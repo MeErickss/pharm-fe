@@ -1,6 +1,8 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import axios from 'axios';
 
 export function LoginPage(){
+    const [dados, setDados] = useState([])
     const [login, setLogin] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
@@ -23,7 +25,7 @@ export function LoginPage(){
     const handleLogin = (e) => {
         e.preventDefault()
 
-        if (login === "" && password === ""){
+        if (login in dados.login && password in dados.password){
             window.location.href = "/home"
         } else{
             setError("Email ou senha incorretos")

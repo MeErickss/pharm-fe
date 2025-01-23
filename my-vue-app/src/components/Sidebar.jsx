@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { NavLink } from "react-router-dom";
+import axios from 'axios';
 
 
 export function Sidebar(){
