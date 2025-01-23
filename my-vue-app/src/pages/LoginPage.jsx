@@ -25,11 +25,13 @@ export function LoginPage(){
     const handleLogin = (e) => {
         e.preventDefault()
 
-        if (login in dados.login && password in dados.password){
-            window.location.href = "/home"
-        } else{
-            setError("Email ou senha incorretos")
-        }
+        const map = dados.map((x) => {
+            if (login == x.login && password == x.password){
+                window.location.href = "/home"
+            }
+            setError("Email ou senha incorretos") 
+            })
+        map()
     }
     return (
         <div>
