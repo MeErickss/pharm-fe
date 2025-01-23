@@ -5,6 +5,21 @@ export function LoginPage(){
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
 
+    useEffect(() => {
+        axios
+          .get('http://localhost:5000/api/dados')  // Altere a URL para apontar para o backend
+          .then((response) => {
+            console.log('Dados recebidos:', response.data);
+            setDados(response.data);
+          })
+          .catch((err) => {
+            console.error('Erro ao buscar dados', err);
+            setError('Não foi possível carregar os dados');
+          });
+      }, []);
+
+
+
     const handleLogin = (e) => {
         e.preventDefault()
 

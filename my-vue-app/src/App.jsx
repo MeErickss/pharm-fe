@@ -8,6 +8,8 @@ import { LoginPage } from "./pages/LoginPage.jsx";
 import { Pagina404 } from "./pages/Page404.jsx";
 import { Layout } from "./pages/Layout.jsx";
 import { Home } from "./pages/Home.jsx";
+import { Production } from "./pages/Production.jsx";
+import { Storage } from "./pages/Storage.jsx";
 
 export default function App() {
   return (
@@ -19,8 +21,8 @@ export default function App() {
         {/* Rotas protegidas com layout */}
         <Route path="/" element={<Layout />}>
           <Route path="home" element={<Home />} />
-          {/* <Route path="payment" element={<Payment />} /> */}
-          {/* <Route path="student" element={<Student />} /> */}
+          <Route path="producao" element={<Production />} />
+          <Route path="armazenamento" element={<Storage />} />
         </Route>
 
         <Route path="*" element={<Pagina404 />} />
