@@ -20,29 +20,29 @@ export function Sidebar() {
     };
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-wrap justify-center items-center text-center mt-10">
             <span className="mb-4 font-bold text-lg">{login}</span> {/* Exibe o login */}
             <NavLink
-                className="w-3/4 h-12 text-white bg-yellow-500 rounded-lg hover:bg-yellow-400"
+                className="w-3/4 h-12 text-white bg-yellow-500 rounded-lg hover:bg-yellow-400 mt-4 p-3"
                 to="/home"
             >
                 <strong>HOME</strong>
             </NavLink>
             <NavLink
-                className="w-3/4 h-12 text-white bg-yellow-500 rounded-lg hover:bg-yellow-400"
+                className="w-3/4 h-12 text-white bg-yellow-500 rounded-lg hover:bg-yellow-400 mt-4 p-3"
                 to="/armazenamento"
             >
                 <strong>ARMAZENAMENTO</strong>
             </NavLink>
             <NavLink
-                className="w-3/4 h-12 text-white bg-yellow-500 rounded-lg hover:bg-yellow-400"
+                className="w-3/4 h-12 text-white bg-yellow-500 rounded-lg hover:bg-yellow-400 mt-4 p-3"
                 to="/producao"
             >
                 <strong>PRODUÇÃO</strong>
             </NavLink>
 
             <button
-                className="w-3/4 h-12 text-white bg-red-500 rounded-lg hover:bg-red-400 mt-4"
+                className="w-3/4 h-12 text-white bg-red-500 rounded-lg hover:bg-red-400 mt-4 p-3"
                 onClick={handleLogout}
             >
                 <strong>SAIR</strong>

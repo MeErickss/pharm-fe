@@ -4,7 +4,7 @@ import { Sidebar } from "../components/Sidebar";
 export function Layout() {
   return (
     <div className="flex w-screen h-screen">
-      <div className="w-1/3 max-w-xs">
+      <div className="w-72">
         <Sidebar />
       </div>
 
