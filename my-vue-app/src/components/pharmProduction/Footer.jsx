@@ -1,8 +1,16 @@
+import { useState } from "react";
+import { Parameters } from "./Parameters";
 
-export function Footer(){
-    return(
-        <div className="flex flex-wrap w-full h-full justify-center items-center">
-            <h1>Footer</h1>
-        </div>
-    )
+export function Footer() {
+  const [parametro, setParametro] = useState(false);
+
+  return (
+    <div className="flex flex-wrap w-full h-full justify-center items-center relative">
+      <button className="bg-white p-2 border rounded" onClick={() => setParametro(true)}>
+        Parameters
+      </button>
+
+      {parametro && <Parameters onClose={() => setParametro(false)} />}
+    </div>
+  );
 }

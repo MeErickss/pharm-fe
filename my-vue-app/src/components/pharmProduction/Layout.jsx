@@ -1,4 +1,4 @@
-import imagem from "./images/p.png"
+import imagem from "./images/p.svg"
 
 
 export function Layout(){

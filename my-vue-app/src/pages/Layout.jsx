@@ -8,7 +8,7 @@ export function Layout() {
         <Sidebar />
       </div>
 
-      <div className="flex-1 p-4 bg-gray-100">
+      <div className="flex-1 p-4 bg-indigo-800 shadow-2xl">
         <Outlet />
       </div>
     </div>

@@ -1,7 +1,6 @@
 import { Alarms } from "../components/pharmProduction/Alarms.jsx";
 import { Footer } from "../components/pharmProduction/Footer.jsx";
 import { Layout } from "../components/pharmProduction/Layout.jsx";
-import { Parameters } from "../components/pharmProduction/Parameters.jsx";
 import { ProductionStatus } from "../components/pharmProduction/ProductionStatus.jsx";
 import { Status } from "../components/pharmProduction/Status.jsx";
 
@@ -13,7 +12,7 @@ export function Production() {
         <Layout />
       </div>
       {/* Production Status */}
-      <div className="col-span-2 bg-red-500">
+      <div className="col-span-2 row-span-2 bg-red-500">
         <ProductionStatus />
       </div>
       {/* Alarms */}
@@ -21,9 +20,6 @@ export function Production() {
         <Alarms />
       </div>
       {/* Parameters */}
-      <div className="col-span-2 bg-yellow-500">
-        <Parameters />
-      </div>
       {/* Footer ocupa toda a última linha */}
       <div className="col-span-2 bg-orange-500 h-1/2">
         <Footer />
