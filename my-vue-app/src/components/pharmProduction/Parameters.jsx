@@ -1,7 +1,36 @@
 import { AiOutlineCloseCircle, AiOutlineReload, AiOutlineDatabase, AiOutlineCheckCircle } from "react-icons/ai";
+import { useState, useEffect } from "react";
+import axios from 'axios';
 
 
 export function Parameters({ onClose }) {
+  const tables = []
+  const parametros_producao_acido = {parametro:"",unid:0,valor:0,vl_min:0,vl_max:0}
+  const parametros_producao_bicarbonato = {parametro:"",unid:0,valor:0,vl_min:0,vl_max:0}
+  const setup_instrumentos = {parametro:"",unid:0,valor:0,vl_min:0,vl_max:0}
+  const tempo_falha_valvulas = {parametro:"",unid:0,valor:0,vl_min:0,vl_max:0}
+  const tempos_producao_acido = {parametro:"",unid:0,valor:0,vl_min:0,vl_max:0}
+  const tempos_producao_bicarbonato = {parametro:"",unid:0,valor:0,vl_min:0,vl_max:0}
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+      axios
+          .get('http://localhost:5000/api/dados')
+          .then((response) => {
+              console.log('Dados recebidos:', response.data);
+              setDados(response.data);
+          })
+          .catch((err) => {
+              console.error('Erro ao buscar dados', err);
+              setError('Não foi possível carregar os dados');
+          });
+  }, []);
+
+  const handleData = (e) => {
+    e.preventDefault();
+
+
+  }
     return (
       <div className="fixed top-1 left-1/4 w-[72rem] h-[60rem] bg-slate-200 p-4 rounded shadow-lg">
           <table className="border-2 border-collapse border-black text-xs mb-3 w-[67rem]">
@@ -18,37 +47,37 @@ export function Parameters({ onClose }) {
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA DRENAGEM DO TANQUE DE MISTURA [TQ-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="seg">SEG</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA DRENAGEM DO TANQUE DE ADIÇÃO [TQ-200]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="seg">SEG</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA HOMOGENIZAÇÃO NO TANQUE DE MISTURA [TQ-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="min">MIN</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">CICLOS PARA LIMPEZA DO TANQUE DE ADIÇÃO [TQ-200]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="ciclos">CICLOS</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">CICLOS PARA ENXÁGUE DO EQUIPAMENTO  [TQ-200]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="ciclos">CICLOS</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
             </tbody>
           </table>
@@ -68,23 +97,23 @@ export function Parameters({ onClose }) {
               <tr>
                 <th className="border-2 border-collapse border-black">PRESSÃO DE RECALQUE BOMBA  [PT-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="psi">PSI</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">VOLUME DE ÁGUA PARA ENXÁGUE [TQ-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="litros">LITROS</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">CONDUTIVIDADE MÁXIMA DE ENTRADA [CI-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="us">US</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
             </tbody>
           </table>
@@ -104,58 +133,58 @@ export function Parameters({ onClose }) {
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA DRENAGEM DO TANQUE DE MISTURA [TQ-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="seg">SEG</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA DRENAGEM DO TANQUE DE ADIÇÃO [TQ-200]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="seg">SEG</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA HOMOGENIZAÇÃO DO TANQUE DE MISTURA [TQ-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="min">MIN</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">CICLOS PARA LIMPEZA DO TANQUE DE ADIÇÃO [TQ-200]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="ciclos">CICLOS</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">CICLOS PARA ENXÁGUE DO EQUIPAMENTO </th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="ciclos">CICLOS</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA CONCENTRAÇÃO DE OZÔNIO [OZ-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="min">MIN</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">CICLOS PARA SANITIZAÇÃO DO TANQUE DE ADIÇÃO [TQ-200]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="ciclos">CICLOS</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO DE SANITIZAÇÃO COM SPRAY-BALL TANQUE DE MISTURA [TQ-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="min">MIN</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
             </tbody>
           </table>
@@ -175,30 +204,30 @@ export function Parameters({ onClose }) {
               <tr>
                 <th className="border-2 border-collapse border-black">PRESSÃO DE RECALQUE BOMBA  [PT-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="psi">PSI</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">VOLUME DE ÁGUA PARA ENXÁGUE [TQ-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="litros">LITROS</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">VOLUME DE ÁGUA PARA SANITIZAÇÃO [TQ-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="litros">LITROS</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">CONDUTIVIDADE MÁXIMA DE ENTRADA [CI-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="us">US</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
             </tbody>
           </table>
@@ -218,30 +247,30 @@ export function Parameters({ onClose }) {
               <tr>
                 <th className="border-2 border-collapse border-black">CONDUTIVIMETRO DE ENTRADA uS   [CI-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="us">US</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">MEDIDOR DE PH ENTRADA [PH-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="ph">PH</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">MEDIDOR PH DA SOLUÇÃO   [PH-101]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="ph">PH</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TRANSMISSOR DE PRESSÃO DE RECALQUE BOMBA  [PT-100]</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="psi">PSI</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
             </tbody>
           </table>
@@ -261,65 +290,65 @@ export function Parameters({ onClose }) {
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA FALHA DE VÁLVULA XV - 100</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="seg">SEG</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA FALHA DE VÁLVULA XV - 101</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="seg">SEG</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA FALHA DE VÁLVULA XV - 102</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="seg">SEG</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA FALHA DE VÁLVULA XV - 103</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="seg">SEG</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA FALHA DE VÁLVULA XV - 104</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="seg">SEG</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA FALHA DE VÁLVULA XV - 105</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="seg">SEG</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA FALHA DE VÁLVULA XV - 106</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="seg">SEG</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA FALHA DE VÁLVULA XV - 107</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="seg">SEG</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
               <tr>
                 <th className="border-2 border-collapse border-black">TEMPO PARA FALHA DE VÁLVULA XV - 108</th>
                 <td className="border-2 border-collapse border-black"><select name="" id=""><option value="seg">SEG</option></select></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
-                <td className="border-2 border-collapse border-black"><input className="w-full" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
+                <td className="border-2 border-collapse border-black"><input value={0} className="w-full px-2" type="number"/></td>
               </tr>
             </tbody>
           </table>
