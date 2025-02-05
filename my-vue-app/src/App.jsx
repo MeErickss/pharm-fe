@@ -10,6 +10,8 @@ import { Layout } from "./pages/Layout.jsx";
 import { Home } from "./pages/Home.jsx";
 import { Production } from "./pages/Production.jsx";
 import { Storage } from "./pages/Storage.jsx";
+import { ParametersProduction } from "./pages/ParametersProduction.jsx";
+import { ParametersStorage } from "./pages/ParametersStorage.jsx";
 
 export default function App() {
   return (
@@ -23,6 +25,8 @@ export default function App() {
           <Route path="home" element={<Home />} />
           <Route path="producao" element={<Production />} />
           <Route path="armazenamento" element={<Storage />} />
+          <Route path="parametroproducao" element={<ParametersProduction />} />
+          <Route path="parametroarmazem" element={<ParametersStorage />} />
         </Route>
 
         <Route path="*" element={<Pagina404 />} />

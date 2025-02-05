@@ -1,55 +1,132 @@
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import logo from "./pharmProduction/images/logo.svg"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { 
+    faIndustry, 
+    faTrash, 
+    faPen, 
+    faCaretDown, 
+    faCaretUp, 
+    faHouse,
+    faArrowUpFromBracket,
+    faGrip,
+    faRightToBracket,
+    faClipboard
+} from "@fortawesome/free-solid-svg-icons";
+
+import logo from "./pharmProduction/images/logo.svg";
 
 export function Sidebar() {
     const [login, setLogin] = useState("");
+    const [producao, setProducao] = useState(false);
+    const [armazenamento, setArmazenamento] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const storedLogin = localStorage.getItem("login"); // Obtém o login do localStorage
+        const storedLogin = localStorage.getItem("login");
         if (!storedLogin) {
-            navigate("/"); // Redireciona para a página de login caso o login não exista
+            navigate("/");
         } else {
-            setLogin(storedLogin); // Define o login no estado local
+            setLogin(storedLogin);
         }
     }, [navigate]);
 
     const handleLogout = () => {
-        localStorage.removeItem("login"); // Remove o login do localStorage
+        localStorage.removeItem("login");
         navigate("/");
     };
 
     return (
-        <div className="flex flex-wrap items-center text-center h-screen bg-cyan-600">
-            <div className="flex flex-wrap justify-center items-center h-1/6 gap-4">
-                <img className="w-10/12" src={logo} alt="logo"/>
-                <span className="font-bold text-lg">{login}</span> {/* Exibe o login */}
+        <div className="grid grid-rows-[auto_1fr_auto] h-screen bg-slate-100 text-sm w-52">
+            {/* Topo - Logo e usuário */}
+            <div className="flex flex-col py-6 items-center">
+                <img className="w-10/12 mb-2" src={logo} alt="logo" />
+                <span className="font-bold text-lg">{login}</span>
             </div>
-            <div className="flex flex-wrap justify-center items-center gap-14">
-                <NavLink
-                    className="w-3/4 h-12 text-white bg-cyan-900 shadow-2xl rounded-lg hover:brightness-125 mt-4 p-3"
+
+            {/* Meio - Botões de navegação */}
+            <div className="flex flex-col w-full">
+                <NavLink 
+                    className={({ isActive }) => 
+                        `w-full flex items-center gap-2 p-4 text-left hover:bg-gray-300 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                    } 
                     to="/home"
                 >
-                    <strong>HOME</strong>
+                    <FontAwesomeIcon icon={faHouse} /> Página Inicial
                 </NavLink>
-                <NavLink
-                    className="w-3/4 h-12 text-white bg-cyan-900 shadow-2xl rounded-lg hover:brightness-125 mt-4 p-3"
-                    to="/armazenamento"
-                >
-                    <strong>ARMAZENAMENTO</strong>
-                </NavLink>
-                <NavLink
-                    className="w-3/4 h-12 text-white bg-cyan-900 shadow-2xl rounded-lg hover:brightness-125 mt-4 p-3"
-                    to="/producao"
-                >
-                    <strong>PRODUÇÃO</strong>
-                </NavLink>
-                <button
-                    className="w-3/4 h-12 text-white bg-red-500 rounded-lg hover:brightness-125 mt-4 p-3"
+
+                <div className="w-full">
+                    <button
+                        className={`w-full flex items-center gap-2 p-4 text-left hover:bg-gray-200 ${
+                            producao ? "text-blue-500 font-bold" : "text-black"
+                        }`}
+                        onClick={() => setProducao(!producao)}
+                    >
+                        <FontAwesomeIcon icon={faIndustry} />
+                        Produção
+                        <FontAwesomeIcon icon={producao ? faCaretUp : faCaretDown} className="ml-auto" />
+                    </button>
+                    {producao && (
+                        <div className="grid w-full bg-gray-200">
+                            <NavLink 
+                                className={({ isActive }) => 
+                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                                } 
+                                to="/producao"
+                            >
+                                <FontAwesomeIcon icon={faGrip} /> Tela de Monitoramento
+                            </NavLink>
+                            <NavLink 
+                                className={({ isActive }) => 
+                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                                } 
+                                to="/parametroproducao"
+                            >
+                                <FontAwesomeIcon icon={faClipboard} /> Parâmetros
+                            </NavLink>
+                        </div>
+                    )}
+                </div>
+
+                <div className="w-full">
+                    <button
+                        className={`w-full flex items-center gap-2 p-4 text-left hover:bg-gray-200 ${
+                            armazenamento ? "text-blue-500 font-bold" : "text-black"
+                        }`}
+                        onClick={() => setArmazenamento(!armazenamento)}
+                    >
+                        <FontAwesomeIcon icon={faArrowUpFromBracket} />
+                        Armazenamento
+                        <FontAwesomeIcon icon={armazenamento ? faCaretUp : faCaretDown} className="ml-auto" />
+                    </button>
+                    {armazenamento && (
+                        <div className="grid w-full bg-gray-200">
+                            <NavLink 
+                                className={({ isActive }) => 
+                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                                } 
+                                to="/armazenamento"
+                            >
+                                <FontAwesomeIcon icon={faGrip} /> Tela de Monitoramento
+                            </NavLink>
+                            <NavLink 
+                                className={({ isActive }) => 
+                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                                } 
+                                to="/parametroarmazem"
+                            >
+                                <FontAwesomeIcon icon={faClipboard} /> Parâmetros
+                            </NavLink>
+                        </div>
+                    )}
+                </div>
+                
+                <button 
+                    className="w-full flex items-center gap-2 p-4 text-left hover:text-red-600 hover:bg-gray-300" 
                     onClick={handleLogout}
                 >
-                    <strong>SAIR</strong>
+                    <FontAwesomeIcon icon={faRightToBracket} />
+                    Sair
                 </button>
             </div>
         </div>
