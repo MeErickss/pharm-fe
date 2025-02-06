@@ -40,7 +40,7 @@ export function LoginPage() {
     return (
         <div className="flex flex-wrap flex-col gap-10 justify-center items-center w-screen h-screen bg-slate-500">
             <img width={200} src={logo} alt="logo" />
-            <div className="flex flex-wrap w-1/4 h-1/3 p-8 text-left bg-slate-700 rounded-lg shadow-2xl">
+            <div className="flex flex-wrap w-1/4 h-10/12 p-8 text-left bg-slate-700 rounded-lg shadow-2xl">
                 <form  onSubmit={handleLogin}>
                     <div className="text-center text-indigo-600"><h2><strong>CADASTRO</strong></h2></div>
                     <label className="w-full" htmlFor="login"><strong>Login:</strong></label>

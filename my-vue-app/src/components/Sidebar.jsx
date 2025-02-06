@@ -1,25 +1,24 @@
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { 
-    faIndustry, 
-    faTrash, 
-    faPen, 
-    faCaretDown, 
-    faCaretUp, 
-    faHouse,
-    faArrowUpFromBracket,
-    faGrip,
-    faRightToBracket,
-    faClipboard
-} from "@fortawesome/free-solid-svg-icons";
-
+import ArrowUpFromBracket  from "./pharmProduction/images/ArrowUpFromBracket.svg";
+import CaretDown from "./pharmProduction/images/CaretDown.svg";
+import CaretUp from "./pharmProduction/images/CaretUp.svg";
+import Clipboard from "./pharmProduction/images/Clipboard.svg";
+import Grip from "./pharmProduction/images/Grip.svg";
+import House from "./pharmProduction/images/House.svg";
+import Industry from "./pharmProduction/images/Industry.svg";
+import RightToBracket from "./pharmProduction/images/RightToBracket.svg";
+import Admin from "./pharmProduction/images/Admin.svg";
+import AdminUsers from "./pharmProduction/images/AdminUsers.svg";
+import AdminProduction from "./pharmProduction/images/AdminProduction.svg";
+import AdminStorage from "./pharmProduction/images/AdminStorage.svg";
 import logo from "./pharmProduction/images/logo.svg";
 
 export function Sidebar() {
     const [login, setLogin] = useState("");
     const [producao, setProducao] = useState(false);
     const [armazenamento, setArmazenamento] = useState(false);
+    const [cadastro, setCadastro] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -52,19 +51,19 @@ export function Sidebar() {
                     } 
                     to="/home"
                 >
-                    <FontAwesomeIcon icon={faHouse} /> Página Inicial
+                    <img width={15} src={House}/> Página Inicial
                 </NavLink>
 
                 <div className="w-full">
                     <button
-                        className={`w-full flex items-center gap-2 p-4 text-left hover:bg-gray-200 ${
-                            producao ? "text-blue-500 font-bold" : "text-black"
+                        className={`w-full flex items-center gap-2 p-4 text-left ${
+                            producao ? "bg-gray-400 font-bold" : "text-black"
                         }`}
                         onClick={() => setProducao(!producao)}
                     >
-                        <FontAwesomeIcon icon={faIndustry} />
+                        <img width={15} src={Industry}/>
                         Produção
-                        <FontAwesomeIcon icon={producao ? faCaretUp : faCaretDown} className="ml-auto" />
+                        {producao ? <img width={8} src={CaretUp}/> : <img width={8} src={CaretDown}/>}
                     </button>
                     {producao && (
                         <div className="grid w-full bg-gray-200">
@@ -74,7 +73,7 @@ export function Sidebar() {
                                 } 
                                 to="/producao"
                             >
-                                <FontAwesomeIcon icon={faGrip} /> Tela de Monitoramento
+                                <img width={10} src={Grip}/> Tela de Monitoramento
                             </NavLink>
                             <NavLink 
                                 className={({ isActive }) => 
@@ -82,7 +81,7 @@ export function Sidebar() {
                                 } 
                                 to="/parametroproducao"
                             >
-                                <FontAwesomeIcon icon={faClipboard} /> Parâmetros
+                                <img width={10} src={Clipboard}/> Parâmetros
                             </NavLink>
                         </div>
                     )}
@@ -90,14 +89,14 @@ export function Sidebar() {
 
                 <div className="w-full">
                     <button
-                        className={`w-full flex items-center gap-2 p-4 text-left hover:bg-gray-200 ${
-                            armazenamento ? "text-blue-500 font-bold" : "text-black"
+                        className={`w-full flex items-center gap-2 p-4 text-left ${
+                            armazenamento ? "bg-gray-400 font-bold" : "text-black"
                         }`}
                         onClick={() => setArmazenamento(!armazenamento)}
                     >
-                        <FontAwesomeIcon icon={faArrowUpFromBracket} />
+                        <img width={15} src={ArrowUpFromBracket}/>
                         Armazenamento
-                        <FontAwesomeIcon icon={armazenamento ? faCaretUp : faCaretDown} className="ml-auto" />
+                        {armazenamento ? <img width={8} src={CaretUp}/> : <img width={8} src={CaretDown}/>}
                     </button>
                     {armazenamento && (
                         <div className="grid w-full bg-gray-200">
@@ -107,7 +106,7 @@ export function Sidebar() {
                                 } 
                                 to="/armazenamento"
                             >
-                                <FontAwesomeIcon icon={faGrip} /> Tela de Monitoramento
+                                <img width={10} src={Grip}/> Tela de Monitoramento
                             </NavLink>
                             <NavLink 
                                 className={({ isActive }) => 
@@ -115,7 +114,50 @@ export function Sidebar() {
                                 } 
                                 to="/parametroarmazem"
                             >
-                                <FontAwesomeIcon icon={faClipboard} /> Parâmetros
+                                <img width={10} src={Clipboard}/> Parâmetros
+                            </NavLink>
+                        </div>
+                    )}
+                </div>
+
+                <div className="w-full">
+                    <button
+                        className={`w-full flex items-center gap-2 p-4 text-left ${
+                            cadastro ? "bg-gray-400 font-bold" : "text-black"
+                        }`}
+                        onClick={() => setCadastro(!cadastro)}
+                    >
+                        <img width={15} src={Admin}/>
+                        Cadastros Admin
+                        {cadastro ? <img width={8} src={CaretUp}/> : <img width={8} src={CaretDown}/>}
+                    </button>
+                    {cadastro && (
+                        <div className="grid w-full bg-gray-200">
+                            <NavLink 
+                                className={({ isActive }) => 
+                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                                } 
+                                to="/adminparametrosproducao"
+                            >
+                                <img width={10} src={AdminProduction}/> Parametros Produção
+                            </NavLink>
+
+                            <NavLink 
+                                className={({ isActive }) => 
+                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                                } 
+                                to="/adminparametrosarmazem"
+                            >
+                                <img width={10} src={AdminStorage}/> Parametros Armazém
+                            </NavLink>
+
+                            <NavLink 
+                                className={({ isActive }) => 
+                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                                } 
+                                to="/usuarios"
+                            >
+                                <img width={10} src={AdminUsers}/> Usuários
                             </NavLink>
                         </div>
                     )}
@@ -125,7 +167,7 @@ export function Sidebar() {
                     className="w-full flex items-center gap-2 p-4 text-left hover:text-red-600 hover:bg-gray-300" 
                     onClick={handleLogout}
                 >
-                    <FontAwesomeIcon icon={faRightToBracket} />
+                    <img width={15} src={RightToBracket}/>
                     Sair
                 </button>
             </div>
