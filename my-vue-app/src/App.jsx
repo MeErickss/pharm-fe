@@ -36,8 +36,8 @@ export default function App() {
           <Route path="usuarios" element={<AdminUsers />} />
           <Route path="adminparametrosproducao" element={<AdminProductionRegister />} />
           <Route path="adminparametrosarmazem" element={<AdminStorageRegister/>} />
-          <Route path="adminparametrosunidade" element={<AdminTypeRegister/>} />
-          <Route path="adminparametrostipos" element={<AdminUnitRegister/>} />
+          <Route path="adminparametrostipos" element={<AdminTypeRegister/>} />
+          <Route path="adminparametrosunidade" element={<AdminUnitRegister/>} />
         </Route>
 
         <Route path="*" element={<Pagina404 />} />
