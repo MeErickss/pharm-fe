@@ -13,9 +13,11 @@ import { Production } from "./pages/Production.jsx";
 import { Storage } from "./pages/Storage.jsx";
 import { ParametersProduction } from "./pages/ParametersProduction.jsx";
 import { ParametersStorage } from "./pages/ParametersStorage.jsx";
-import { AdminProductionRegister } from "./pages/AdminProductionRegister.jsx";
-import { AdminStorageRegister } from "./pages/AdminStorageRegister.jsx";
-import { Users } from "./pages/Users.jsx"
+import { AdminProductionRegister } from "./pages/Admin/AdminProductionRegister.jsx";
+import { AdminStorageRegister } from "./pages/Admin/AdminStorageRegister.jsx";
+import { AdminTypeRegister } from "./pages/Admin/AdminTypeRegister.jsx";
+import { AdminUnitRegister } from "./pages/Admin/AdminUnitRegister.jsx";
+import { AdminUsers } from "./pages/Admin/AdminUsers.jsx"
 
 export default function App() {
   return (
@@ -31,9 +33,11 @@ export default function App() {
           <Route path="armazenamento" element={<Storage />} />
           <Route path="parametroproducao" element={<ParametersProduction />} />
           <Route path="parametroarmazem" element={<ParametersStorage />} />
-          <Route path="usuarios" element={<Users />} />
+          <Route path="usuarios" element={<AdminUsers />} />
           <Route path="adminparametrosproducao" element={<AdminProductionRegister />} />
           <Route path="adminparametrosarmazem" element={<AdminStorageRegister/>} />
+          <Route path="adminparametrosunidade" element={<AdminTypeRegister/>} />
+          <Route path="adminparametrostipos" element={<AdminUnitRegister/>} />
         </Route>
 
         <Route path="*" element={<Pagina404 />} />

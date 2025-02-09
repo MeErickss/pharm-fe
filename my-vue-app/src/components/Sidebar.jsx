@@ -155,6 +155,24 @@ export function Sidebar() {
                                 className={({ isActive }) => 
                                     `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
                                 } 
+                                to="/adminparametrosunidade"
+                            >
+                                <img width={10} src={AdminStorage}/> Parametros Unidade
+                            </NavLink>
+
+                            <NavLink 
+                                className={({ isActive }) => 
+                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                                } 
+                                to="/adminparametrostipos"
+                            >
+                                <img width={10} src={AdminStorage}/> Parametros Tipos
+                            </NavLink>
+
+                            <NavLink 
+                                className={({ isActive }) => 
+                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                                } 
                                 to="/usuarios"
                             >
                                 <img width={10} src={AdminUsers}/> Usuários

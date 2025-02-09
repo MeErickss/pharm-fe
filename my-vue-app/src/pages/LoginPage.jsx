@@ -12,7 +12,7 @@ export function LoginPage() {
 
     useEffect(() => {
         axios
-            .get('http://localhost:5000/api/dados')
+            .get('http://localhost:5000/api/users')
             .then((response) => {
                 console.log('Dados recebidos:', response.data);
                 setDados(response.data);
