@@ -4,7 +4,7 @@ import axios from "axios";
 export function AdminProductionRegister() {
   const [error, setError] = useState("");
   const [dados, setDados] = useState([]);
-  const [editar, setEditar] = useState(false)
+  const [editar, setEditar] = useState(true)
 
   useEffect(() => {
     axios
