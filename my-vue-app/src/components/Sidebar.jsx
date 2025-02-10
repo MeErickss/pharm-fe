@@ -13,13 +13,23 @@ import AdminUsers from "./pharmProduction/images/AdminUsers.svg";
 import AdminProduction from "./pharmProduction/images/AdminProduction.svg";
 import AdminStorage from "./pharmProduction/images/AdminStorage.svg";
 import logo from "./pharmProduction/images/logo.svg";
+import axios from "axios";
+
 
 export function Sidebar() {
     const [login, setLogin] = useState("");
     const [producao, setProducao] = useState(false);
     const [armazenamento, setArmazenamento] = useState(false);
     const [cadastro, setCadastro] = useState(false);
+    const [dados, setDados] = useState([]);
+    const [nivel, setNivel] = useState("");
     const navigate = useNavigate();
+
+    const nivelMap = {
+        1:"operador",
+        2:"manutencao",
+        3:"admin"
+    }
 
     useEffect(() => {
         const storedLogin = localStorage.getItem("login");
@@ -27,8 +37,23 @@ export function Sidebar() {
             navigate("/");
         } else {
             setLogin(storedLogin);
+            axios
+                .get("http://localhost:5000/api/users")
+                .then((response) => {
+                    console.log("Dados recebidos:", response.data);
+                    setDados(response.data);
+                    const usuario = response.data.find((item) => item.LOGIN === storedLogin);
+                    if (usuario) {
+                        setNivel(nivelMap[usuario.NIVEL] || "desconhecido");
+                    }
+                })
+                .catch((err) => {
+                    console.error("Erro ao buscar dados", err);
+                    setError("Não foi possível carregar os dados");
+                });
         }
     }, [navigate]);
+    
 
     const handleLogout = () => {
         localStorage.removeItem("login");
@@ -120,7 +145,7 @@ export function Sidebar() {
                     )}
                 </div>
 
-                <div className="w-full">
+                {nivel==="admin" && <div className="w-full">
                     <button
                         className={`w-full flex items-center gap-2 p-4 text-left ${
                             cadastro ? "bg-gray-400 font-bold" : "text-black"
@@ -179,7 +204,7 @@ export function Sidebar() {
                             </NavLink>
                         </div>
                     )}
-                </div>
+                </div>}
                 
                 <button 
                     className="w-full flex items-center gap-2 p-4 text-left hover:text-red-600 hover:bg-gray-300" 

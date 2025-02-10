@@ -26,7 +26,7 @@ export function LoginPage() {
     const handleLogin = (e) => {
         e.preventDefault();
 
-        const user = dados.find((x) => login === x.login && password === x.password);
+        const user = dados.find((x) => login === x.LOGIN && password === x.PASSWORD);
 
         if (user) {
             localStorage.setItem('login', login);

@@ -22,14 +22,14 @@ export function AdminTypeRegister() {
   return (
     <div className="w-full h-full bg-gray-100 p-4">
       <div className="w-full border border-gray-300 rounded-lg bg-white shadow">
-        <div className="grid grid-cols-3 bg-gray-200 font-semibold text-gray-700 p-3 border-b">
+        <div className="grid grid-cols-[3rem_12rem_5rem] bg-gray-200 font-semibold text-gray-700 p-3 border-b">
           <div>ID</div>
           <div>Tipo Parametro</div>
           <div>Ações</div>
         </div>
 
         {dados.map((x) => (
-          <div key={x.ID} className="grid grid-cols-3 p-3 border-b items-center">
+          <div key={x.ID} className="grid grid-cols-[3rem_12rem_5rem] p-3 border-b items-center">
             <div>{x.ID}</div>
             <div>{x.TIPO_PARAMETRO}</div>
             <div className="flex gap-4">

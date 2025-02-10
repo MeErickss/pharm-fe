@@ -23,7 +23,7 @@ export function AdminStorageRegister() {
   return (
     <div className="w-full h-full bg-gray-100 p-4">
       <div className="w-full border border-gray-300 rounded-lg bg-white shadow">
-        <div className="grid grid-cols-8 bg-gray-200 font-semibold text-gray-700 p-3 border-b">
+        <div className="grid grid-cols-[3rem_30rem_5rem_5rem_5rem_8rem_8rem_5rem] bg-gray-200 font-semibold text-gray-700 p-3 border-b">
           <div>ID</div>
           <div>Parametro</div>
           <div>Tipo</div>
@@ -35,7 +35,7 @@ export function AdminStorageRegister() {
         </div>
 
         {dados.map((x) => (
-          <div key={x.ID} className="grid grid-cols-8 p-3 border-b items-center">
+          <div key={x.ID} className="grid grid-cols-[3rem_30rem_5rem_5rem_5rem_8rem_8rem_5rem] p-3 border-b items-center">
             <div>{x.ID}</div>
             <div>{x.PARAMETRO}</div>
             <div>{x.TIPO}</div>

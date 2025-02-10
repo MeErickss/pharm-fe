@@ -22,18 +22,20 @@ export function AdminUsers() {
   return (
     <div className="w-full h-full bg-gray-100 p-4">
       <div className="w-full border border-gray-300 rounded-lg bg-white shadow">
-        <div className="grid grid-cols-4 bg-gray-200 font-semibold text-gray-700 p-3 border-b">
+        <div className="grid grid-cols-[3rem_20rem_5rem_5rem_5rem] bg-gray-200 font-semibold text-gray-700 p-3 border-b">
           <div>ID</div>
           <div>Login</div>
           <div>Senha</div>
+          <div>Nível</div>
           <div>Ações</div>
         </div>
 
         {dados.map((x) => (
-          <div key={x.id} className="grid grid-cols-4 p-3 border-b items-center">
-            <div>{x.id}</div>
-            <div>{x.login}</div>
-            <div>{x.password}</div>
+          <div key={x.ID} className="grid grid-cols-[3rem_20rem_5rem_5rem_5rem] p-3 border-b items-center">
+            <div>{x.ID}</div>
+            <div>{x.LOGIN}</div>
+            <div>{x.PASSWORD}</div>
+            <div>{x.NIVEL}</div>
             <div className="flex gap-4">
             {editar ? <button onClick={()=> setEditar(!editar)}>
               <svg
