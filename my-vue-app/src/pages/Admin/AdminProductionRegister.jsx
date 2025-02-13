@@ -4,20 +4,15 @@ import axios from "axios";
 export function AdminProductionRegister() {
   const [error, setError] = useState("");
   const [dados, setDados] = useState([]);
-  const [editar, setEditar] = useState([]);
+  const [editar, setEditar] = useState(true);
+  const [dadosLen, setDadosLen] = useState(0);
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/parametros_producao")
+      .get("http://localhost:5000/api/parametros")
       .then((response) => {
         console.log("Dados recebidos:", response.data);
         setDados(response.data);
-
-        const estadoInicial = response.data.map((x) => ({
-          ID: x.ID,
-          EDITAR: false,
-        }));
-        setEditar(estadoInicial);
       })
       .catch((err) => {
         console.error("Erro ao buscar dados", err);
@@ -25,105 +20,82 @@ export function AdminProductionRegister() {
       });
   }, []);
 
-  const toggleEditar = (id) => {
-    setEditar((prev) =>
-      prev.map((item) =>
-        item.ID === id ? { ...item, EDITAR: !item.EDITAR } : item
-      )
-    );
-  };
-
-  const handleDelete = async (id, tableName) => {
-    try {
-      const response = await axios.delete(`http://localhost:5000/api/delete/${tableName}/${id}`);
-    
-      console.log(response.data);
-      alert(`Registro deletado da tabela ${tableName} com sucesso!`);
-    } catch (err) {
-      console.error("Erro ao deletar:", err);
-      alert("Erro ao excluir registro");
+  // Atualiza dadosLen apenas quando `dados` mudar
+  useEffect(() => {
+    if (dados.length > 0) {
+      setDadosLen(Object.keys(dados[0]).length);
     }
-  };
-  
-      
+  }, [dados]);
 
   return (
     <div className="w-full h-full bg-gray-100 p-4">
       <div className="w-full border border-gray-300 rounded-lg bg-white shadow">
-        <div className="grid grid-cols-[3rem_30rem_5rem_5rem_5rem_8rem_8rem_5rem] bg-gray-200 font-semibold text-gray-700 p-3 border-b">
-          <div>ID</div>
-          <div>Parametro</div>
-          <div>Tipo</div>
-          <div>Unidade</div>
-          <div>Valor</div>
-          <div>Valor Minimo</div>
-          <div>Valor Maximo</div>
-          <div>Ações</div>
-        </div>
-
-        {dados.map((x) => {
-          const estadoEdicao = editar.find((item) => item.ID === x.ID)?.EDITAR;
-
-          return (
-            <div key={x.ID} className="grid grid-cols-[3rem_30rem_5rem_5rem_5rem_8rem_8rem_5rem] p-3 border-b items-center">
-              {estadoEdicao ? (
-                <>
-                  <div><input type="text" className="w-full" defaultValue={x.ID}></input></div>
-                  <div><input type="text" className="w-full" defaultValue={x.PARAMETRO}></input></div>
-                  <div><input type="text" className="w-full" defaultValue={x.TIPO} /></div>
-                  <div><input type="text" className="w-full" defaultValue={x.UNID} /></div>
-                  <div><input type="text" className="w-full" defaultValue={x.VALOR} /></div>
-                  <div><input type="text" className="w-full" defaultValue={x.VL_MIN}></input></div>
-                  <div><input type="text" className="w-full" defaultValue={x.VL_MAX}></input></div>
-                </>
-              ) : (
-                <>
-                  <div>{x.ID}</div>
-                  <div>{x.PARAMETRO}</div>
-                  <div>{x.TIPO}</div>
-                  <div>{x.UNID}</div>
-                  <div>{x.VALOR}</div>
-                  <div>{x.VL_MIN}</div>
-                  <div>{x.VL_MAX}</div>
-                </>
-              )}
-              <div className="flex gap-4">
-                <button onClick={() => toggleEditar(x.ID)}>
-                  {estadoEdicao ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="10"
-                      viewBox="0 0 448 512"
-                      className="hover:fill-green-500"
-                    >
-                      <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 512 512"
-                      width="10"
-                      className="hover:fill-orange-500"
-                    >
-                      <path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z" />
-                    </svg>
-                  )}
-                </button>
-
-                <button onClick={() => handleDelete(x.ID,"parameters_producao")}>
+        {dados.length > 0 && (
+          <div
+            className="grid bg-gray-200 font-semibold text-gray-700 p-3 border-b"
+            style={{ gridTemplateColumns: `minmax(4rem, auto) repeat(${dadosLen}, minmax(0, 1fr))` }}
+          >
+            {Object.keys(dados[0]).map((key, index) => (
+              <div key={key} className="px-2">
+                {key}
+              </div>
+            ))}
+            <div className="px-2">Ações</div>
+          </div>
+        )}
+    
+        {/* Linhas de dados dinâmicas */}
+        {dados.map((x) => (
+          <div
+            key={x.ID}
+            className="grid p-3 border-b items-center"
+            style={{ gridTemplateColumns: `minmax(4rem, auto) repeat(${dadosLen}, minmax(0, 1fr))` }}
+          >
+            {Object.values(x).map((value, index) => (
+              <div key={index} className="px-2">
+                {value}
+              </div>
+            ))}
+    
+            {/* Botões de ação */}
+            <div className="flex gap-4">
+              {editar ? (
+                <button onClick={() => setEditar(!editar)}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 448 512"
-                    width="10"
-                    className="hover:fill-red-500"
+                    viewBox="0 0 512 512"
+                    width="16"
+                    className="hover:fill-orange-500"
                   >
-                    <path d="M135.2 17.8l9.8 22H312l9.8-22c5.4-12 17.3-17.8 28.2-17.8h32c13.3 0 24 10.7 24 24V56H16V24c0-13.3 10.7-24 24-24h32c10.9 0 22.8 5.8 28.2 17.8zM32 96h384l-20.4 368c-1.5 26.5-24 48-50.5 48H102.9c-26.5 0-49-21.5-50.5-48L32 96zm80 48v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16zm96 0v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16zm96 0v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16z" />
+                    <path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z" />
                   </svg>
                 </button>
-              </div>
+              ) : (
+                <button onClick={() => setEditar(!editar)}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    viewBox="0 0 448 512"
+                    className="hover:fill-green-500"
+                  >
+                    <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/>
+                  </svg>
+                </button>
+              )}
+    
+              <button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 448 512"
+                  width="16"
+                  className="hover:fill-red-500"
+                >
+                  <path d="M135.2 17.8l9.8 22H312l9.8-22c5.4-12 17.3-17.8 28.2-17.8h32c13.3 0 24 10.7 24 24V56H16V24c0-13.3 10.7-24 24-24h32c10.9 0 22.8 5.8 28.2 17.8zM32 96h384l-20.4 368c-1.5 26.5-24 48-50.5 48H102.9c-26.5 0-49-21.5-50.5-48L32 96zm80 48v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16zm96 0v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16zm96 0v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16z" />
+                </svg>
+              </button>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </div>
   );

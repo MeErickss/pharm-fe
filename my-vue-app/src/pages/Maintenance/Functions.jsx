@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export function AdminUnitRegister() {
+export function Functions() {
   const [error, setError] = useState("");
   const [dados, setDados] = useState([]);
   const [editar, setEditar] = useState(true);
@@ -9,7 +9,7 @@ export function AdminUnitRegister() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/unidades")
+      .get("http://localhost:5000/api/functions")
       .then((response) => {
         console.log("Dados recebidos:", response.data);
         setDados(response.data);

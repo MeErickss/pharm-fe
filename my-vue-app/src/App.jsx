@@ -18,6 +18,8 @@ import { AdminStorageRegister } from "./pages/Admin/AdminStorageRegister.jsx";
 import { AdminTypeRegister } from "./pages/Admin/AdminTypeRegister.jsx";
 import { AdminUnitRegister } from "./pages/Admin/AdminUnitRegister.jsx";
 import { AdminUsers } from "./pages/Admin/AdminUsers.jsx"
+import { Status } from "./pages/Maintenance/status.jsx";
+import { Functions } from "./pages/Maintenance/Functions.jsx";
 
 export default function App() {
   return (
@@ -38,6 +40,8 @@ export default function App() {
           <Route path="adminparametrosarmazem" element={<AdminStorageRegister/>} />
           <Route path="adminparametrostipos" element={<AdminTypeRegister/>} />
           <Route path="adminparametrosunidade" element={<AdminUnitRegister/>} />
+          <Route path="maintencefunctions" element={<Functions/>} />
+          <Route path="maintencestatus" element={<Status/>} />
         </Route>
 
         <Route path="*" element={<Pagina404 />} />

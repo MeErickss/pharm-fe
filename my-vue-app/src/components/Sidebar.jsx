@@ -13,6 +13,7 @@ import AdminUsers from "./pharmProduction/images/AdminUsers.svg";
 import AdminProduction from "./pharmProduction/images/AdminProduction.svg";
 import AdminStorage from "./pharmProduction/images/AdminStorage.svg";
 import logo from "./pharmProduction/images/logo.svg";
+import maintence from "./pharmProduction/images/Maintence.svg";
 import axios from "axios";
 
 
@@ -21,6 +22,7 @@ export function Sidebar() {
     const [producao, setProducao] = useState(false);
     const [armazenamento, setArmazenamento] = useState(false);
     const [cadastro, setCadastro] = useState(false);
+    const [manutencao, setManutencao] = useState(false)
     const [dados, setDados] = useState([]);
     const [nivel, setNivel] = useState("");
     const navigate = useNavigate();
@@ -145,6 +147,8 @@ export function Sidebar() {
                     )}
                 </div>
 
+                
+                
                 {nivel==="admin" && <div className="w-full">
                     <button
                         className={`w-full flex items-center gap-2 p-4 text-left ${
@@ -173,7 +177,7 @@ export function Sidebar() {
                                 } 
                                 to="/adminparametrosarmazem"
                             >
-                                <img width={10} src={AdminStorage}/> Parametros Armazém
+                                <img width={10} src={AdminProduction}/> Parametros Armazém
                             </NavLink>
 
                             <NavLink 
@@ -182,7 +186,7 @@ export function Sidebar() {
                                 } 
                                 to="/adminparametrosunidade"
                             >
-                                <img width={10} src={AdminStorage}/> Parametros Unidade
+                                <img width={10} src={AdminProduction}/> Parametros Unidade
                             </NavLink>
 
                             <NavLink 
@@ -191,7 +195,50 @@ export function Sidebar() {
                                 } 
                                 to="/adminparametrostipos"
                             >
-                                <img width={10} src={AdminStorage}/> Parametros Tipos
+                                <img width={10} src={AdminProduction}/> Parametros Tipos
+                            </NavLink>
+
+                            <NavLink 
+                                className={({ isActive }) => 
+                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                                } 
+                                to="/usuarios"
+                            >
+                                <img width={10} src={AdminUsers}/> Usuários
+                            </NavLink>
+                        </div>
+                    )}
+                </div>}
+
+                {nivel==="manutencao" && <div className="w-full">
+                    <button
+                        className={`w-full flex items-center gap-2 p-4 text-left ${
+                            manutencao ? "bg-gray-400 font-bold" : "text-black"
+                        }`}
+                        onClick={() => setManutencao(!manutencao)}
+                    >
+                        <img width={15} src={maintence}/>
+                        Cadastros Manutenção
+                        {manutencao ? <img width={8} src={CaretUp}/> : <img width={8} src={CaretDown}/>}
+                    </button>
+                    {manutencao && (
+                        <div className="grid w-full bg-gray-200">
+                            <NavLink 
+                                className={({ isActive }) => 
+                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                                } 
+                                to="/maintencefunctions"
+                            >
+                                <img width={10} src={AdminStorage}/> Funções Manutenção
+                            </NavLink>
+
+                            <NavLink 
+                                className={({ isActive }) => 
+                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                                } 
+                                to="/maintencestatus"
+                            >
+                                <img width={10} src={AdminStorage}/> Status Manutenção
                             </NavLink>
 
                             <NavLink 
