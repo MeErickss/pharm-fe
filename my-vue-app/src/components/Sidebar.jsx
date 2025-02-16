@@ -66,8 +66,8 @@ export function Sidebar() {
         <div className="grid grid-rows-[auto_1fr_auto] h-screen bg-slate-100 text-sm w-52">
             {/* Topo - Logo e usuário */}
             <div className="flex flex-col py-6 items-center">
-                <img className="w-10/12 mb-2" src={logo} alt="logo" />
-                <span className="font-bold text-lg">{login}</span>
+                <img className="w-10/12 fill-red-500 mb-2" src={logo} alt="logo" />
+                <span className="font-bold text-base">{login}</span>
             </div>
 
             {/* Meio - Botões de navegação */}

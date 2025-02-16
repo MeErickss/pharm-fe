@@ -64,18 +64,27 @@ export function AdminProductionRegister() {
   
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/delete?table=${tabela}&value=${dell}`,
-          { method: "DELETE" }
-        );
-  
-        if (!response.ok) {
-          throw new Error(`Erro na requisição: ${response.statusText}`);
-        }
-  
-        console.log("Registro deletado com sucesso");
-          setDados((prevDados) => prevDados.filter((item) => item.ID !== dell));
-  
+        var x = ""
+        var r=confirm(`Deseja excluir o Registro ${dell}`);
+        if (r==true)
+          {
+          x="Opção de exclusão selecionada";
+          const response = await fetch(
+            `http://localhost:5000/api/delete?table=${tabela}&value=${dell}`,
+            { method: "DELETE" }
+          );
+    
+          if (!response.ok) {
+            throw new Error(`Erro na requisição: ${response.statusText}`);
+          }
+    
+          console.log("Registro deletado com sucesso");
+            setDados((prevDados) => prevDados.filter((item) => item.ID !== dell));
+          }
+        else
+          {
+          x="You pressed Cancel!";
+          }
       } catch (error) {
         console.error("Erro ao deletar dados:", error);
       }
@@ -89,7 +98,6 @@ export function AdminProductionRegister() {
     setDell(id);
   };
   
-
   const handleQuery = (event) => {
     setQuery(event.target.value);
   };

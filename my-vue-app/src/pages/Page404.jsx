@@ -1,7 +1,7 @@
 export function Pagina404(){
     return (
         <div>
-            <h1>BBBBBBBBB</h1>
+            <h1>Pagina não encontrada</h1>
         </div>
     )
 }
