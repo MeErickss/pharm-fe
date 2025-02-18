@@ -6,10 +6,11 @@ export function Status() {
   const [dados, setDados] = useState([]);
   const [editar, setEditar] = useState(true);
   const [dadosLen, setDadosLen] = useState(0);
+  const tabela = "status"
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/status")
+      .get(`http://localhost:5000/api/table?table=${tabela}`)
       .then((response) => {
         console.log("Dados recebidos:", response.data);
         setDados(response.data);

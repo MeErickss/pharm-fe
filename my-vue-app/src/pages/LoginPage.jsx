@@ -8,11 +8,12 @@ export function LoginPage() {
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const tabela = "users"
     const navigate = useNavigate();
 
     useEffect(() => {
         axios
-            .get('http://localhost:5000/api/users')
+            .get(`http://localhost:5000/api/table?table=${tabela}`)
             .then((response) => {
                 console.log('Dados recebidos:', response.data);
                 setDados(response.data);

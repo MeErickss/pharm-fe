@@ -31,7 +31,7 @@ export function AddParametro({ dados, closeModal }) {
           </div>
 
         {dados.length > 0 && (
-            <div className="grid grid-cols-2 bg-gray-200 font-semibold text-gray-700 p-3 border-b gap-2">
+            <div className="grid grid-cols-3 bg-gray-200 font-semibold text-gray-700 p-3 border-b gap-2">
               {Object.keys(dados[0]).map((key) => (
                 <div key={key}>
                   <div className="px-2">{key}</div>

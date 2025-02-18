@@ -6,10 +6,11 @@ export function Functions() {
   const [dados, setDados] = useState([]);
   const [editar, setEditar] = useState(true);
   const [dadosLen, setDadosLen] = useState(0);
+  const tabela = "funcoes"
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/functions")
+      .get(`http://localhost:5000/api/table?table=${tabela}`)
       .then((response) => {
         console.log("Dados recebidos:", response.data);
         setDados(response.data);

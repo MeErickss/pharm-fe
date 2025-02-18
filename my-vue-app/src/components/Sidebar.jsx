@@ -26,6 +26,7 @@ export function Sidebar() {
     const [dados, setDados] = useState([]);
     const [nivel, setNivel] = useState("");
     const navigate = useNavigate();
+    const tabela = "users"
 
     const nivelMap = {
         1:"operador",
@@ -40,7 +41,7 @@ export function Sidebar() {
         } else {
             setLogin(storedLogin);
             axios
-                .get("http://localhost:5000/api/users")
+                .get(`http://localhost:5000/api/table?table=${tabela}`)
                 .then((response) => {
                     console.log("Dados recebidos:", response.data);
                     setDados(response.data);
