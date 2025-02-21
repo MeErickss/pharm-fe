@@ -10,26 +10,44 @@ export function EditParametro({ id, tabela, dados, closeModal }) {
 
 
   const handleEdit = (e, key) => {
-    setValoresEditados((prev) => ({
-      ...prev,
-      [key]: e.target.value,
-    }));
-    console.log(valoresEditados)
+    let value = e.target.value;
+  
+    setValoresEditados((prev) => {
+      let updatedValues = { ...prev, [key]: value };
+  
+      // Garantir que VL_MIN não seja maior que VL_MAX
+      if (key === "VL_MIN" && parseFloat(value) > parseFloat(prev.VL_MAX)) {
+        updatedValues.VL_MAX = value;
+      }
+  
+      // Garantir que VL_MAX não seja menor que VL_MIN
+      if (key === "VL_MAX" && parseFloat(value) < parseFloat(prev.VL_MIN)) {
+        updatedValues.VL_MIN = value;
+      }
+  
+      return updatedValues;
+    });
   };
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     try {
-      await axios.post(`http://localhost:5000/api/insert`, {
-        table: tabela,
-        value: valoresEditados,
+      await axios.put("http://localhost:5000/api/insert", {
+        table: "parametros", // Nome da tabela
+        values: valoresEditados, // Objeto com todos os campos editados
       });
+  
       alert("Parâmetro editado com sucesso!");
       closeModal();
     } catch (error) {
       console.error("Erro ao editar parâmetro:", error);
+      alert("Erro ao editar parâmetro!");
     }
   };
+  
 
   return (
     <div>
@@ -46,24 +64,29 @@ export function EditParametro({ id, tabela, dados, closeModal }) {
 
       {dados.length > 0 && (
         <div className="grid grid-cols-3 bg-gray-200 font-semibold text-gray-700 p-3 border-b gap-2">
-          {Object.entries(dados[id - 1]).map(([key, value]) => (
-            <div key={key}>
-              <div className="px-2">{key}</div>
-              {["UNID", "STATUS", "FUNCAO", "TIPO"].includes(key) ? (
-                <SelectInput table={key} value={valoresEditados[key]} onChange={(e) => handleEdit(e, key)} />
-              ) : (
-                <input
-                  type={key === "VALOR" || key === "VL_MIN" || key === "VL_MAX" ? "number" : "text"}
-                  className="w-11/12 border p-1 rounded"
-                  onChange={(e) => handleEdit(e, key)}
-                  value={valoresEditados[key] || ""}
-                  placeholder={`Digite ${key}`}
-                />
-              )}
-            </div>
-          ))}
+          {Object.entries(dados[id - 1]).map(([key, value]) => 
+            key !== "ID" && (
+              <div key={key}>
+                <div className="px-2">{key}</div>
+                {["UNID", "STATUS", "FUNCAO", "TIPO"].includes(key) ? (
+                  <SelectInput table={key} value={valoresEditados[key]} onChange={(e) => handleEdit(e, key)} />
+                ) : (
+                  <input
+                    type={key === "VALOR" || key === "VL_MIN" || key === "VL_MAX" ? "number" : "text"}
+                    className="w-11/12 border p-1 rounded"
+                    onChange={(e) => handleEdit(e, key)}
+                    value={valoresEditados[key] || ""}
+                    min={key==="VALOR" ? valoresEditados.VL_MIN : ""}
+                    max={key==="VALOR" ? valoresEditados.VL_MAX : ""}
+                    placeholder={`Digite ${key}`}
+                  />
+                )}
+              </div>
+            )
+          )}
         </div>
       )}
+
 
       <form onSubmit={handleSubmit} className="flex justify-end gap-4 mt-4">
         <button type="submit" className="w-[12rem] bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">

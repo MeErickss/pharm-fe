@@ -112,7 +112,7 @@ export function AdminProductionRegister() {
     setQuery("");
     setFilter("");
     axios
-      .get(`http://localhost:5000/api/${tabela}`)
+      .get(`http://localhost:5000/api/table?table=${tabela}`)
       .then((response) => {
         console.log("Dados restaurados:", response.data);
         setDados(response.data);
@@ -164,7 +164,7 @@ export function AdminProductionRegister() {
       {showModalAdd && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-            <AddParametro dados={dados} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
+            <AddParametro tabela={tabela} dados={dados} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
           </div>
         </div>
       )}
