@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 
-export function SelectInput({ table, onChange }) {
+export function SelectInput({ table, onChange, value }) {
     const [options, setOptions] = useState([]);
   
     useEffect(() => {
@@ -18,7 +18,7 @@ export function SelectInput({ table, onChange }) {
     }, [table]);
   
     return (
-      <select className="w-11/12 border p-1 rounded" onChange={onChange}>
+      <select className="w-11/12 border p-1 rounded" value={value} onChange={onChange}>
         <option value="">Selecione</option>
         {options.map((item, index) => (
           <option key={index} value={item.NOME}>

@@ -8,6 +8,7 @@ export function EditParametro({ id, tabela, dados, closeModal }) {
     Object.fromEntries(Object.keys(dados[0]).map((key) => [key, dados[id - 1][key] || ""]))
   );
 
+
   const handleEdit = (e, key) => {
     setValoresEditados((prev) => ({
       ...prev,
@@ -48,10 +49,8 @@ export function EditParametro({ id, tabela, dados, closeModal }) {
           {Object.entries(dados[id - 1]).map(([key, value]) => (
             <div key={key}>
               <div className="px-2">{key}</div>
-
-              {/* Se for uma das chaves que precisa de Select, renderiza o componente */}
               {["UNID", "STATUS", "FUNCAO", "TIPO"].includes(key) ? (
-                <SelectInput table={key} onChange={(e) => handleEdit(e, key)} />
+                <SelectInput table={key} value={valoresEditados[key]} onChange={(e) => handleEdit(e, key)} />
               ) : (
                 <input
                   type={key === "VALOR" || key === "VL_MIN" || key === "VL_MAX" ? "number" : "text"}
@@ -66,8 +65,8 @@ export function EditParametro({ id, tabela, dados, closeModal }) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
-        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+      <form onSubmit={handleSubmit} className="flex justify-end gap-4 mt-4">
+        <button type="submit" className="w-[12rem] bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
           Concluir
         </button>
       </form>
