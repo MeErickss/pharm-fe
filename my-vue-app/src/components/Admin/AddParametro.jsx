@@ -11,6 +11,7 @@ export function AddParametro({ tabela, dados, closeModal }) {
 
   const handleEdit = (e, key) => {
     let value = e.target.value;
+    console.log(e,key)
   
     setValoresEditados((prev) => {
       let updatedValues = { ...prev, [key]: value };
@@ -32,22 +33,21 @@ export function AddParametro({ tabela, dados, closeModal }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Remover o ID do objeto antes de enviar para o backend
-    const { ID, ...valuesWithoutId } = valoresEditados;
-  
     try {
-      await axios.post("http://localhost:5000/api/insert", {
-        table: "parametros", // Nome da tabela
-        values: valuesWithoutId, // Envia os valores sem o ID
+      await axios.put("http://localhost:5000/api/update", {
+        table: "parametros",
+        values: valoresEditados,
+        id: valoresEditados.ID, // ID do registro a ser atualizado
       });
   
-      alert("Parâmetro adicionado com sucesso!");
+      alert("Parâmetro editado com sucesso!");
       closeModal();
     } catch (error) {
-      console.error("Erro ao adicionar parâmetro:", error);
-      alert("Erro ao adicionar parâmetro!");
+      console.error("Erro ao editar parâmetro:", error);
+      alert("Erro ao editar parâmetro!");
     }
   };
+  
   
 
   return (
@@ -70,7 +70,7 @@ export function AddParametro({ tabela, dados, closeModal }) {
               <div key={key}>
                 <div className="px-2">{key}</div>
                 {["UNID", "STATUS", "FUNCAO", "TIPO"].includes(key) ? (
-                  <SelectInput table={key} value="" onChange={(e) => handleEdit(e, key)} />
+                  <SelectInput table={key} value={valoresEditados[key]} onChange={(e) => handleEdit(e, key)} />
                 ) : (
                   <input
                     type={key === "VALOR" || key === "VL_MIN" || key === "VL_MAX" ? "number" : "text"}

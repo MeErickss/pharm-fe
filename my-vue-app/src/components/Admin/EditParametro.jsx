@@ -33,6 +33,7 @@ export function EditParametro({ id, tabela, dados, closeModal }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(valoresEditados)
   
     try {
       await axios.put("http://localhost:5000/api/insert", {

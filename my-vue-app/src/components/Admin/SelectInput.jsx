@@ -18,7 +18,7 @@ export function SelectInput({ table, onChange, value }) {
     }, [table]);
   
     return (
-      <select className="w-11/12 border p-1 rounded" value={value} onChange={onChange}>
+      <select className="w-11/12 border p-1 rounded" value={value} onChange={(e)=>onChange(e,Object.keys(options[0]))}>
         <option value="">Selecione</option>
         {options.map((item, index) => (
           <option key={index} value={item.NOME}>
