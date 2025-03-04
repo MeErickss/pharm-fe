@@ -24,6 +24,7 @@ export function AdminProductionRegister() {
       .then((response) => {
         console.log("Dados recebidos:", response.data);
         setDados(response.data);
+        console.log(dados)
       })
       .catch((err) => {
         console.error("Erro ao buscar dados", err);
@@ -147,10 +148,15 @@ export function AdminProductionRegister() {
           <select name="filter" id="filter" value={filter} onChange={handleFilter} className="p-2 mr-1 rounded-l-sm outline-none">
             <option value="">Selecione um filtro</option>
             {Object.keys(dados[0]).map((key) => (
-              <option key={key} value={key}>
-                {key}
-              </option>
-            ))}
+            <option
+              key={key}
+              value={key === "MEDIDA" ? `m.ID = pm.ID_MEDIDAS AND m.NOME` :
+                     key === "UNIDADE" ? `u.ID = pu.ID_UNIDADES AND u.NOME` :
+                     key === "FUNCAO" ? `f.ID = pf.ID_FUNCOES AND f.NOME` :
+                     key}>
+              {key}
+            </option>
+          ))}
           </select>
         )}
         <button
