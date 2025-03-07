@@ -3,15 +3,15 @@ import axios from "axios";
 import { SelectInput } from "./SelectInput"
 
 // Componente para renderizar o Select
-export function EditParametro({ id, tabela, dados, closeModal }) {
+export function EditParametro({ id, dados, closeModal }) {
+  console.log(dados)
   const [valoresEditados, setValoresEditados] = useState(
     Object.fromEntries(Object.keys(dados[0]).map((key) => [key, dados[id - 1][key] || ""]))
   );
 
-
   const handleEdit = (e, key) => {
     let value = e.target.value;
-  
+
     setValoresEditados((prev) => {
       let updatedValues = { ...prev, [key]: value };
   
@@ -36,9 +36,10 @@ export function EditParametro({ id, tabela, dados, closeModal }) {
     console.log(valoresEditados)
   
     try {
-      await axios.put("http://localhost:5000/api/insert", {
+      await axios.put("http://localhost:5000/api/update", {
         table: "parametros", // Nome da tabela
         values: valoresEditados, // Objeto com todos os campos editados
+        id:valoresEditados.id
       });
   
       alert("Parâmetro editado com sucesso!");
@@ -65,18 +66,18 @@ export function EditParametro({ id, tabela, dados, closeModal }) {
 
       {dados.length > 0 && (
         <div className="grid grid-cols-3 bg-gray-200 font-semibold text-gray-700 p-3 border-b gap-2">
-          {Object.entries(dados[id - 1]).map(([key, value]) => 
+          {Object.entries(dados[id - 1]).map(([key]) => 
             key !== "ID" && (
               <div key={key}>
                 <div className="px-2">{key}</div>
-                {["UNID", "STATUS", "FUNCAO", "TIPO"].includes(key) ? (
+                {["UNIDADE", "STATUS", "FUNCAO", "MEDIDA"].includes(key) && valoresEditados != undefined ? (
                   <SelectInput table={key} value={valoresEditados[key]} onChange={(e) => handleEdit(e, key)} />
                 ) : (
                   <input
                     type={key === "VALOR" || key === "VL_MIN" || key === "VL_MAX" ? "number" : "text"}
                     className="w-11/12 border p-1 rounded"
                     onChange={(e) => handleEdit(e, key)}
-                    value={valoresEditados[key] || ""}
+                    value={valoresEditados[key]}
                     min={key==="VALOR" ? valoresEditados.VL_MIN : ""}
                     max={key==="VALOR" ? valoresEditados.VL_MAX : ""}
                     placeholder={`Digite ${key}`}

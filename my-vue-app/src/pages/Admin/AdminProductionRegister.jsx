@@ -9,7 +9,7 @@ export function AdminProductionRegister() {
   const [error, setError] = useState("");
   const [dados, setDados] = useState([]);
   const [dadosLen, setDadosLen] = useState(0);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState("")
   const [filter, setFilter] = useState("");
   const [dell, setDell] = useState(0);
   const [showModalAdd, setShowModalAdd] = useState(false);
@@ -22,7 +22,7 @@ export function AdminProductionRegister() {
     axios
       .get(`http://localhost:5000/api/table?table=${tabela}`)
       .then((response) => {
-        console.log("Dados recebidos:", response.data);
+        console.log("Dados recebidos aa:", response.data);
         setDados(response.data);
         console.log(dados)
       })
@@ -39,34 +39,15 @@ export function AdminProductionRegister() {
   }, [dados]);
 
   useEffect(() => {
-    if (!filter || !query) return;
-
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:5000/api/query?table=${tabela}&column=${filter}&value=${query}`
-        );
-        const result = await response.json();
-        setDados(result);
-        console.log("Dados filtrados:", result);
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-      }
-    };
-
-    fetchData();
-  }, [query, filter]);
-
-  useEffect(() => {
     if (!dell) return;
   
     const fetchData = async () => {
       try {
-        var x = ""
-        var r=confirm(`Deseja excluir o Registro ${dell}`);
-        if (r==true)
+        var option = ""
+        var question=confirm(`Deseja excluir o Registro ${dell}`);
+        if (question==true)
           {
-          x="Opção de exclusão selecionada";
+          option="Opção de exclusão selecionada";
           const response = await fetch(
             `http://localhost:5000/api/delete?table=${tabela}&value=${dell}`,
             { method: "DELETE" }
@@ -81,7 +62,7 @@ export function AdminProductionRegister() {
           }
         else
           {
-          x="You pressed Cancel!";
+          option="You pressed Cancel!";
           }
       } catch (error) {
         console.error("Erro ao deletar dados:", error);
@@ -97,16 +78,25 @@ export function AdminProductionRegister() {
   };
   
   const handleQuery = (event) => {
-    setQuery(event.target.value);
+    setQuery(event);
+  
+    const filteredData = dados.filter((item) => {
+      const value = item[filter];
+      
+        return value.toString().toLowerCase().includes(event.toLowerCase());
+  
+    });
+  
+    setDados(filteredData);
   };
 
   const handleFilter = (event) => {
     setFilter(event.target.value);
-  };
+    };
 
   const toggleEditar = (id) => {
-    setEditId(id); // Define o ID do item a ser editado
-    setShowModalEdit(true); // Abre o modal de edição
+    setEditId(id);
+    setShowModalEdit(true);
   };
 
   const handleReset = () => {
@@ -137,24 +127,21 @@ export function AdminProductionRegister() {
       </article>
 
       <div className="my-4 flex">
-        <input
-          type="text"
-          value={query}
-          onChange={handleQuery}
-          className="p-2 rounded-r-sm outline-none"
-          placeholder="Digite o valor"
-        />
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => filter == "" ?alert("Defina um Filtro"):handleQuery(e.target.value, filter)} // Pegando o valor do input e passando a key
+        className="p-2 rounded-r-sm outline-none"
+        placeholder="Digite o valor"
+      />
+
         {dados.length > 0 && (
           <select name="filter" id="filter" value={filter} onChange={handleFilter} className="p-2 mr-1 rounded-l-sm outline-none">
             <option value="">Selecione um filtro</option>
             {Object.keys(dados[0]).map((key) => (
             <option
               key={key}
-              value={key === "MEDIDA" ? `m.ID = pm.ID_MEDIDAS AND m.NOME` :
-                     key === "UNIDADE" ? `u.ID = pu.ID_UNIDADES AND u.NOME` :
-                     key === "FUNCAO" ? `f.ID = pf.ID_FUNCOES AND f.NOME` :
-                     key}>
-              {key}
+              value={key}>{key}
             </option>
           ))}
           </select>
@@ -186,38 +173,47 @@ export function AdminProductionRegister() {
       <div className="w-full border border-gray-300 rounded-lg bg-white shadow">
         {dados.length > 0 && (
           <div
-            className="grid bg-gray-200 font-semibold text-gray-700 p-3 border-b"
-            style={{ gridTemplateColumns: `minmax(4rem, auto) repeat(${dadosLen}, minmax(0, 1fr))` }}
-          >
+          className="grid bg-gray-200 text-base font-semibold text-gray-700 p-3 border-b"
+          style={{
+            gridTemplateColumns: `minmax(3rem, auto) minmax(24.5rem, 1fr) ${Array.from({ length: dadosLen - 1 })
+              .map(() => 'minmax(4rem, 1fr)')
+              .join(' ')}`
+          }}
+        >
+
             {Object.keys(dados[0]).map((key) => (
               <div key={key} className="px-2">
                 {key}
               </div>
             ))}
-            <div className="px-2">Ações</div>
+            <div className="px-2">AÇÕES</div>
           </div>
         )}
 
-        {dados.map((x) => (
+        {dados.map((tabelas) => (
           <div
-            key={x.ID}
-            className="grid p-3 border-b items-center"
-            style={{ gridTemplateColumns: `minmax(4rem, auto) repeat(${dadosLen}, minmax(0, 1fr))` }}
+          className="grid text-sm p-3 px-2 border-b"
+          style={{
+            gridTemplateColumns: `minmax(3rem, auto) minmax(25rem, 1fr) ${Array.from({ length: dadosLen - 1 })
+              .map(() => 'minmax(4rem, 1fr)')
+              .join(' ')}`
+          }}
           >
-            {Object.values(x).map((value, index) => (
+
+            {Object.values(tabelas).map((value, index) => (
               <div key={index} className="px-2">
                 {value}
               </div>
             ))}
 
-            <div className="flex gap-4">
-              <button onClick={() => toggleEditar(x.ID)}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" className="hover:fill-orange-500">
+            <div className="flex gap-4 pl-4">
+              <button onClick={() => toggleEditar(tabelas.ID)}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="12" className="fill-blue-600 hover:fill-orange-500">
                   <path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z" />
                 </svg>
               </button>
-              <button onClick={() => handleDelete(x.ID)}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="16" className="hover:fill-red-500">
+              <button onClick={() => handleDelete(tabelas.ID)}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="12" className="fill-blue-600 hover:fill-red-500">
                   <path d="M135.2 17.8l9.8 22H312l9.8-22c5.4-12 17.3-17.8 28.2-17.8h32c13.3 0 24 10.7 24 24V56H16V24c0-13.3 10.7-24 24-24h32c10.9 0 22.8 5.8 28.2 17.8zM32 96h384l-20.4 368c-1.5 26.5-24 48-50.5 48H102.9c-26.5 0-49-21.5-50.5-48L32 96zm80 48v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16zm96 0v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16zm96 0v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16z" />
                 </svg>
               </button>

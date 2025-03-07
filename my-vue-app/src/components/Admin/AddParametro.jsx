@@ -11,8 +11,6 @@ export function AddParametro({ tabela, dados, closeModal }) {
 
   const handleEdit = (e, key) => {
     let value = e.target.value;
-    console.log(e,key)
-  
     setValoresEditados((prev) => {
       let updatedValues = { ...prev, [key]: value };
   
@@ -32,22 +30,27 @@ export function AddParametro({ tabela, dados, closeModal }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(valoresEditados);
   
     try {
-      await axios.put("http://localhost:5000/api/update", {
-        table: "parametros",
-        values: valoresEditados,
-        id: valoresEditados.ID, // ID do registro a ser atualizado
+      await axios.post("http://localhost:5000/api/insert", {
+        PARAMETRO: valoresEditados.PARAMETRO,
+        MEDIDA: valoresEditados.MEDIDA,
+        UNIDADE: valoresEditados.UNIDADE,
+        FUNCAO: "PRODUCAO",
+        VALOR: valoresEditados.VALOR,
+        VL_MAX: valoresEditados.VL_MAX,
+        VL_MIN: valoresEditados.VL_MIN,
+        STATUS: valoresEditados.STATUS,
       });
   
-      alert("Parâmetro editado com sucesso!");
+      alert("Parâmetro inserido com sucesso!");
       closeModal();
     } catch (error) {
-      console.error("Erro ao editar parâmetro:", error);
-      alert("Erro ao editar parâmetro!");
+      console.error("Erro ao inserir parâmetro:", error);
+      alert("Erro ao inserir parâmetro!");
     }
   };
-  
   
 
   return (
@@ -65,11 +68,11 @@ export function AddParametro({ tabela, dados, closeModal }) {
 
       {dados.length > 0 && (
         <div className="grid grid-cols-3 bg-gray-200 font-semibold text-gray-700 p-3 border-b gap-2">
-          {Object.entries(dados[0]).map(([key, value]) => 
+          {Object.entries(dados[0]).map(([key]) => 
             key !== "ID" && key !=="FUNCAO"  && (
               <div key={key}>
                 <div className="px-2">{key}</div>
-                {["UNID", "STATUS", "FUNCAO", "TIPO"].includes(key) ? (
+                {["UNIDADE", "STATUS", "MEDIDA"].includes(key) ? (
                   <SelectInput table={key} value={valoresEditados[key]} onChange={(e) => handleEdit(e, key)} />
                 ) : (
                   <input
