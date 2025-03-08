@@ -3,35 +3,41 @@ import axios from "axios";
 import { SelectInput } from "./SelectInput"
 
 // Componente para renderizar o Select
-export function AddParametro({ tabela, dados, closeModal }) {
+export function AddParametro({ dados, closeModal }) {
   const [valoresEditados, setValoresEditados] = useState(
     Object.fromEntries(Object.keys(dados[0]).map((key) => [key, dados[0][key] || ""]))
   );
 
 
-  const handleEdit = (e, key) => {
-    let value = e.target.value;
-    console.log(value)
+  const handleEdit = (value, key) => {
     setValoresEditados((prev) => {
-      let updatedValues = { ...prev, [key]: value };
-  
+      let updatedValues = { ...prev };
+
+      if (key === "MEDIDA" && typeof value === "object") {
+        updatedValues.MEDIDA = value.medida || "";  // Garante que MEDIDA não fique undefined
+        updatedValues.UNIDADE = value.unidade || ""; // Garante que UNIDADE seja atribuída corretamente
+      } else {
+        updatedValues[key] = value;
+      }
+
       if (key === "VL_MIN" && parseFloat(value) > parseFloat(prev.VL_MAX)) {
         updatedValues.VL_MAX = value;
       }
-  
+
       if (key === "VL_MAX" && parseFloat(value) < parseFloat(prev.VL_MIN)) {
         updatedValues.VL_MIN = value;
-      } 
+      }
+
       return updatedValues;
     });
+    console.log(valoresEditados)
   };
-  
-  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(valoresEditados);
-  
+
     try {
       await axios.post("http://localhost:5000/api/insert", {
         PARAMETRO: valoresEditados.PARAMETRO,
@@ -41,9 +47,9 @@ export function AddParametro({ tabela, dados, closeModal }) {
         VALOR: valoresEditados.VALOR,
         VL_MAX: valoresEditados.VL_MAX,
         VL_MIN: valoresEditados.VL_MIN,
-        STATUS: valoresEditados.STATUS,
+        STATUS: valoresEditados.STATUS?.medida || valoresEditados.STATUS,
       });
-  
+
       alert("Parâmetro inserido com sucesso!");
       closeModal();
     } catch (error) {
@@ -51,7 +57,8 @@ export function AddParametro({ tabela, dados, closeModal }) {
       alert("Erro ao inserir parâmetro!");
     }
   };
-  
+
+
 
   return (
     <div>
@@ -68,21 +75,26 @@ export function AddParametro({ tabela, dados, closeModal }) {
 
       {dados.length > 0 && (
         <div className="grid grid-cols-3 bg-gray-200 font-semibold text-gray-700 p-3 border-b gap-2">
-          {Object.entries(dados[0]).map(([key]) => 
-            key !== "ID" && key !=="FUNCAO"  && key !=="UNIDADE"  && (
+          {Object.entries(dados[0]).map(([key]) =>
+            key !== "ID" && key !== "FUNCAO" && key !== "UNIDADE" && (
               <div key={key}>
                 <div className="px-2">{key}</div>
                 {["STATUS", "MEDIDA"].includes(key) ? (
-                  <SelectInput table={key} value={valoresEditados[key]} onChange={(e) => handleEdit(e, key)} />
+                  <SelectInput
+                    table={key}
+                    value={valoresEditados[key]}
+                    onChange={(selected) => handleEdit(selected, key)}
+                  />
                 ) : (
                   <input
                     type={key === "VALOR" || key === "VL_MIN" || key === "VL_MAX" ? "number" : "text"}
                     className="w-11/12 border p-1 rounded"
-                    onChange={(e) => handleEdit(e, key)}
-                    min={key==="VALOR" ? valoresEditados.VL_MIN : ""}
-                    max={key==="VALOR" ? valoresEditados.VL_MAX : ""}
+                    onChange={(e) => handleEdit(e.target.value, key)} // Corrigido aqui
+                    min={key === "VALOR" ? valoresEditados.VL_MIN : ""}
+                    max={key === "VALOR" ? valoresEditados.VL_MAX : ""}
                     placeholder={`Digite ${key}`}
                   />
+
                 )}
               </div>
             )

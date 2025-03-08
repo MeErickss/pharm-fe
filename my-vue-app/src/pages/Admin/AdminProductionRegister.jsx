@@ -164,7 +164,7 @@ export function AdminProductionRegister() {
       {showModalAdd && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-            <AddParametro tabela={tabela} dados={dados} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
+            <AddParametro dados={dados} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
           </div>
         </div>
       )}
@@ -172,7 +172,7 @@ export function AdminProductionRegister() {
       {showModalEdit && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-            <EditParametro id={editId} tabela={tabela} dados={dados} closeModal={() => setShowModalEdit(false)} />
+            <EditParametro id={editId} dados={dados} closeModal={() => setShowModalEdit(false)} />
           </div>
         </div>
       )}

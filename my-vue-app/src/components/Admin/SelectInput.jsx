@@ -47,7 +47,7 @@ export function SelectInput({ table, onChange }) {
             const selectedValue = e.target.value;
             setMedida(selectedValue);
             setUnidade("");
-            onChange({ medida: selectedValue, unidade: "" });
+            onChange({ medida: selectedValue, unidade: "" }); // Passando um objeto válido sempre
           }}
         >
           <option value="">Selecione</option>
@@ -57,6 +57,7 @@ export function SelectInput({ table, onChange }) {
             </option>
           ))}
         </select>
+
       )}
 
       {table === "MEDIDA" && unidadeOptions.length > 0 && (
@@ -66,7 +67,7 @@ export function SelectInput({ table, onChange }) {
           onChange={(e) => {
             const selectedUnidade = e.target.value;
             setUnidade(selectedUnidade);
-            onChange({ medida, unidade: selectedUnidade });
+            onChange({ medida, unidade: selectedUnidade }); // Passa { medida, unidade } sempre
           }}
         >
           <option value="">Selecione a Unidade</option>
@@ -77,6 +78,8 @@ export function SelectInput({ table, onChange }) {
           ))}
         </select>
       )}
+
+
     </div>
   );
 }
