@@ -11,6 +11,7 @@ export function EditParametro({ id, dados, closeModal }) {
 
   const handleEdit = (e, key) => {
     let value = e.target.value;
+    console.log(value)
 
     setValoresEditados((prev) => {
       let updatedValues = { ...prev, [key]: value };
@@ -67,10 +68,10 @@ export function EditParametro({ id, dados, closeModal }) {
       {dados.length > 0 && (
         <div className="grid grid-cols-3 bg-gray-200 font-semibold text-gray-700 p-3 border-b gap-2">
           {Object.entries(dados[id - 1]).map(([key]) => 
-            key !== "ID" && (
+            key !== "ID" && key != "UNIDADE" && (
               <div key={key}>
                 <div className="px-2">{key}</div>
-                {["UNIDADE", "STATUS", "FUNCAO", "MEDIDA"].includes(key) && valoresEditados != undefined ? (
+                {["STATUS", "FUNCAO", "MEDIDA"].includes(key) && valoresEditados != undefined ? (
                   <SelectInput table={key} value={valoresEditados[key]} onChange={(e) => handleEdit(e, key)} />
                 ) : (
                   <input
