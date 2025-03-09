@@ -99,7 +99,7 @@ export function AdminProductionRegister() {
 
   const handleFilter = (event) => {
     setFilter(event.target.value);
-    };
+  };
 
   const toggleEditar = (id) => {
     setEditId(id);

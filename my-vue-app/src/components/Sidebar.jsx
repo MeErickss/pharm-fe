@@ -187,7 +187,7 @@ export function Sidebar() {
                                 } 
                                 to="/adminparametrosunidade"
                             >
-                                <img width={10} src={AdminProduction}/> Parametros Unidade
+                                <img width={10} src={AdminProduction}/> Cadastro Unidade
                             </NavLink>
 
                             <NavLink 
@@ -196,7 +196,16 @@ export function Sidebar() {
                                 } 
                                 to="/adminparametrostipos"
                             >
-                                <img width={10} src={AdminProduction}/> Parametros Tipos
+                                <img width={10} src={AdminProduction}/> Cadastro Grandezas
+                            </NavLink>
+
+                            <NavLink 
+                                className={({ isActive }) => 
+                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                                } 
+                                to="/adminparametrostipos"
+                            >
+                                <img width={10} src={AdminProduction}/> Cadastro Funções
                             </NavLink>
 
                             <NavLink 
@@ -205,7 +214,7 @@ export function Sidebar() {
                                 } 
                                 to="/usuarios"
                             >
-                                <img width={10} src={AdminUsers}/> Usuários
+                                <img width={10} src={AdminUsers}/> Cadastro Usuários
                             </NavLink>
                         </div>
                     )}
