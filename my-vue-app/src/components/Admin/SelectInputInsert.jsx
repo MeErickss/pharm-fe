@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export function SelectInput({ table, onChange }) {
+export function SelectInputInsert({ table, onChange }) {
   const [options, setOptions] = useState([]);
   const [unidadeOptions, setUnidadeOptions] = useState([]);
   const [medida, setMedida] = useState("");

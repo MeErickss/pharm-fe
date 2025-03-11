@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { SelectInput } from "./SelectInput"
+import { SelectInputUpdate } from "./SelectInputUpdate";
 
 // Componente para renderizar o Select
 export function EditParametro({ id, dados, closeModal }) {
@@ -9,32 +9,21 @@ export function EditParametro({ id, dados, closeModal }) {
     Object.fromEntries(Object.keys(dados[0]).map((key) => [key, dados[id - 1][key] || ""]))
   );
 
-  const handleEdit = (e, key) => {
-    let value = e.target.value;
-    console.log(value)
-
-    setValoresEditados((prev) => {
-      let updatedValues = { ...prev, [key]: value };
-  
-      // Garantir que VL_MIN não seja maior que VL_MAX
-      if (key === "VL_MIN" && parseFloat(value) > parseFloat(prev.VL_MAX)) {
-        updatedValues.VL_MAX = value;
-      }
-  
-      // Garantir que VL_MAX não seja menor que VL_MIN
-      if (key === "VL_MAX" && parseFloat(value) < parseFloat(prev.VL_MIN)) {
-        updatedValues.VL_MIN = value;
-      }
-  
-      return updatedValues;
-    });
+  const handleEdit = (e) => {
+    const { name, value } = e.target || {}; // Evita erro caso e.target seja undefined
+    setEditedData((prev) => ({
+      ...prev,
+      [name]: value ?? "", // Garante que não seja undefined
+    }));
   };
+  
   
   
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(valoresEditados)
+    console.log("a")
   
     try {
       await axios.put("http://localhost:5000/api/update", {
@@ -72,7 +61,7 @@ export function EditParametro({ id, dados, closeModal }) {
               <div key={key}>
                 <div className="px-2">{key}</div>
                 {["STATUS", "FUNCAO", "MEDIDA"].includes(key) && valoresEditados != undefined ? (
-                  <SelectInput table={key} value={valoresEditados[key]} onChange={(e) => handleEdit(e, key)} />
+                  <SelectInputUpdate table={key} value={valoresEditados[key]} onChange={(e) => handleEdit(e, key)} />
                 ) : (
                   <input
                     type={key === "VALOR" || key === "VL_MIN" || key === "VL_MAX" ? "number" : "text"}

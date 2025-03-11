@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { SelectInput } from "./SelectInput"
+import { SelectInputInsert } from "./SelectInputInsert"
 
 // Componente para renderizar o Select
 export function AddParametro({ dados, closeModal }) {
@@ -80,7 +80,7 @@ export function AddParametro({ dados, closeModal }) {
               <div key={key}>
                 <div className="px-2">{key}</div>
                 {["STATUS", "MEDIDA"].includes(key) ? (
-                  <SelectInput
+                  <SelectInputInsert
                     table={key}
                     value={valoresEditados[key]}
                     onChange={(selected) => handleEdit(selected, key)}
