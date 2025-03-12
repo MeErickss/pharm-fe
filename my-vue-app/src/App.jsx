@@ -14,8 +14,9 @@ import { Storage } from "./pages/Storage.jsx";
 import { ParametersProduction } from "./pages/ParametersProduction.jsx";
 import { ParametersStorage } from "./pages/ParametersStorage.jsx";
 import { AdminProductionRegister } from "./pages/Admin/AdminProductionRegister.jsx";
+import { AdminGreatnessRegister } from "./pages/Admin/AdminGreatnessRegister.jsx";
 import { AdminStorageRegister } from "./pages/Admin/AdminStorageRegister.jsx";
-import { AdminTypeRegister } from "./pages/Admin/AdminTypeRegister.jsx";
+import { AdminFunctionRegister } from "./pages/Admin/AdminFunctionRegister.jsx";
 import { AdminUnitRegister } from "./pages/Admin/AdminUnitRegister.jsx";
 import { AdminUsers } from "./pages/Admin/AdminUsers.jsx"
 import { Status } from "./pages/Maintenance/status.jsx";
@@ -38,8 +39,9 @@ export default function App() {
           <Route path="usuarios" element={<AdminUsers />} />
           <Route path="adminparametrosproducao" element={<AdminProductionRegister />} />
           <Route path="adminparametrosarmazem" element={<AdminStorageRegister/>} />
-          <Route path="adminparametrostipos" element={<AdminTypeRegister/>} />
+          <Route path="adminparametrosfuncoes" element={<AdminFunctionRegister/>} />
           <Route path="adminparametrosunidade" element={<AdminUnitRegister/>} />
+          <Route path="adminparametrosgrandeza" element={<AdminGreatnessRegister/>} />
           <Route path="maintencefunctions" element={<Functions/>} />
           <Route path="maintencestatus" element={<Status/>} />
         </Route>

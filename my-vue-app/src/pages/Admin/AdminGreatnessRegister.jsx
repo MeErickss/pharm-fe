@@ -6,7 +6,7 @@ import { EditParametro } from "../../components/Admin/EditParametro"; // Importa
 
 
 
-export function AdminTypeRegister() {
+export function AdminGreatnessRegister() {
   const [error, setError] = useState("");
   const [dados, setDados] = useState([]);
   const [dadosLen, setDadosLen] = useState(0);
@@ -17,7 +17,7 @@ export function AdminTypeRegister() {
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [editId, setEditId] = useState(null);
   const [tooltipVisible, setTooltipVisible] = useState({ edit: null, delete: null });
-  const tabela = "medidas"
+  const tabela = "grandeza"
 
   const handleMouseEnter = (type, id) => {
     setTooltipVisible((prev) => ({ ...prev, [type]: id }));

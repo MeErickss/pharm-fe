@@ -9,12 +9,13 @@ export function AddParametro({ dados, closeModal }) {
   );
 
 
+
   const handleEdit = (value, key) => {
     setValoresEditados((prev) => {
       let updatedValues = { ...prev };
 
-      if (key === "MEDIDA" && typeof value === "object") {
-        updatedValues.MEDIDA = value.medida || "";  // Garante que MEDIDA não fique undefined
+      if (key === "GRANDEZA" && typeof value === "object") {
+        updatedValues.GRANDEZA = value.grandeza || "";  // Garante que GRANDEZA não fique undefined
         updatedValues.UNIDADE = value.unidade || ""; // Garante que UNIDADE seja atribuída corretamente
       } else {
         updatedValues[key] = value;
@@ -41,13 +42,13 @@ export function AddParametro({ dados, closeModal }) {
     try {
       await axios.post("http://localhost:5000/api/insert", {
         PARAMETRO: valoresEditados.PARAMETRO,
-        MEDIDA: valoresEditados.MEDIDA,
+        GRANDEZA: valoresEditados.GRANDEZA,
         UNIDADE: valoresEditados.UNIDADE,
         FUNCAO: "PRODUCAO",
         VALOR: valoresEditados.VALOR,
         VL_MAX: valoresEditados.VL_MAX,
         VL_MIN: valoresEditados.VL_MIN,
-        STATUS: valoresEditados.STATUS?.medida || valoresEditados.STATUS,
+        STATUS: valoresEditados.STATUS?.grandeza || valoresEditados.STATUS,
       });
 
       alert("Parâmetro inserido com sucesso!");
@@ -79,7 +80,7 @@ export function AddParametro({ dados, closeModal }) {
             key !== "ID" && key !== "FUNCAO" && key !== "UNIDADE" && (
               <div key={key}>
                 <div className="px-2">{key}</div>
-                {["STATUS", "MEDIDA"].includes(key) ? (
+                {["STATUS", "GRANDEZA"].includes(key) ? (
                   <SelectInputInsert
                     table={key}
                     value={valoresEditados[key]}

@@ -194,7 +194,7 @@ export function Sidebar() {
                                 className={({ isActive }) => 
                                     `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
                                 } 
-                                to="/adminparametrostipos"
+                                to="/adminparametrosgrandeza"
                             >
                                 <img width={10} src={AdminProduction}/> Cadastro Grandezas
                             </NavLink>
@@ -203,7 +203,7 @@ export function Sidebar() {
                                 className={({ isActive }) => 
                                     `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
                                 } 
-                                to="/adminparametrostipos"
+                                to="/adminparametrosfuncoes"
                             >
                                 <img width={10} src={AdminProduction}/> Cadastro Funções
                             </NavLink>

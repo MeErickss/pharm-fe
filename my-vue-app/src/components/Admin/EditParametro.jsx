@@ -4,32 +4,39 @@ import { SelectInputUpdate } from "./SelectInputUpdate";
 
 // Componente para renderizar o Select
 export function EditParametro({ id, dados, closeModal }) {
-  console.log(dados)
   const [valoresEditados, setValoresEditados] = useState(
     Object.fromEntries(Object.keys(dados[0]).map((key) => [key, dados[id - 1][key] || ""]))
   );
 
-  const handleEdit = (e) => {
-    const { name, value } = e.target || {}; // Evita erro caso e.target seja undefined
-    setEditedData((prev) => ({
-      ...prev,
-      [name]: value ?? "", // Garante que não seja undefined
-    }));
+  const handleEdit = (value, key) => {
+    setValoresEditados((prev) => {
+      if (["GRANDEZA", "UNIDADE"].includes(key)) {
+        return {
+          ...prev,
+          GRANDEZA: value.grandeza || prev.GRANDEZA, 
+          UNIDADE: value.unidade || prev.UNIDADE, 
+        };
+      } else {
+        return {
+          ...prev,
+          [key]: typeof value === "object" ? value.grandeza : value, // Corrigido para inputs normais
+        };
+      }
+    });
   };
-  
   
   
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(valoresEditados)
-    console.log("a")
+  
+    console.log("Dados enviados:", valoresEditados); // Verifique o que está sendo enviado
   
     try {
       await axios.put("http://localhost:5000/api/update", {
-        table: "parametros", // Nome da tabela
-        values: valoresEditados, // Objeto com todos os campos editados
-        id:valoresEditados.id
+        table: "parametros",
+        values: valoresEditados,
+        id: valoresEditados.ID, // Certifique-se de que está enviando o ID corretamente
       });
   
       alert("Parâmetro editado com sucesso!");
@@ -40,12 +47,13 @@ export function EditParametro({ id, dados, closeModal }) {
     }
   };
   
+  
 
   return (
     <div>
       <div className="flex flex-row justify-between mb-2">
         <h2 className="text-lg font-semibold">
-          Editar Parâmetro <strong className="border-l-4 pl-1 border-blue-700">{valoresEditados.PARAMETRO}</strong>
+          Editar Parâmetro <strong className="border-l-4 pl-1 border-blue-700">{valoresEditados.PARAMETRO || valoresEditados.NOME || valoresEditados.UNIDADE|| valoresEditados.LOGIN}</strong>
         </h2>
         <button onClick={closeModal}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="16" className="fill-red-500 hover:fill-red-900">
@@ -60,18 +68,18 @@ export function EditParametro({ id, dados, closeModal }) {
             key !== "ID" && key != "UNIDADE" && (
               <div key={key}>
                 <div className="px-2">{key}</div>
-                {["STATUS", "FUNCAO", "MEDIDA"].includes(key) && valoresEditados != undefined ? (
-                  <SelectInputUpdate table={key} value={valoresEditados[key]} onChange={(e) => handleEdit(e, key)} />
+                {["STATUS", "FUNCAO", "GRANDEZA"].includes(key) && valoresEditados != undefined ? (
+                  <SelectInputUpdate table={key} value={valoresEditados[key]} onChange={(value) => handleEdit(value, key)} />
                 ) : (
                   <input
-                    type={key === "VALOR" || key === "VL_MIN" || key === "VL_MAX" ? "number" : "text"}
-                    className="w-11/12 border p-1 rounded"
-                    onChange={(e) => handleEdit(e, key)}
-                    value={valoresEditados[key]}
-                    min={key==="VALOR" ? valoresEditados.VL_MIN : ""}
-                    max={key==="VALOR" ? valoresEditados.VL_MAX : ""}
-                    placeholder={`Digite ${key}`}
-                  />
+                  type={key === "VALOR" || key === "VL_MIN" || key === "VL_MAX" ? "number" : "text"}
+                  className="w-11/12 border p-1 rounded"
+                  onChange={(e) => handleEdit(e.target.value, key)} // Agora pega o valor correto
+                  value={valoresEditados[key]} // Evita `undefined`
+                  min={key === "VALOR" ? valoresEditados.VL_MIN || 0 : ""}
+                  max={key === "VALOR" ? valoresEditados.VL_MAX || "" : ""}
+                  placeholder={`Digite ${key}`}
+                />
                 )}
               </div>
             )

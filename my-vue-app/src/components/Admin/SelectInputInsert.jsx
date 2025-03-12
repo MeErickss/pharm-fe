@@ -4,7 +4,7 @@ import axios from "axios";
 export function SelectInputInsert({ table, onChange }) {
   const [options, setOptions] = useState([]);
   const [unidadeOptions, setUnidadeOptions] = useState([]);
-  const [medida, setMedida] = useState("");
+  const [grandeza, setGrandeza] = useState("");
   const [unidade, setUnidade] = useState("");
 
   useEffect(() => {
@@ -21,13 +21,13 @@ export function SelectInputInsert({ table, onChange }) {
 
   useEffect(() => {
     const fetchUnidade = async () => {
-      if (table === "MEDIDA" && medida !== "") {
-        console.log(`Buscando unidades para medida: ${medida}`);
+      if (table === "GRANDEZA" && grandeza !== "") {
+        console.log(`Buscando unidades para grandeza: ${grandeza}`);
         try {
-          const response = await axios.get(`http://localhost:5000/api/selectunidade?value=${medida}`);
+          const response = await axios.get(`http://localhost:5000/api/selectunidade?value=${grandeza}`);
           setUnidadeOptions(response.data);
         } catch (error) {
-          console.error(`Erro ao buscar unidades para ${medida}:`, error);
+          console.error(`Erro ao buscar unidades para ${grandeza}:`, error);
         }
       } else {
         setUnidadeOptions([]);
@@ -35,7 +35,7 @@ export function SelectInputInsert({ table, onChange }) {
       }
     };
     fetchUnidade();
-  }, [medida]);
+  }, [grandeza]);
 
   return (
     <div>
@@ -45,9 +45,9 @@ export function SelectInputInsert({ table, onChange }) {
           defaultValue={""}
           onChange={(e) => {
             const selectedValue = e.target.value;
-            setMedida(selectedValue);
+            setGrandeza(selectedValue);
             setUnidade("");
-            onChange({ medida: selectedValue, unidade: "" }); // Passando um objeto válido sempre
+            onChange({ grandeza: selectedValue, unidade: "" }); // Passando um objeto válido sempre
           }}
         >
           <option value="">Selecione</option>
@@ -60,14 +60,14 @@ export function SelectInputInsert({ table, onChange }) {
 
       )}
 
-      {table === "MEDIDA" && unidadeOptions.length > 0 && (
+      {table === "GRANDEZA" && unidadeOptions.length > 0 && (
         <select
           className="w-11/12 border p-1 rounded mt-2"
           value={unidade}
           onChange={(e) => {
             const selectedUnidade = e.target.value;
             setUnidade(selectedUnidade);
-            onChange({ medida, unidade: selectedUnidade }); // Passa { medida, unidade } sempre
+            onChange({ grandeza, unidade: selectedUnidade }); // Passa { grandeza, unidade } sempre
           }}
         >
           <option value="">Selecione a Unidade</option>

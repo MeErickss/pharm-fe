@@ -17,7 +17,7 @@ export function AdminUsers() {
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [editId, setEditId] = useState(null);
   const [tooltipVisible, setTooltipVisible] = useState({ edit: null, delete: null });
-  const tabela = "usuarios"
+  const tabela = "users"
 
   const handleMouseEnter = (type, id) => {
     setTooltipVisible((prev) => ({ ...prev, [type]: id }));
@@ -99,7 +99,7 @@ export function AdminUsers() {
 
   const handleFilter = (event) => {
     setFilter(event.target.value);
-    };
+  };
 
   const toggleEditar = (id) => {
     setEditId(id);
@@ -164,7 +164,7 @@ export function AdminUsers() {
       {showModalAdd && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-            <AddParametro tabela={tabela} dados={dados} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
+            <AddParametro dados={dados} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
           </div>
         </div>
       )}
@@ -172,7 +172,7 @@ export function AdminUsers() {
       {showModalEdit && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-            <EditParametro id={editId} tabela={tabela} dados={dados} closeModal={() => setShowModalEdit(false)} />
+            <EditParametro id={editId} dados={dados} closeModal={() => setShowModalEdit(false)} />
           </div>
         </div>
       )}

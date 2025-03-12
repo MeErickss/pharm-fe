@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export function SelectInputUpdate({ table, value, onChange }) {
+export function SelectInputUpdate({ table, onChange, value }) {
   const [options, setOptions] = useState([]);
   const [unidadeOptions, setUnidadeOptions] = useState([]);
-  const [medida, setMedida] = useState(value || "");
+  const [grandeza, setGrandeza] = useState("");
   const [unidade, setUnidade] = useState("");
+
+  console.log(value)
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -21,13 +23,13 @@ export function SelectInputUpdate({ table, value, onChange }) {
 
   useEffect(() => {
     const fetchUnidade = async () => {
-      if (table === "MEDIDA" && medida !== "") {
-        console.log(`Buscando unidades para medida: ${medida}`);
+      if (table === "GRANDEZA" && grandeza !== "") {
+        console.log(`Buscando unidades para grandeza: ${grandeza}`);
         try {
-          const response = await axios.get(`http://localhost:5000/api/selectunidade?value=${medida}`);
+          const response = await axios.get(`http://localhost:5000/api/selectunidade?value=${grandeza}`);
           setUnidadeOptions(response.data);
         } catch (error) {
-          console.error(`Erro ao buscar unidades para ${medida}:`, error);
+          console.error(`Erro ao buscar unidades para ${grandeza}:`, error);
         }
       } else {
         setUnidadeOptions([]);
@@ -35,19 +37,19 @@ export function SelectInputUpdate({ table, value, onChange }) {
       }
     };
     fetchUnidade();
-  }, [medida]);
+  }, [grandeza]);
 
   return (
     <div>
       {table !== "UNIDADE" && (
         <select
           className="w-11/12 border p-1 rounded"
-          value={medida}
+          value={value}
           onChange={(e) => {
             const selectedValue = e.target.value;
-            setMedida(selectedValue);
+            setGrandeza(selectedValue);
             setUnidade("");
-            onChange(selectedValue); // Agora passando apenas a medida
+            onChange({ grandeza: selectedValue, unidade: "" }); // Para GRANDEZA
           }}
         >
           <option value="">Selecione</option>
@@ -57,16 +59,17 @@ export function SelectInputUpdate({ table, value, onChange }) {
             </option>
           ))}
         </select>
+
       )}
 
-      {table === "MEDIDA" && unidadeOptions.length > 0 && (
+      {table === "GRANDEZA" && unidadeOptions.length > 0 && (
         <select
           className="w-11/12 border p-1 rounded mt-2"
           value={unidade}
           onChange={(e) => {
             const selectedUnidade = e.target.value;
             setUnidade(selectedUnidade);
-            onChange(selectedUnidade); // Agora passando apenas a unidade
+            onChange({ grandeza, unidade: selectedUnidade }); // Para UNIDADE
           }}
         >
           <option value="">Selecione a Unidade</option>
@@ -77,6 +80,8 @@ export function SelectInputUpdate({ table, value, onChange }) {
           ))}
         </select>
       )}
+
+
     </div>
   );
 }
