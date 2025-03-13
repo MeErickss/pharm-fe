@@ -164,7 +164,7 @@ export function AdminUnitRegister() {
       {showModalAdd && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-            <RegisterData dados={dados} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
+            <RegisterData dados={dados} table={"unidades"} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
           </div>
         </div>
       )}
@@ -172,7 +172,7 @@ export function AdminUnitRegister() {
       {showModalEdit && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-            <UpdateData id={editId} dados={dados} closeModal={() => setShowModalEdit(false)} />
+            <UpdateData id={editId} table={"unidades"} dados={dados} closeModal={() => setShowModalEdit(false)} />
           </div>
         </div>
       )}

@@ -10,19 +10,28 @@ export function EditParametro({ id, dados, closeModal }) {
 
   const handleEdit = (value, key) => {
     setValoresEditados((prev) => {
-      if (["GRANDEZA", "UNIDADE"].includes(key)) {
-        return {
-          ...prev,
-          GRANDEZA: value.grandeza || prev.GRANDEZA, 
-          UNIDADE: value.unidade || prev.UNIDADE, 
-        };
-      } else {
-        return {
-          ...prev,
-          [key]: typeof value === "object" ? value.grandeza : value, // Corrigido para inputs normais
-        };
+      let updatedValues = { ...prev };
+
+      if (key === "GRANDEZA" && typeof value === "object") {
+        updatedValues.GRANDEZA = value.grandeza || "";  // Garante que GRANDEZA não fique undefined
+        updatedValues.UNIDADE = value.unidade || ""; // Garante que UNIDADE seja atribuída corretamente
+      } else if(key === "STATUS"){
+        updatedValues.STATUS = value.grandeza;
+      }else {
+        updatedValues[key] = value;
       }
+
+      if (key === "VL_MIN" && parseFloat(value) > parseFloat(prev.VL_MAX)) {
+        updatedValues.VL_MAX = value;
+      }
+
+      if (key === "VL_MAX" && parseFloat(value) < parseFloat(prev.VL_MIN)) {
+        updatedValues.VL_MIN = value;
+      }
+
+      return updatedValues;
     });
+    console.log(valoresEditados)
   };
   
   

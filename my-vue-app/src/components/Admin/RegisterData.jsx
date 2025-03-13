@@ -3,7 +3,7 @@ import axios from "axios";
 import { SelectInputInsert } from "./SelectInputInsert"
 
 // Componente para renderizar o Select
-export function RegisterData({ dados, closeModal }) {
+export function RegisterData({ dados, closeModal, table }) {
   const [valoresEditados, setValoresEditados] = useState(
     Object.fromEntries(Object.keys(dados[0]).map((key) => [key, dados[0][key] || ""]))
   );
@@ -17,7 +17,9 @@ export function RegisterData({ dados, closeModal }) {
       if (key === "GRANDEZA" && typeof value === "object") {
         updatedValues.GRANDEZA = value.grandeza || "";  // Garante que GRANDEZA não fique undefined
         updatedValues.UNIDADE = value.unidade || ""; // Garante que UNIDADE seja atribuída corretamente
-      } else {
+      } else if(key === "STATUS"){
+        updatedValues.STATUS = value.grandeza;
+      }else {
         updatedValues[key] = value;
       }
 
@@ -37,27 +39,22 @@ export function RegisterData({ dados, closeModal }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(valoresEditados);
+    delete valoresEditados.ID
 
     try {
       await axios.post("http://localhost:5000/api/insert", {
-        PARAMETRO: valoresEditados.PARAMETRO,
-        GRANDEZA: valoresEditados.GRANDEZA,
-        UNIDADE: valoresEditados.UNIDADE,
-        FUNCAO: "PRODUCAO",
-        VALOR: valoresEditados.VALOR,
-        VL_MAX: valoresEditados.VL_MAX,
-        VL_MIN: valoresEditados.VL_MIN,
-        STATUS: valoresEditados.STATUS?.grandeza || valoresEditados.STATUS,
+        table, // 🚀 Informar a tabela ao backend
+        ...valoresEditados, // Enviar todos os valores sem precisar especificar cada um manualmente
       });
-
-      alert("Parâmetro inserido com sucesso!");
+  
+      alert("✅ Registro inserido com sucesso!");
       closeModal();
     } catch (error) {
-      console.error("Erro ao inserir parâmetro:", error);
-      alert("Erro ao inserir parâmetro!");
+      console.error("❌ Erro ao inserir registro:", error);
+      alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
     }
   };
+  
 
 
 
