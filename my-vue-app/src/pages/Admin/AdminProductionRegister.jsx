@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Tooltip } from "antd"
-import { AddParametro } from "../../components/Admin/AddParametro"; // Importando o novo componente]
+import { AddParametro } from "../../components/Admin/AddParametro"; // Importando o novo componente
 import { EditParametro } from "../../components/Admin/EditParametro"; // Importando o novo componente
 
 

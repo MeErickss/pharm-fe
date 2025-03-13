@@ -7,8 +7,6 @@ export function SelectInputUpdate({ table, onChange, value }) {
   const [grandeza, setGrandeza] = useState("");
   const [unidade, setUnidade] = useState("");
 
-  console.log(value)
-
   useEffect(() => {
     const fetchOptions = async () => {
       try {
@@ -24,7 +22,6 @@ export function SelectInputUpdate({ table, onChange, value }) {
   useEffect(() => {
     const fetchUnidade = async () => {
       if (table === "GRANDEZA" && grandeza !== "") {
-        console.log(`Buscando unidades para grandeza: ${grandeza}`);
         try {
           const response = await axios.get(`http://localhost:5000/api/selectunidade?value=${grandeza}`);
           setUnidadeOptions(response.data);
@@ -46,20 +43,20 @@ export function SelectInputUpdate({ table, onChange, value }) {
           className="w-11/12 border p-1 rounded"
           value={value}
           onChange={(e) => {
-            const selectedValue = e.target.value;
+            const selectedIndex = e.target.selectedIndex - 1; // -1 para ignorar o "Selecione"
+            const selectedValue = table === "NIVEL" ? selectedIndex : e.target.value;
             setGrandeza(selectedValue);
             setUnidade("");
-            onChange({ grandeza: selectedValue, unidade: "" }); // Para GRANDEZA
+            onChange({ grandeza: selectedValue, unidade: "" }); // Para GRANDEZA e NIVEL
           }}
         >
           <option value="">Selecione</option>
           {options.map((item, index) => (
-            <option key={index} value={item.NOME}>
+            <option key={index} value={table === "NIVEL" ? index : item.NOME}>
               {item.NOME || item.DESCRICAO}
             </option>
           ))}
         </select>
-
       )}
 
       {table === "GRANDEZA" && unidadeOptions.length > 0 && (
@@ -80,8 +77,6 @@ export function SelectInputUpdate({ table, onChange, value }) {
           ))}
         </select>
       )}
-
-
     </div>
   );
 }
