@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export function SelectInputUpdate({ table, onChange, value }) {
+export function SelectInputUpdate({ table, onChange, value, param }) {
   const [options, setOptions] = useState([]);
   const [unidadeOptions, setUnidadeOptions] = useState([]);
   const [grandeza, setGrandeza] = useState("");
@@ -45,7 +45,7 @@ export function SelectInputUpdate({ table, onChange, value }) {
           onChange={(e) => {
             const selectedIndex = e.target.selectedIndex - 1; // -1 para ignorar o "Selecione"
             const selectedValue = table === "NIVEL" ? selectedIndex : e.target.value;
-            setGrandeza(selectedValue);
+            {param == true && setGrandeza(selectedValue);}
             setUnidade("");
             onChange({ grandeza: selectedValue, unidade: "" }); // Para GRANDEZA e NIVEL
           }}
@@ -59,7 +59,7 @@ export function SelectInputUpdate({ table, onChange, value }) {
         </select>
       )}
 
-      {table === "GRANDEZA" && unidadeOptions.length > 0 && (
+      {table === "GRANDEZA" && param === true && unidadeOptions.length > 0 && (
         <select
           className="w-11/12 border p-1 rounded mt-2"
           value={unidade}

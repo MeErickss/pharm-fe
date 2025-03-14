@@ -13,14 +13,6 @@ export function ParametersProduction() {
   const [tooltipVisible, setTooltipVisible] = useState({ edit: null, delete: null });
   const tabela = "parametros_producao"
 
-  const handleMouseEnter = (type, id) => {
-    setTooltipVisible((prev) => ({ ...prev, [type]: id }));
-  };
-
-  const handleMouseLeave = (type) => {
-    setTooltipVisible((prev) => ({ ...prev, [type]: null }));
-  };
-
   useEffect(() => {
     axios
       .get(`http://localhost:5000/api/table?table=${tabela}`)

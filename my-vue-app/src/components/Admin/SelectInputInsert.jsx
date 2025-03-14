@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export function SelectInputInsert({ table, onChange }) {
+export function SelectInputInsert({ table, onChange, param }) {
   const [options, setOptions] = useState([]);
   const [unidadeOptions, setUnidadeOptions] = useState([]);
   const [grandeza, setGrandeza] = useState("");
@@ -57,10 +57,9 @@ export function SelectInputInsert({ table, onChange }) {
             </option>
           ))}
         </select>
-
       )}
-
-      {table === "GRANDEZA" && unidadeOptions.length > 0 && (
+  
+      {table === "GRANDEZA" && unidadeOptions.length > 0 && param === true && (
         <select
           className="w-11/12 border p-1 rounded mt-2"
           value={unidade}
@@ -78,8 +77,6 @@ export function SelectInputInsert({ table, onChange }) {
           ))}
         </select>
       )}
-
-
     </div>
   );
-}
+};

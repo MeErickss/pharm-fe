@@ -3,7 +3,7 @@ import axios from "axios";
 import { SelectInputInsert } from "./SelectInputInsert"
 
 // Componente para renderizar o Select
-export function AddParametro({ dados, closeModal }) {
+export function AddParametro({ dados, closeModal, param }) {
   const [valoresEditados, setValoresEditados] = useState(
     Object.fromEntries(Object.keys(dados[0]).map((key) => [key, dados[0][key] || ""]))
   );
@@ -79,6 +79,7 @@ export function AddParametro({ dados, closeModal }) {
                 <div className="px-2">{key}</div>
                 {["STATUS", "GRANDEZA"].includes(key) ? (
                   <SelectInputInsert
+                    param={param}
                     table={key}
                     value={valoresEditados[key]}
                     onChange={(selected) => handleEdit(selected, key)}

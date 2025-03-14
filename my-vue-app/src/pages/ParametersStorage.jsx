@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+
 export function ParametersStorage() {
   const [error, setError] = useState("");
   const [dados, setDados] = useState([]);
@@ -8,17 +9,11 @@ export function ParametersStorage() {
   const [query, setQuery] = useState("")
   const [filter, setFilter] = useState("");
   const [dell, setDell] = useState(0);
+  const [showModalAdd, setShowModalAdd] = useState(false);
+  const [showModalEdit, setShowModalEdit] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [tooltipVisible, setTooltipVisible] = useState({ edit: null, delete: null });
   const tabela = "parametros_armazenamento"
 
-  const handleMouseEnter = (type, id) => {
-    setTooltipVisible((prev) => ({ ...prev, [type]: id }));
-  };
-
-  const handleMouseLeave = (type) => {
-    setTooltipVisible((prev) => ({ ...prev, [type]: null }));
-  };
 
   useEffect(() => {
     axios
@@ -74,11 +69,6 @@ export function ParametersStorage() {
     fetchData();
   }, [dell]);
   
-  
-  const handleDelete = (id) => {
-    setDell(id);
-  };
-  
   const handleQuery = (event) => {
     setQuery(event);
   
@@ -92,11 +82,6 @@ export function ParametersStorage() {
 
   const handleFilter = (event) => {
     setFilter(event.target.value);
-  };
-
-  const toggleEditar = (id) => {
-    setEditId(id);
-    setShowModalEdit(true);
   };
 
   const handleReset = () => {
@@ -182,7 +167,6 @@ export function ParametersStorage() {
                 {value}
               </div>
             ))}
-
           </div>
         ))}
       </div>

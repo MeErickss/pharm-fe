@@ -3,7 +3,7 @@ import axios from "axios";
 import { SelectInputUpdate } from "./SelectInputUpdate";
 
 // Componente para renderizar o Select
-export function EditParametro({ id, dados, closeModal }) {
+export function EditParametro({ id, dados, closeModal, param }) {
   const [valoresEditados, setValoresEditados] = useState(
     Object.fromEntries(Object.keys(dados[0]).map((key) => [key, dados[id - 1][key] || ""]))
   );
@@ -17,6 +17,8 @@ export function EditParametro({ id, dados, closeModal }) {
         updatedValues.UNIDADE = value.unidade || ""; // Garante que UNIDADE seja atribuída corretamente
       } else if(key === "STATUS"){
         updatedValues.STATUS = value.grandeza;
+      }else if(key === "FUNCAO"){
+        updatedValues.FUNCAO = value.grandeza;
       }else {
         updatedValues[key] = value;
       }
@@ -78,7 +80,7 @@ export function EditParametro({ id, dados, closeModal }) {
               <div key={key}>
                 <div className="px-2">{key}</div>
                 {["STATUS", "FUNCAO", "GRANDEZA"].includes(key) && valoresEditados != undefined ? (
-                  <SelectInputUpdate table={key} value={valoresEditados[key]} onChange={(value) => handleEdit(value, key)} />
+                  <SelectInputUpdate param={param} table={key} value={valoresEditados[key]} onChange={(value) => handleEdit(value, key)} />
                 ) : (
                   <input
                   type={key === "VALOR" || key === "VL_MIN" || key === "VL_MAX" ? "number" : "text"}
