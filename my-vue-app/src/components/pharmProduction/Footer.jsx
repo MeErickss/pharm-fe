@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { ParametersProduction } from "../../pages/ParametersProduction";
 
 export function Footer() {
   const [parametro, setParametro] = useState(false);

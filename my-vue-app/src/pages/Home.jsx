@@ -3,6 +3,7 @@ import image from "./images/g.png";
 import farmacia from "./images/farmacia.png";
 import filtros from "./images/filtros.png";
 import purifier from "./images/purifier.png";
+import CollapseC from "../components/Collapse"
 
 export function Home() {
   const [width, setWidth] = useState(window.innerWidth);

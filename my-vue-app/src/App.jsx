@@ -5,44 +5,44 @@ import {
   Route,
 } from "react-router-dom";
 import "antd/dist/reset.css";
-import { LoginPage } from "./pages/LoginPage.jsx";
+import { PaginaLogin } from "./pages/PaginaLogin.jsx";
 import { Pagina404 } from "./pages/Page404.jsx";
 import { Layout } from "./pages/Layout.jsx";
 import { Home } from "./pages/Home.jsx";
-import { Production } from "./pages/Production.jsx";
-import { Storage } from "./pages/Storage.jsx";
-import { ParametersProduction } from "./pages/ParametersProduction.jsx";
-import { ParametersStorage } from "./pages/ParametersStorage.jsx";
-import { AdminProductionRegister } from "./pages/Admin/AdminProductionRegister.jsx";
-import { AdminGreatnessRegister } from "./pages/Admin/AdminGreatnessRegister.jsx";
-import { AdminStorageRegister } from "./pages/Admin/AdminStorageRegister.jsx";
-import { AdminFunctionRegister } from "./pages/Admin/AdminFunctionRegister.jsx";
-import { AdminUnitRegister } from "./pages/Admin/AdminUnitRegister.jsx";
-import { AdminUsers } from "./pages/Admin/AdminUsers.jsx"
-import { Status } from "./pages/Maintenance/status.jsx";
-import { Functions } from "./pages/Maintenance/Functions.jsx";
+import { Producao } from "./pages/Producao.jsx";
+import { Armazenamento } from "./pages/Armazenamento.jsx";
+import { ParametrosProducao } from "./pages/ParametrosProducao.jsx";
+import { ParametrosArmazenamento } from "./pages/ParametrosArmazenamento.jsx";
+import { AdminRegistroProducao } from "./pages/Admin/AdminRegistroProducao.jsx";
+import { AdminRegistroGrandeza } from "./pages/Admin/AdminRegistroGrandeza.jsx";
+import { AdminRegistroArmazenamento } from "./pages/Admin/AdminRegistroArmazenamento.jsx";
+import { AdminRegistroFuncao } from "./pages/Admin/AdminRegistroFuncao.jsx";
+import { AdminRegistroUnidade } from "./pages/Admin/AdminRegistroUnidade.jsx";
+import { AdminRegistroUsuarios } from "./pages/Admin/AdminRegistroUsuarios.jsx"
+import { Status } from "./pages/Maintenance/Status.jsx";
+import { ManutencaoFuncao } from "./pages/Maintenance/ManutencaoFuncao.jsx";
 
 export default function App() {
   return (
     <Router>
       <Routes>
         {/* Rota de login */}
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/" element={<PaginaLogin />} />
 
         {/* Rotas protegidas com layout */}
         <Route path="/" element={<Layout />}>
           <Route path="home" element={<Home />} />
-          <Route path="producao" element={<Production />} />
-          <Route path="armazenamento" element={<Storage />} />
-          <Route path="parametroproducao" element={<ParametersProduction />} />
-          <Route path="parametroarmazem" element={<ParametersStorage />} />
-          <Route path="usuarios" element={<AdminUsers />} />
-          <Route path="adminparametrosproducao" element={<AdminProductionRegister />} />
-          <Route path="adminparametrosarmazem" element={<AdminStorageRegister/>} />
-          <Route path="adminparametrosfuncoes" element={<AdminFunctionRegister/>} />
-          <Route path="adminparametrosunidade" element={<AdminUnitRegister/>} />
-          <Route path="adminparametrosgrandeza" element={<AdminGreatnessRegister/>} />
-          <Route path="maintencefunctions" element={<Functions/>} />
+          <Route path="producao" element={<Producao />} />
+          <Route path="armazenamento" element={<Armazenamento />} />
+          <Route path="parametroproducao" element={<ParametrosProducao />} />
+          <Route path="parametroarmazem" element={<ParametrosArmazenamento />} />
+          <Route path="usuarios" element={<AdminRegistroUsuarios />} />
+          <Route path="adminparametrosproducao" element={<AdminRegistroProducao />} />
+          <Route path="adminparametrosarmazem" element={<AdminRegistroArmazenamento/>} />
+          <Route path="adminparametrosfuncoes" element={<AdminRegistroFuncao/>} />
+          <Route path="adminparametrosunidade" element={<AdminRegistroUnidade/>} />
+          <Route path="adminparametrosgrandeza" element={<AdminRegistroGrandeza/>} />
+          <Route path="maintencefunctions" element={<ManutencaoFuncao/>} />
           <Route path="maintencestatus" element={<Status/>} />
         </Route>
 

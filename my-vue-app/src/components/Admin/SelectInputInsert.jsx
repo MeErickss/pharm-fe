@@ -1,82 +1,99 @@
+// SelectInputInsert.jsx
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../api";
+import { SelectInputGeneric } from "./SelectInputGeneric";
 
-export function SelectInputInsert({ table, onChange, param }) {
+export function SelectInputInsert({ table, onChange, value = {} }) {
   const [options, setOptions] = useState([]);
   const [unidadeOptions, setUnidadeOptions] = useState([]);
-  const [grandeza, setGrandeza] = useState("");
-  const [unidade, setUnidade] = useState("");
 
+  // Estados controlados, iniciando com value se precisar de edição prévia
+  const [grandeza, setGrandeza] = useState(value.grandeza || "");
+  const [unidade, setUnidade] = useState(value.unidade || "");
+
+  // 1) Buscar todas as opções do recurso atual (e.g. "status", "funcao", "grandeza")
   useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/api/select?table=${table}`);
-        setOptions(response.data);
-      } catch (error) {
-        console.error(`Erro ao buscar opções para ${table}:`, error);
-      }
-    };
-    fetchOptions();
+    api
+      .get(`/${table}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => setOptions(res.data))
+      .catch((err) =>
+        console.error(`Erro ao buscar opções para ${table}:`, err)
+      );
   }, [table]);
 
+  // 2) Se for "grandeza", ao mudar busca unidades relacionadas
   useEffect(() => {
-    const fetchUnidade = async () => {
-      if (table === "GRANDEZA" && grandeza !== "") {
-        console.log(`Buscando unidades para grandeza: ${grandeza}`);
-        try {
-          const response = await axios.get(`http://localhost:5000/api/selectunidade?value=${grandeza}`);
-          setUnidadeOptions(response.data);
-        } catch (error) {
-          console.error(`Erro ao buscar unidades para ${grandeza}:`, error);
-        }
-      } else {
-        setUnidadeOptions([]);
-        setUnidade("");
-      }
-    };
-    fetchUnidade();
-  }, [grandeza]);
+    if (table === "grandeza" && grandeza) {
+      api
+        .get("/unidades/por-grandeza", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          params: { descricao: grandeza },
+        })
+        .then((res) => setUnidadeOptions(res.data))
+        .catch((err) =>
+          console.error(`Erro ao buscar unidades para ${grandeza}:`, err)
+        );
+    } else {
+      setUnidadeOptions([]);
+      setUnidade("");
+    }
+  }, [grandeza, table]);
 
   return (
-    <div>
-      {table !== "UNIDADE" && (
-        <select
-          className="w-11/12 border p-1 rounded"
-          defaultValue={""}
-          onChange={(e) => {
-            const selectedValue = e.target.value;
-            setGrandeza(selectedValue);
+    <div className="space-y-2">
+      {/* Select para GRANDEZA (ou outro recurso que não seja cascata) */}
+      <SelectInputGeneric
+        resource={table}
+        displayField={table === "unidade" ? "descricao" : "nome"}
+        valueField="id"
+        // selected é o id que corresponde ao estado
+        selected={
+          table === "grandeza"
+            ? options.find((o) => o.nome === grandeza)?.id ?? ""
+            : options.find((o) =>
+                // para recursos que não são grandeza, assumimos objeto simples
+                o.id === value.id
+              )
+            ? String(value.id)
+            : ""
+        }
+        onChange={(obj) => {
+          // obj é undefined ou { id, nome } (ou { id, descricao })
+          if (table === "grandeza") {
+            const nome = obj?.nome ?? "";
+            setGrandeza(nome);
             setUnidade("");
-            onChange({ grandeza: selectedValue, unidade: "" }); // Passando um objeto válido sempre
+            onChange({ grandeza: nome, unidade: "" });
+          } else if (table === "unidade") {
+            const nome = obj?.descricao ?? "";
+            setUnidade(nome);
+            onChange({ grandeza, unidade: nome });
+          } else {
+            // status, funcao, etc.
+            onChange(obj);
+          }
+        }}
+      />
+
+      {/* Se for cascata de grandeza → unidade, renderiza o segundo select */}
+      {table === "grandeza" && (
+        <SelectInputGeneric
+          resource="unidade"
+          displayField="descricao"
+          valueField="id"
+          parentValue={grandeza}
+          parentResourceKey="descricao"
+          optionsOverride={unidadeOptions}
+          selected={unidadeOptions.find((u) => u.descricao === unidade)?.id ?? ""}
+          onChange={(obj) => {
+            const nome = obj?.descricao ?? "";
+            setUnidade(nome);
+            onChange({ grandeza, unidade: nome });
           }}
-        >
-          <option value="">Selecione</option>
-          {options.map((item, index) => (
-            <option key={index} value={item.NOME}>
-              {item.NOME || item.DESCRICAO}
-            </option>
-          ))}
-        </select>
-      )}
-  
-      {table === "GRANDEZA" && unidadeOptions.length > 0 && param === true && (
-        <select
-          className="w-11/12 border p-1 rounded mt-2"
-          value={unidade}
-          onChange={(e) => {
-            const selectedUnidade = e.target.value;
-            setUnidade(selectedUnidade);
-            onChange({ grandeza, unidade: selectedUnidade }); // Passa { grandeza, unidade } sempre
-          }}
-        >
-          <option value="">Selecione a Unidade</option>
-          {unidadeOptions.map((item, index) => (
-            <option key={index} value={item.UNIDADE}>
-              {item.UNIDADE}
-            </option>
-          ))}
-        </select>
+        />
       )}
     </div>
   );
-};
+}

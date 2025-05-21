@@ -1,6 +1,8 @@
+// src/Sidebar.jsx
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import ArrowUpFromBracket  from "./pharmProduction/images/ArrowUpFromBracket.svg";
+import api from "../api";  // instância axios com withCredentials
+import ArrowUpFromBracket from "./pharmProduction/images/ArrowUpFromBracket.svg";
 import CaretDown from "./pharmProduction/images/CaretDown.svg";
 import CaretUp from "./pharmProduction/images/CaretUp.svg";
 import Clipboard from "./pharmProduction/images/Clipboard.svg";
@@ -14,54 +16,31 @@ import AdminProduction from "./pharmProduction/images/AdminProduction.svg";
 import AdminStorage from "./pharmProduction/images/AdminStorage.svg";
 import logo from "./pharmProduction/images/logo.svg";
 import maintence from "./pharmProduction/images/Maintence.svg";
-import axios from "axios";
 
 
 export function Sidebar() {
-    const [login, setLogin] = useState("");
-    const [producao, setProducao] = useState(false);
-    const [armazenamento, setArmazenamento] = useState(false);
-    const [cadastro, setCadastro] = useState(false);
-    const [manutencao, setManutencao] = useState(false)
-    const [dados, setDados] = useState([]);
-    const [nivel, setNivel] = useState("");
-    const navigate = useNavigate();
-    const tabela = "users"
+  const [login, setLogin] = useState("");
+  const [producao, setProducao] = useState(false);
+  const [armazenamento, setArmazenamento] = useState(false);
+  const [cadastro, setCadastro] = useState(false);
+  const [manutencao, setManutencao] = useState(false);
+  const [nivel, setNivel] = useState("");
+  const navigate = useNavigate();
 
-    const nivelMap = {
-        1:"operador",
-        2:"manutencao",
-        3:"admin"
+  useEffect(() => {
+    const storedLogin = localStorage.getItem("login");
+    if (!storedLogin) {
+      navigate("/");
+    } else {
+      setLogin(storedLogin);
+      setNivel(localStorage.getItem('nivel').toLowerCase())
     }
+  }, [navigate]);
 
-    useEffect(() => {
-        const storedLogin = localStorage.getItem("login");
-        if (!storedLogin) {
-            navigate("/");
-        } else {
-            setLogin(storedLogin);
-            axios
-                .get(`http://localhost:5000/api/table?table=${tabela}`)
-                .then((response) => {
-                    console.log("Dados recebidos:", response.data);
-                    setDados(response.data);
-                    const usuario = response.data.find((item) => item.LOGIN === storedLogin);
-                    if (usuario) {
-                        setNivel(nivelMap[usuario.NIVEL] || "desconhecido");
-                    }
-                })
-                .catch((err) => {
-                    console.error("Erro ao buscar dados", err);
-                    setError("Não foi possível carregar os dados");
-                });
-        }
-    }, [navigate]);
-    
-
-    const handleLogout = () => {
-        localStorage.removeItem("login");
-        navigate("/");
-    };
+  const handleLogout = () => {
+    localStorage.removeItem("login");
+    navigate("/");
+  };
 
     return (
         <div className="grid grid-rows-[auto_1fr_auto] h-screen bg-slate-100 text-sm w-52">
@@ -197,15 +176,6 @@ export function Sidebar() {
                                 to="/adminparametrosgrandeza"
                             >
                                 <img width={10} src={AdminProduction}/> Cadastro Grandezas
-                            </NavLink>
-
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/adminparametrosfuncoes"
-                            >
-                                <img width={10} src={AdminProduction}/> Cadastro Funções
                             </NavLink>
 
                             <NavLink 
