@@ -7,7 +7,7 @@ import { Status } from "../components/pharmProduction/Status.jsx";
 export function Production() {
   return (
     <main className="grid grid-cols-4 grid-rows-4 gap-4 w-full h-full bg-gray-100">
-      <div className="col-span-2 row-span-3 bg-black">
+      <div className="flex col-span-2 row-span-3 bg-transparent">
         <Layout />
       </div>
       <div className="col-span-2 row-span-2 bg-red-500">
