@@ -233,7 +233,7 @@ export function AdminFunctionRegister() {
                   onMouseLeave={() => handleMouseLeave("delete")}
                   onClick={() => handleDelete(tabelas.ID)}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="12" className="fill-blue-600 hover:fill-red-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="12" className="fill-red-500 hover:fill-red-500">
                     <path d="M135.2 17.8l9.8 22H312l9.8-22c5.4-12 17.3-17.8 28.2-17.8h32c13.3 0 24 10.7 24 24V56H16V24c0-13.3 10.7-24 24-24h32c10.9 0 22.8 5.8 28.2 17.8zM32 96h384l-20.4 368c-1.5 26.5-24 48-50.5 48H102.9c-26.5 0-49-21.5-50.5-48L32 96zm80 48v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16zm96 0v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16zm96 0v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16z" />
                   </svg>
                 </button>

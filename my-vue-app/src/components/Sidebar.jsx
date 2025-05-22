@@ -63,6 +63,7 @@ export function Sidebar() {
         navigate("/");
     };
 
+
     return (
         <div className="grid grid-rows-[auto_1fr_auto] h-screen bg-slate-100 text-sm w-52">
             {/* Topo - Logo e usuário */}
@@ -87,7 +88,7 @@ export function Sidebar() {
                         className={`w-full flex items-center gap-2 p-4 text-left ${
                             producao ? "bg-gray-400 font-bold" : "text-black"
                         }`}
-                        onClick={() => setProducao(!producao)}
+                        onClick={() => {cadastro == false && manutencao == false && armazenamento == false && setProducao(!producao)}}
                     >
                         <img width={15} src={Industry}/>
                         Produção
@@ -120,7 +121,7 @@ export function Sidebar() {
                         className={`w-full flex items-center gap-2 p-4 text-left ${
                             armazenamento ? "bg-gray-400 font-bold" : "text-black"
                         }`}
-                        onClick={() => setArmazenamento(!armazenamento)}
+                        onClick={() => {cadastro == false && manutencao == false && producao == false && setArmazenamento(!armazenamento)}}
                     >
                         <img width={15} src={ArrowUpFromBracket}/>
                         Armazenamento
@@ -155,7 +156,7 @@ export function Sidebar() {
                         className={`w-full flex items-center gap-2 p-4 text-left ${
                             cadastro ? "bg-gray-400 font-bold" : "text-black"
                         }`}
-                        onClick={() => setCadastro(!cadastro)}
+                        onClick={() => {manutencao == false && producao == false && armazenamento == false && setCadastro(!cadastro)}}
                     >
                         <img width={15} src={Admin}/>
                         Cadastros Admin
@@ -225,7 +226,7 @@ export function Sidebar() {
                         className={`w-full flex items-center gap-2 p-4 text-left ${
                             manutencao ? "bg-gray-400 font-bold" : "text-black"
                         }`}
-                        onClick={() => setManutencao(!manutencao)}
+                        onClick={() => {cadastro == false && producao == false && armazenamento == false && setManutencao(!manutencao)}}
                     >
                         <img width={15} src={maintence}/>
                         Cadastros Manutenção
