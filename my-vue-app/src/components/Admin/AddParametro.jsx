@@ -8,6 +8,7 @@ export function AddParametro({ dados, closeModal, param }) {
     Object.fromEntries(Object.keys(dados[0]).map((key) => [key, dados[0][key] || ""]))
   );
 
+  const parametro = "col-span-3"
 
 
   const handleEdit = (value, key) => {
@@ -75,7 +76,7 @@ export function AddParametro({ dados, closeModal, param }) {
         <div className="grid grid-cols-3 bg-gray-200 font-semibold text-gray-700 p-3 border-b gap-2">
           {Object.entries(dados[0]).map(([key]) =>
             key !== "ID" && key !== "FUNCAO" && key !== "UNIDADE" && (
-              <div key={key}>
+              <div key={key} className={key=="PARAMETRO" && parametro}>
                 <div className="px-2">{key}</div>
                 {["STATUS", "GRANDEZA"].includes(key) ? (
                   <SelectInputInsert
