@@ -1,7 +1,7 @@
   import { useState, useEffect } from "react";
   import api from "../../api"
   import { Cabecalho } from "../../components/Cabecalho";
-  import { Grid } from "../../components/Admin/Grid";
+  import { GridAdmin } from "../../components/Admin/GridAdmin";
   import { EditarParametro } from "../../components/Admin/EditarParametro"; // Importando o novo componente
   import { AdicionarParametro } from "../../components/Admin/AdicionarParametro";
 
@@ -108,7 +108,7 @@
           </div>
         )}
 
-        <Grid
+        <GridAdmin
           dados={dados}
           dadosLen={dadosLen}
           tooltipVisible={tooltipVisible}

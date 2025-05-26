@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../../api"
-import { Grid } from "../../components/Admin/Grid";
+import { GridAdmin } from "../../components/Admin/GridAdmin";
 import { RegistrarDados } from "../../components/Admin/RegistrarDados"; // Importando o novo componente
 import { AtualizarDados } from "../../components/Admin/AtualizarDados"; // Importando o novo componente
 import { Cabecalho } from "../../components/Cabecalho";
@@ -132,7 +132,7 @@ export function AdminRegistroFuncao() {
         </div>
       )}
 
-      <Grid
+      <GridAdmin
         dados={dados}
         dadosLen={dadosLen}
         tooltipVisible={tooltipVisible}

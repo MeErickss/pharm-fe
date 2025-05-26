@@ -21,6 +21,7 @@ import { AdminRegistroUnidade } from "./pages/Admin/AdminRegistroUnidade.jsx";
 import { AdminRegistroUsuarios } from "./pages/Admin/AdminRegistroUsuarios.jsx"
 import { Status } from "./pages/Maintenance/Status.jsx";
 import { ManutencaoFuncao } from "./pages/Maintenance/ManutencaoFuncao.jsx";
+import { Teste } from "./pages/teste.jsx";
 
 export default function App() {
   return (
@@ -44,6 +45,7 @@ export default function App() {
           <Route path="adminparametrosgrandeza" element={<AdminRegistroGrandeza/>} />
           <Route path="maintencefunctions" element={<ManutencaoFuncao/>} />
           <Route path="maintencestatus" element={<Status/>} />
+          <Route path="teste" element={<Teste/>} />
         </Route>
 
         <Route path="*" element={<Pagina404 />} />

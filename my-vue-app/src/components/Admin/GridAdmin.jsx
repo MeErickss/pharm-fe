@@ -1,7 +1,7 @@
 import { Tooltip } from "antd";
 import React from "react";
 
-export function Grid({
+export function GridAdmin({
   dados,
   dadosLen,
   tooltipVisible,
