@@ -85,7 +85,7 @@ export function EditarParametro({ id, dados, closeModal, param }) {
           return (
             <div key={key} className={key === "descricao" ? "col-span-3 w-[48.3rem]" : undefined}>
               <div className="px-2 text-black">
-                <strong>{key.toUpperCase()}</strong>
+                <strong>{key.charAt(0).toUpperCase() + key.slice(1)}</strong>
               </div>
 
               {isSelect ? (

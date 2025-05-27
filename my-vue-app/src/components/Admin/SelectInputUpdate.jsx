@@ -12,7 +12,7 @@ export function SelectInputUpdate({ table, onChange, value, param }) {
     api.get(`/${table}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     })
-    .then(res => setOptions(res.data))
+    .then(res => {setOptions(res.data); console.log(response.data)})
     .catch(err => {
       if (err.response?.status === 401) navigator('/login');
       console.error(`Erro ao buscar opções para ${table}:`, err);
@@ -22,7 +22,7 @@ export function SelectInputUpdate({ table, onChange, value, param }) {
   useEffect(() => {
     if (table === "grandeza") {
       const selected = typeof value === 'object' ? value.grandeza : value;
-      const found = options.find(o => o.nome === selected || String(o.id) === String(selected));
+      const found = options.find(o => o.descricao === selected || String(o.id) === String(selected));
       setUnidadeOptions(found?.unidades ?? []);
     }
   }, [table, options, value]);
@@ -41,11 +41,11 @@ export function SelectInputUpdate({ table, onChange, value, param }) {
       return options.map((st, i) => <option key={i} value={st}>{st}</option>);
     }
     if (table === "grandeza") {
-      return options.map(o => <option key={o.id} value={o.nome}>{o.nome}</option>);
+      return options.map(o => <option key={o.id} value={o.descricao}>{o.descricao}</option>);
     }
     return options.map((o, i) => (
-      <option key={i} value={o.nome || o.descricao}>
-        {o.nome || o.descricao}
+      <option key={i} value={o.descricao}>
+        {o.descricao}
       </option>
     ));
   };

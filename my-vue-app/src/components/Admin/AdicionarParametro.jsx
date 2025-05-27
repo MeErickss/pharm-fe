@@ -1,7 +1,7 @@
 // AdicionarParametro.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../api";
 import { SelectInputInsert } from "./SelectInputInsert";
 
 export function AdicionarParametro({ dados, closeModal, param }) {
@@ -32,26 +32,40 @@ export function AdicionarParametro({ dados, closeModal, param }) {
       if (key === "vlMax" && parseFloat(updated.vlMax) < parseFloat(updated.vlMin)) {
         updated.vlMin = updated.vlMax;
       }
+      console.log(updated)
       return updated;
     });
   };
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    const payload = { table: "parametros", ...valores };
-    delete payload.id;
-    try {
-      await axios.post("http://localhost:5000/api/insert", payload, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-      });
-      alert("✅ Registro inserido com sucesso!");
-      closeModal();
-    } catch (error) {
-      if (error.response?.status === 401) navigator("/login");
-      console.error("❌ Erro ao inserir registro:", error);
-      alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
-    }
+const handleSubmit = async e => {
+  e.preventDefault();
+
+  const body = {
+    descricao:  valores.descricao,
+    vlmin:      Number(valores.vlMin),
+    vlmax:      Number(valores.vlMax),
+    valor:      Number(valores.valor),
+    statusenum: valores.status,    
+    grandezaDesc: valores.grandeza,
+    unidadeDesc:  valores.unidade, 
+    funcao:       "PRODUCAO"   
   };
+
+  console.log(body)
+  console.log("body")
+
+  try {
+    await api.post("/parametro", body, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    });
+    alert("✅ Registro inserido com sucesso!");
+    closeModal();
+  } catch (error) {
+    if (error.response?.status === 401) navigator("/login");
+    console.error("❌ Erro ao inserir registro:", error);
+    alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
+  }
+};
 
   return (
     <div>
@@ -69,7 +83,7 @@ export function AdicionarParametro({ dados, closeModal, param }) {
           {Object.keys(dados[0]).map(key => (
             key !== "id" && key !== "unidade" && (
               <div key={key} className={key === "descricao" ? "col-span-3 w-[48.3rem]" : undefined}>
-                <div className="px-2 text-black"><strong>{key.toUpperCase()}</strong></div>
+                <div className="px-2 text-black"><strong>{key.charAt(0).toUpperCase() + key.slice(1)}</strong></div>
                 {selectFields.includes(key) ? (
                   <SelectInputInsert
                     table={key}
@@ -81,7 +95,6 @@ export function AdicionarParametro({ dados, closeModal, param }) {
                   <input
                     type={ ["valor","vlMin","vlMax"].includes(key) ? "number" : "text" }
                     className="w-11/12 border p-1 rounded"
-                    value={valores[key]}
                     onChange={e => handleEdit(e.target.value, key)}
                     min={key === "valor" ? valores.vlMin : undefined}
                     max={key === "valor" ? valores.vlMax : undefined}

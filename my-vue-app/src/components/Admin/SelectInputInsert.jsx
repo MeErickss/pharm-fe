@@ -27,7 +27,7 @@ export function SelectInputInsert({ table, onChange, param, value }) {
   useEffect(() => {
     if (table === "grandeza") {
       const sel = options.find(
-        o => o.nome === grandeza || String(o.id) === String(grandeza)
+        o => o.descricao === grandeza || String(o.id) === String(grandeza)
       );
       setUnidadeOptions(sel?.unidades || []);
     }
@@ -47,15 +47,15 @@ export function SelectInputInsert({ table, onChange, param, value }) {
     }
     if (table === "grandeza") {
       return options.map(o => (
-        <option key={o.id} value={o.nome}>
-          {o.nome}
+        <option key={o.id} value={o.descricao}>
+          {o.descricao}
         </option>
       ));
     }
     // genérico
     return options.map((o, i) => (
-      <option key={i} value={o.nome || o.descricao}>
-        {o.nome || o.descricao}
+      <option key={i} value={o.descricao || o.descricao}>
+        {o.descricao || o.descricao}
       </option>
     ));
   };
