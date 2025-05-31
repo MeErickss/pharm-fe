@@ -48,7 +48,7 @@ const handleSubmit = async e => {
     statusenum: valores.status,    
     grandezaDesc: valores.grandeza,
     unidadeDesc:  valores.unidade, 
-    funcao:       "PRODUCAO"   
+    funcao:       valores.funcao  
   };
 
   console.log(body)
@@ -64,6 +64,8 @@ const handleSubmit = async e => {
     if (error.response?.status === 401) navigator("/login");
     console.error("❌ Erro ao inserir registro:", error);
     alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
+  }finally{
+    window.location.reload()
   }
 };
 

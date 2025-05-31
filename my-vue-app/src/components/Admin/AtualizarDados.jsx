@@ -5,19 +5,20 @@ import { SelectInputUpdate } from "./SelectInputUpdate";
 
 // Componente para renderizar o formulário de atualização
 export function AtualizarDados({ dados, closeModal, table, param }) {
-  const [valoresEditados, setValoresEditados] = useState(
+  const [valores, setValores] = useState(
     Object.fromEntries(
       Object.keys(dados[0]).map((key) => [key, dados[0][key] || ""])
     )
   );
+  console.log(valores)
 
-  // Debug: log sempre que valoresEditados mudar
+  // Debug: log sempre que valores mudar
   useEffect(() => {
-    console.log("valoresEditados:", valoresEditados);
-  }, [valoresEditados]);
+    console.log("valores:", valores);
+  }, [valores]);
 
   const handleEdit = (value, key) => {
-    setValoresEditados((prev) => {
+    setValores((prev) => {
       const updated = { ...prev };
 
       if (key === "grandeza" && typeof value === "object") {
@@ -39,24 +40,26 @@ export function AtualizarDados({ dados, closeModal, table, param }) {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
+    console.log(table)
+
+    console.log(valores)
+    console.log("body")
 
     try {
-      // Envia o objeto completo para o backend
-      await api.put(
-        `/parametro/${valoresEditados.id}`,
-        valoresEditados,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
-
-      alert("Parâmetro editado com sucesso!");
+      await api.put(`/${table}`, valores, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      });
+      alert("✅ Registro inserido com sucesso!");
       closeModal();
     } catch (error) {
-      console.error("Erro ao editar parâmetro:", error);
-      alert("Erro ao editar parâmetro. Por favor, tente novamente.");
+      if (error.response?.status === 401) navigator("/login");
+      console.error("❌ Erro ao inserir registro:", error);
+      alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
+    }
+    finally{
+      window.location.reload()
     }
   };
 
@@ -66,7 +69,7 @@ export function AtualizarDados({ dados, closeModal, table, param }) {
         <h2 className="text-lg font-semibold">
           Editar Dado{' '}
           <strong className="border-l-4 pl-1 border-blue-700">
-            {valoresEditados.descricao || valoresEditados.nome || valoresEditados.unidade || valoresEditados.login}
+            {valores.descricao || valores.nome || valores.unidade || valores.login}
           </strong>
         </h2>
         <button type="button" onClick={closeModal}>
@@ -80,21 +83,21 @@ export function AtualizarDados({ dados, closeModal, table, param }) {
         {Object.keys(dados[0]).map((key) =>
           key === "id" ? null : (
             <div key={key}>
-                <div className="px-2 text-black"><strong>{key.toUpperCase()}</strong></div>
+                <div key={key} className="px-2 text-black"><strong>{key.charAt(0).toUpperCase() + key.slice(1)}</strong></div>
                 { ["status", "grandeza", "nivel"].includes(key) ? (
                 <SelectInputUpdate
                   table={key}
-                  value={valoresEditados[key]}
+                  value={valores[key]}
                   onChange={(sel) => handleEdit(sel, key)}
                 />
               ) : (
                 <input
                   type={["valor", "vlMin", "vlMax"].includes(key) ? "number" : "text"}
                   className="w-11/12 border p-1 rounded"
-                  value={valoresEditados[key]}
+                  value={valores[key]}
                   onChange={(e) => handleEdit(e.target.value, key)}
-                  min={key === "valor" ? valoresEditados.vlMin : undefined}
-                  max={key === "valor" ? valoresEditados.vlMax : undefined}
+                  min={key === "valor" ? valores.vlMin : undefined}
+                  max={key === "valor" ? valores.vlMax : undefined}
                   placeholder={`Digite ${key}`}
                 />
               ) }

@@ -3,12 +3,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
 
-export function SelectInputInsert({ table, onChange, param, value }) {
+export function SelectInputInsert({ table, onChange, param, value, isUnidade = false }) {
   const [options, setOptions] = useState([]);
   const [unidadeOptions, setUnidadeOptions] = useState([]);
   const [grandeza, setGrandeza] = useState("");
   const [unidade, setUnidade] = useState("");
   const navigator = useNavigate();
+  
 
   // Busca as opções principais (status, funcao, grandeza, etc)
   useEffect(() => {
@@ -37,7 +38,7 @@ export function SelectInputInsert({ table, onChange, param, value }) {
   const mainValue = value ?? "";
 
   const renderMainOptions = () => {
-    if (table === "status" || table === "funcao") {
+    if (table === "status" || table === "funcao" || table === "nivel") {
       // enum arrays vindos do back
       return options.map((opt, i) => (
         <option key={i} value={opt}>
@@ -81,7 +82,7 @@ export function SelectInputInsert({ table, onChange, param, value }) {
       </select>
 
 
-      {table === "grandeza" && param && unidadeOptions.length > 0 && (
+      {table === "grandeza" && isUnidade && param && unidadeOptions.length > 0 && (
         <select
           className="w-11/12 border p-1 rounded mt-2"
           value={unidade}

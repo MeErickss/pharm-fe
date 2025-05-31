@@ -9,6 +9,7 @@ export function GridAdmin({
   onEdit,
   onDelete,
 }) {
+
   const handleMouseEnter = (type, id) => {
     setTooltipVisible((prev) => ({ ...prev, [type]: id }));
   };
@@ -39,7 +40,7 @@ export function GridAdmin({
 
       {dados.map((row) => (
         <div
-          key={row.ID}
+          key={row.id}
           className="grid text-sm p-3 px-2 border-b"
           style={{
             gridTemplateColumns: `minmax(3rem, auto) minmax(25rem, 1fr) ${Array.from({ length: dadosLen - 1 })

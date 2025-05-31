@@ -41,21 +41,38 @@ export function EditarParametro({ id, dados, closeModal, param }) {
   };
 
   // envia PUT para editar o parâmetro
-  const handleSubmit = async e => {
-    e.preventDefault();
-    try {
-      await api.put(
-        `/parametro/${valoresEditados.id}`,
-        valoresEditados,
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-      );
-      alert("Parâmetro editado com sucesso!");
-      closeModal();
-    } catch (err) {
-      console.error("Erro ao editar parâmetro:", err);
-      alert("Erro ao editar parâmetro!");
-    }
+const handleSubmit = async e => {
+  e.preventDefault();
+
+  const body = {
+    id: id,
+    descricao:  valoresEditados.descricao,
+    vlmin:      Number(valoresEditados.vlMin),
+    vlmax:      Number(valoresEditados.vlMax),
+    valor:      Number(valoresEditados.valor),
+    statusenum: valoresEditados.status,    
+    grandezaDesc: valoresEditados.grandeza,
+    unidadeDesc:  valoresEditados.unidade, 
+    funcao:       valoresEditados.funcao   
   };
+
+  console.log(body)
+  console.log("body")
+
+  try {
+    await api.put("/parametro", body, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    });
+    alert("✅ Registro inserido com sucesso!");
+    closeModal();
+  } catch (error) {
+    if (error.response?.status === 401) navigator("/login");
+    console.error("❌ Erro ao inserir registro:", error);
+    alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
+  }finally{
+    window.location.reload()
+  }
+};
 
   return (
     <div>

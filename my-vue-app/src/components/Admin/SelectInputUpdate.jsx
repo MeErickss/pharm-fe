@@ -12,7 +12,7 @@ export function SelectInputUpdate({ table, onChange, value, param }) {
     api.get(`/${table}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     })
-    .then(res => {setOptions(res.data); console.log(response.data)})
+    .then(res => {setOptions(res.data); console.log(res.data)})
     .catch(err => {
       if (err.response?.status === 401) navigator('/login');
       console.error(`Erro ao buscar opções para ${table}:`, err);
@@ -32,12 +32,14 @@ export function SelectInputUpdate({ table, onChange, value, param }) {
     mainValue = typeof value === 'object' ? (value.grandeza ?? "") : (value ?? "");
   } else if (table === "status") {
     mainValue = typeof value === 'object' ? (value.status ?? "") : (value ?? "");
+  } else if (table === "funcao"){
+    mainValue = typeof value === 'object' ? (value.funcao ?? "") : (value ?? "");
   } else {
-    mainValue = value ?? "";
+    mainValue = value ?? ""
   }
 
   const renderMainOptions = () => {
-    if (table === "status") {
+    if (table === "status" || table === "funcao" || table === "nivel") {
       return options.map((st, i) => <option key={i} value={st}>{st}</option>);
     }
     if (table === "grandeza") {
@@ -60,7 +62,7 @@ export function SelectInputUpdate({ table, onChange, value, param }) {
           console.log('Selecionado em', table, ':', val);
           if (table === "grandeza" && param) {
             onChange({ grandeza: val, unidade: "" });
-          } else if (table === "status") {
+          } else if (table === "status" || table === "funcao" || table === "nivel") {
             onChange(val);
           } else {
             onChange(val);

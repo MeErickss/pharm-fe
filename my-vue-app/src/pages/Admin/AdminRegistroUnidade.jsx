@@ -2,8 +2,8 @@
   import api from "../../api"
   import { Cabecalho } from "../../components/Cabecalho";
   import { GridAdmin } from "../../components/Admin/GridAdmin";
-  import { EditarParametro } from "../../components/Admin/EditarParametro"; // Importando o novo componente
-  import { AdicionarParametro } from "../../components/Admin/AdicionarParametro";
+  import { RegistrarDados } from "../../components/Admin/RegistrarDados"; 
+  import { AtualizarDados } from "../../components/Admin/AtualizarDados"; 
 
 
 
@@ -16,6 +16,7 @@
     const [showModalEdit, setShowModalEdit] = useState(false);
     const [editId, setEditId] = useState(null);
     const [tooltipVisible, setTooltipVisible] = useState({ edit: null, delete: null });
+    const table = "unidade"
 
 
 
@@ -25,7 +26,7 @@
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
   })
-  .then(response => setDados(response.data))
+  .then(response => {setDados(response.data);console.log(response.data)})
   .catch(err => {        if (err.response?.status === 401) {
           navigator('/login'); 
         }
@@ -50,7 +51,7 @@
           if (question==true)
             {
             option="Opção de exclusão selecionada";
-            const response = await api.delete(`/parametro/${dell}`)
+            const response = await api.delete(`/unidade/${dell}`)
       
             if (!response.ok) {
               throw new Error(`Erro na requisição: ${response.statusText}`);
@@ -81,6 +82,8 @@
       setEditId(id);
       setShowModalEdit(true);
       console.log(editId)
+      console.log(editId)
+      console.log(editId)
     };
     
     return (
@@ -91,7 +94,7 @@
         {showModalAdd && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-              <AdicionarParametro dados={dados} param={true} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
+              <RegistrarDados dados={dados} table={table} param={true} isUnidade={true} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
             </div>
           </div>
         )}
@@ -99,7 +102,7 @@
         {showModalEdit && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-              <EditarParametro id={editId} param={true} dados={dados} closeModal={() => setShowModalEdit(false)} />
+              <AtualizarDados id={editId} table={table} param={true} dados={dados} closeModal={() => setShowModalEdit(false)} />
             </div>
           </div>
         )}

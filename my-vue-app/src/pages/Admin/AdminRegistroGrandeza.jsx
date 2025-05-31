@@ -124,7 +124,7 @@ export function AdminRegistroGrandeza() {
     label: (
       <div className="grid grid-cols-5 gap-4 w-full">
         <div>{item.id}</div>
-        <div>{item.nome}</div>
+        <div>{item.descricao}</div>
         <div>{item.status}</div>
         <div>{item.parametros.length} parâmetro(s)</div>
         <div>{item.unidades.length} unidade(s)</div>
@@ -233,7 +233,7 @@ export function AdminRegistroGrandeza() {
       <div className="w-full border border-gray-300 rounded-lg bg-white shadow">
         <div className="grid bg-gray-200 text-base font-semibold text-gray-700 p-3 border-b grid-cols-5">
           <div>ID</div>
-          <div>NOME</div>
+          <div>DESCRICAO</div>
           <div>STATUS</div>
           <div>PARÂMETROS</div>
           <div>UNIDADES</div>

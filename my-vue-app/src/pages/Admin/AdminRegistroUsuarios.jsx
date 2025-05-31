@@ -19,7 +19,7 @@ export function AdminRegistroUsuarios() {
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [editId, setEditId] = useState(null);
   const [tooltipVisible, setTooltipVisible] = useState({ edit: null, delete: null });
-  const tabela = "users"
+  const table = "usuario"
 
   useEffect(() => {
     api.get("/usuario",{token:localStorage.getItem('cookie')})
@@ -77,40 +77,10 @@ export function AdminRegistroUsuarios() {
   const handleDelete = (id) => {
     setDell(id);
   };
-  
-  const handleQuery = (event) => {
-    setQuery(event);
-  
-    const filteredData = dados.filter((item) => {
-      const value = item[filter];
-        return value.toString().toLowerCase().includes(event.toLowerCase());
-    });
-  
-    setDados(filteredData);
-  };
-
-  const handleFilter = (event) => {
-    setFilter(event.target.value);
-  };
 
   const toggleEditar = (id) => {
     setEditId(id);
     setShowModalEdit(true);
-  };
-
-  const handleReset = () => {
-    setQuery("");
-    setFilter("");
-    axios
-      .get(`http://localhost:5000/api/table?table=${tabela}`)
-      .then((response) => {
-        console.log("Dados restaurados:", response.data);
-        setDados(response.data);
-      })
-      .catch((err) => {
-        console.error("Erro ao buscar dados", err);
-        setError("Não foi possível carregar os dados");
-      });
   };
   
   return (
@@ -121,7 +91,7 @@ export function AdminRegistroUsuarios() {
       {showModalAdd && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-            <RegistrarDados dados={dados} param={false} table={"users"} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
+            <RegistrarDados dados={dados} param={false} table={table} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
           </div>
         </div>
       )}
@@ -129,7 +99,7 @@ export function AdminRegistroUsuarios() {
       {showModalEdit && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-            <AtualizarDados id={editId} param={false} table={"users"} dados={dados} closeModal={() => setShowModalEdit(false)} />
+            <AtualizarDados id={editId} param={false} table={table} dados={dados} closeModal={() => setShowModalEdit(false)} />
           </div>
         </div>
       )}

@@ -29,7 +29,12 @@
         funcaoEnum: tabela  
       }
   })
-  .then(response => setDados(response.data))
+  .then(response => {      
+    const dadosComFuncao = response.data.map(item => ({
+        ...item,
+        funcao: tabela
+      }));
+      setDados(dadosComFuncao);})
   .catch(err => {        if (err.response?.status === 401) {
           navigator('/login'); 
         }
@@ -78,6 +83,7 @@
     
     const handleDelete = (id) => {
       setDell(id);
+      window.location.reload()
     };
     
 

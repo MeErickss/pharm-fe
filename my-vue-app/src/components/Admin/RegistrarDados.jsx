@@ -1,68 +1,70 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../api";
 import { SelectInputInsert } from "./SelectInputInsert"
 
 // Componente para renderizar o Select
 export function RegistrarDados({ dados, closeModal, table, param }) {
-  const [valoresEditados, setValoresEditados] = useState(
+  const [valores, setValores] = useState(
     Object.fromEntries(Object.keys(dados[0]).map((key) => [key, dados[0][key] || ""]))
   );
+
+  console.log(valores)
 
 
 
   const handleEdit = (value, key) => {
-    setValoresEditados((prev) => {
-      let updatedValues = { ...prev };
-
+    setValores(prev => {
+      const updated = { ...prev };
       if (key === "grandeza" && typeof value === "object") {
-        updatedValues.grandeza = value.grandeza || "";  // Garante que GRANDEZA não fique undefined
-        updatedValues.unidade = value.unidade || ""; // Garante que UNIDADE seja atribuída corretamente
-      } else if(key === "status"){
-        updatedValues.status = value.grandeza;
-      }else {
-        updatedValues[key] = value;
+        updated.grandeza = value.grandeza;
+        updated.unidade = value.unidade;
+      } else {
+        updated[key] = value;
       }
-
-      if (key === "vlMin" && parseFloat(value) > parseFloat(prev.vlMax)) {
-        updatedValues.vlMax = value;
+      // Ajuste automático de limites
+      if (key === "vlMin" && parseFloat(updated.vlMin) > parseFloat(updated.vlMax)) {
+        updated.vlMax = updated.vlMin;
       }
-
-      if (key === "vlMax" && parseFloat(value) < parseFloat(prev.vlMin)) {
-        updatedValues.vlMin = value;
+      if (key === "vlMax" && parseFloat(updated.vlMax) < parseFloat(updated.vlMin)) {
+        updated.vlMin = updated.vlMax;
       }
-
-      return updatedValues;
+      console.log(updated)
+      return updated;
     });
-    console.log(valoresEditados)
   };
 
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    delete valoresEditados.id
+    console.log(table)
+
+    delete valores.id
+
+    console.log(valores)
+    console.log("body")
 
     try {
-      await axios.post("http://localhost:5000/api/insert", {
-        table, // 🚀 Informar a tabela ao backend
-        ...valoresEditados, // Enviar todos os valores sem precisar especificar cada um manualmente
+      await api.post(`/${table}`, valores, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
-  
       alert("✅ Registro inserido com sucesso!");
       closeModal();
     } catch (error) {
+      if (error.response?.status === 401) navigator("/login");
       console.error("❌ Erro ao inserir registro:", error);
       alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
     }
+    // finally{
+    //   window.location.reload()
+    // }
   };
   
-
-
 
   return (
     <div>
       <div className="flex flex-row justify-between mb-2">
         <h2 className="text-lg font-semibold">
-          Adicionar Parâmetro
+          Adicionar Dado
         </h2>
         <button onClick={closeModal}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="16" className="fill-red-500 hover:fill-red-900">
@@ -76,21 +78,21 @@ export function RegistrarDados({ dados, closeModal, table, param }) {
           {Object.entries(dados[0]).map(([key]) =>
             key !== "id" && (
               <div key={key}>
-                <div className="px-2">{key.toUpperCase()}</div>
-                {["status", "grandeza"].includes(key) ? (
+                <div className="px-2 text-black"><strong>{key.charAt(0).toUpperCase() + key.slice(1)}</strong></div>
+                {["status", "grandeza", "funcao", "nivel"].includes(key) ? (
                   <SelectInputInsert
-                    param={param}
                     table={key}
-                    value={valoresEditados[key]}
-                    onChange={(selected) => handleEdit(selected, key)}
+                    param={param}
+                    value={valores[key]}
+                    onChange={val => handleEdit(val, key)}
                   />
                 ) : (
                   <input
                     type={key === "valor" || key === "vlMin" || key === "vlMax" ? "number" : "text"}
                     className="w-11/12 border p-1 rounded"
                     onChange={(e) => handleEdit(e.target.value, key)} // Corrigido aqui
-                    min={key === "valor" ? valoresEditados.vlMin : ""}
-                    max={key === "valor" ? valoresEditados.vlMax : ""}
+                    min={key === "valor" ? valores.vlMin : ""}
+                    max={key === "valor" ? valores.vlMax : ""}
                     placeholder={`Digite ${key}`}
                   />
 
