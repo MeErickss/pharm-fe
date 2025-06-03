@@ -2,8 +2,8 @@
   import api from "../../api"
   import { Cabecalho } from "../../components/Cabecalho";
   import { GridAdmin } from "../../components/Admin/GridAdmin";
-  import { RegistrarDados } from "../../components/Admin/RegistrarDados"; 
-  import { AtualizarDados } from "../../components/Admin/AtualizarDados"; 
+  import { AdicionarDado } from "../../components/Admin/AdicionarDado"; 
+  import { EditarDado } from "../../components/Admin/EditarDado";
 
 
 
@@ -75,15 +75,13 @@
     
     const handleDelete = (id) => {
       setDell(id);
+      window.location.reload();
     };
     
 
     const toggleEditar = (id) => {
       setEditId(id);
       setShowModalEdit(true);
-      console.log(editId)
-      console.log(editId)
-      console.log(editId)
     };
     
     return (
@@ -94,7 +92,7 @@
         {showModalAdd && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-              <RegistrarDados dados={dados} table={table} param={true} isUnidade={true} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
+              <AdicionarDado dados={dados} table={table} param={true} isUnidade={true} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
             </div>
           </div>
         )}
@@ -102,7 +100,7 @@
         {showModalEdit && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-              <AtualizarDados id={editId} table={table} param={true} dados={dados} closeModal={() => setShowModalEdit(false)} />
+              <EditarDado id={editId} table={table} dados={dados} closeModal={() => setShowModalEdit(false)} />
             </div>
           </div>
         )}

@@ -4,14 +4,12 @@ import { SelectInputInsert } from "./SelectInputInsert";
 import { SelectInputUpdate } from "./SelectInputUpdate";
 
 // Componente para renderizar o formulário de atualização
-export function AtualizarDados({ dados, closeModal, table, param }) {
-  const [valores, setValores] = useState(
-    Object.fromEntries(
-      Object.keys(dados[0]).map((key) => [key, dados[0][key] || ""])
-    )
-  );
-  console.log(valores)
+export function EditarGrandeza({ dados, closeModal, table, id }) {
+  const itemInicial = dados.find(item => item.id === id) || {};
+  const [valores, setValores] = useState({ ...itemInicial });
 
+
+  console.log(valores)
   // Debug: log sempre que valores mudar
   useEffect(() => {
     console.log("valores:", valores);
@@ -42,10 +40,10 @@ export function AtualizarDados({ dados, closeModal, table, param }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    console.log(table)
 
     console.log(valores)
-    console.log("body")
+    console.log("valores enviados")
+    
 
     try {
       await api.put(`/${table}`, valores, {
@@ -81,7 +79,7 @@ export function AtualizarDados({ dados, closeModal, table, param }) {
 
       <div className="grid grid-cols-3 bg-gray-200 font-semibold text-gray-500 p-3 border-b gap-2">
         {Object.keys(dados[0]).map((key) =>
-          key === "id" ? null : (
+          key != "id" && key != "unidade" && key != "unidades" && key != "parametros" &&  (
             <div key={key}>
                 <div key={key} className="px-2 text-black"><strong>{key.charAt(0).toUpperCase() + key.slice(1)}</strong></div>
                 { ["status", "grandeza", "nivel"].includes(key) ? (

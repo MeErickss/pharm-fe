@@ -66,11 +66,11 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
       <select
         className="w-11/12 border p-1 rounded"
         value={mainValue}
+        defaultValue={""}
         onChange={e => {
           const val = e.target.value;
           if (table === "grandeza") {
             setGrandeza(val);
-            setUnidade("");
             onChange({ grandeza: val, unidade: "" });
           } else {
             onChange(val);
@@ -86,6 +86,7 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
         <select
           className="w-11/12 border p-1 rounded mt-2"
           value={unidade}
+          defaultValue={""}
           onChange={e => {
             const u = e.target.value;
             setUnidade(u);

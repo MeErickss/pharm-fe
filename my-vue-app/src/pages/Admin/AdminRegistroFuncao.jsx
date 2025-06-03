@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import api from "../../api"
 import { GridAdmin } from "../../components/Admin/GridAdmin";
-import { RegistrarDados } from "../../components/Admin/RegistrarDados"; // Importando o novo componente
-import { AtualizarDados } from "../../components/Admin/AtualizarDados"; // Importando o novo componente
+import { AdicionarDado } from "../../components/Admin/AdicionarDado"; 
+import { EditarDado } from "../../components/Admin/EditarDado";
 import { Cabecalho } from "../../components/Cabecalho";
 
 
@@ -119,7 +119,7 @@ export function AdminRegistroFuncao() {
       {showModalAdd && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-            <RegistrarDados dados={dados} param={false} table={"funcoes"} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
+            <AdicionarDado dados={dados} param={false} table={"funcoes"} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
           </div>
         </div>
       )}
@@ -127,7 +127,7 @@ export function AdminRegistroFuncao() {
       {showModalEdit && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-            <AtualizarDados id={editId} param={false} table={"funcoes"} dados={dados} closeModal={() => setShowModalEdit(false)} />
+            <EditarDado id={editId} param={false} table={"funcoes"} dados={dados} closeModal={() => setShowModalEdit(false)} />
           </div>
         </div>
       )}

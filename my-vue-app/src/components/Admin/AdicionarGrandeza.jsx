@@ -3,7 +3,7 @@ import api from "../../api";
 import { SelectInputInsert } from "./SelectInputInsert"
 
 // Componente para renderizar o Select
-export function RegistrarDados({ dados, closeModal, table, param }) {
+export function AdicionarGrandeza({ dados, closeModal, table, param }) {
   const [valores, setValores] = useState(
     Object.fromEntries(Object.keys(dados[0]).map((key) => [key, dados[0][key] || ""]))
   );
@@ -17,6 +17,7 @@ export function RegistrarDados({ dados, closeModal, table, param }) {
       const updated = { ...prev };
       if (key === "grandeza" && typeof value === "object") {
         updated.grandeza = value.grandeza;
+      } if(value.unidade) {
         updated.unidade = value.unidade;
       } else {
         updated[key] = value;
@@ -54,9 +55,9 @@ export function RegistrarDados({ dados, closeModal, table, param }) {
       console.error("❌ Erro ao inserir registro:", error);
       alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
     }
-    // finally{
-    //   window.location.reload()
-    // }
+    finally{
+      window.location.reload()
+    }
   };
   
 
@@ -76,13 +77,14 @@ export function RegistrarDados({ dados, closeModal, table, param }) {
       {dados.length > 0 && (
         <div className="grid grid-cols-3 bg-gray-200 font-semibold text-gray-700 p-3 border-b gap-2">
           {Object.entries(dados[0]).map(([key]) =>
-            key !== "id" && (
+            key !== "id" && key !== "unidade" && key !== "unidades" && key !== "parametros" && (
               <div key={key}>
                 <div className="px-2 text-black"><strong>{key.charAt(0).toUpperCase() + key.slice(1)}</strong></div>
                 {["status", "grandeza", "funcao", "nivel"].includes(key) ? (
                   <SelectInputInsert
                     table={key}
                     param={param}
+                    isUnidade={true}
                     value={valores[key]}
                     onChange={val => handleEdit(val, key)}
                   />

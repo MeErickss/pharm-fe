@@ -34,7 +34,7 @@ export function GridAdmin({
               {key[0].toUpperCase() + key.substring(1)}
             </div>
           ))}
-          <div className="px-2">AÇÕES</div>
+          <div className="px-2">Ações</div>
         </div>
       )}
 

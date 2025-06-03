@@ -1,40 +1,40 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import api from "../../api"
-import { Tooltip } from "antd"
-import { RegistrarDados } from "../../components/Admin/RegistrarDados"; // Importando o novo componente
-import { AtualizarDados } from "../../components/Admin/AtualizarDados"; // Importando o novo componente
+import api from "../../api";
+import { EditarGrandeza } from "../../components/Admin/EditarGrandeza";
+import { AdicionarGrandeza } from "../../components/Admin/AdicionarGrandeza";
+import { Tooltip } from "antd";
 import CollapseC from "../../components/Collapse";
-
-
+import { Cabecalho } from "../../components/Cabecalho";
 
 export function AdminRegistroGrandeza() {
   const [error, setError] = useState("");
   const [dados, setDados] = useState([]);
   const [dadosLen, setDadosLen] = useState(0);
-  const [query, setQuery] = useState("")
-  const [filter, setFilter] = useState("");
-  const [dell, setDell] = useState(0);
+  const [dell, setDell] = useState({
+    id:null,
+    tabela:""
+  });
+
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
+
+  // Agora o estado tem deleteParam e deleteUni separados:
+  const [tooltipVisible, setTooltipVisible] = useState({
+    edit: null,
+    deleteParam: null,
+    deleteUni: null,
+    delete:null
+  });
+
   const [editId, setEditId] = useState(null);
-  const [tooltipVisible, setTooltipVisible] = useState({ edit: null, delete: null });
-  const tabela = "grandeza"
-
-  const handleMouseEnter = (type, id) => {
-    setTooltipVisible((prev) => ({ ...prev, [type]: id }));
-  };
-
-  const handleMouseLeave = (type) => {
-    setTooltipVisible((prev) => ({ ...prev, [type]: null }));
-  };
+  const tabela = "grandeza";
 
   useEffect(() => {
-    api.get(`/grandeza`,{token:localStorage.getItem('cookie')})
+    api
+      .get(`/grandeza`, { token: localStorage.getItem("cookie") })
       .then((response) => {
         console.log("Dados recebidos aa:", response.data);
         setDados(response.data);
-        console.log(dados)
       })
       .catch((err) => {
         console.error("Erro ao buscar dados", err);
@@ -49,54 +49,43 @@ export function AdminRegistroGrandeza() {
   }, [dados]);
 
   useEffect(() => {
-    if (!dell) return;
-  
+    if (dell.id == null) return;
+
     const fetchData = async () => {
       try {
-        var option = ""
-        var question=confirm(`Deseja excluir o Registro ${dell}`);
-        if (question==true)
-          {
-          option="Opção de exclusão selecionada";
-          const response = await api.delete(`/grandeza/${dell}`)
-    
+        let question = confirm(`Deseja excluir o Registro ${dell.id}?`);
+        if (question) {
+          const response = await api.delete(`/${dell.tabela}/${dell.id}`);
           if (!response.ok) {
             throw new Error(`Erro na requisição: ${response.statusText}`);
           }
-    
           console.log("Registro deletado com sucesso");
-            setDados((prevDados) => prevDados.filter((item) => item.ID !== dell));
-          }
-        else
-          {
-          option="You pressed Cancel!";
+          setDados((prevDados) =>
+          prevDados.filter((item) => item.id !== dell.id));
+          } else {
+          // Usuário cancelou a exclusão
           }
       } catch (error) {
         console.error("Erro ao deletar dados:", error);
       }
     };
-  
+
     fetchData();
   }, [dell]);
-  
-  
+
   const handleDelete = (id) => {
-    setDell(id);
-  };
-  
-  const handleQuery = (event) => {
-    setQuery(event);
-  
-    const filteredData = dados.filter((item) => {
-      const value = item[filter];
-        return value.toString().toLowerCase().includes(event.toLowerCase());
-    });
-  
-    setDados(filteredData);
+    setDell({id:id, tabela:"grandeza"});
+    window.location.reload();
   };
 
-  const handleFilter = (event) => {
-    setFilter(event.target.value);
+  const handleDeleteParam = (id) => {
+    setDell({id:id, tabela:"parametro"});
+    window.location.reload();
+  };
+
+  const handleDeleteUni = (id) => {
+    setDell({id:id, tabela:"unidade"});
+    window.location.reload();
   };
 
   const toggleEditar = (id) => {
@@ -104,20 +93,35 @@ export function AdminRegistroGrandeza() {
     setShowModalEdit(true);
   };
 
-  const handleReset = () => {
-    setQuery("");
-    setFilter("");
-    axios
-      .get(`http://localhost:5000/api/table?table=${tabela}`)
-      .then((response) => {
-        console.log("Dados restaurados:", response.data);
-        setDados(response.data);
-      })
-      .catch((err) => {
-        console.error("Erro ao buscar dados", err);
-        setError("Não foi possível carregar os dados");
-      });
-  };
+  // ←–––––––––– Handlers separados ––––––––––→
+  function handleMouseEnterParam(id) {
+    setTooltipVisible((prev) => ({ ...prev, deleteParam: id }));
+  }
+  function handleMouseLeaveParam() {
+    setTooltipVisible((prev) => ({ ...prev, deleteParam: null }));
+  }
+
+  function handleMouseEnterUni(id) {
+    setTooltipVisible((prev) => ({ ...prev, deleteUni: id }));
+  }
+  function handleMouseLeaveUni() {
+    setTooltipVisible((prev) => ({ ...prev, deleteUni: null }));
+  }
+  function handleMouseEnterEdit(id) {
+    setTooltipVisible((prev) => ({ ...prev, edit: id }));
+  }
+  function handleMouseLeaveEdit() {
+    setTooltipVisible((prev) => ({ ...prev, edit: null }));
+  }
+
+  function handleMouseEnterDelete(id) {
+    setTooltipVisible((prev) => ({ ...prev, delete: id }));
+  }
+  
+  function handleMouseLeaveDelete() {
+    setTooltipVisible((prev) => ({ ...prev, delete: null }));
+  }
+  // ←––––––––––––––––––––––––––––––––––––––––→
 
   const collapseItems = dados.map((item) => ({
     key: item.id.toString(),
@@ -136,32 +140,95 @@ export function AdminRegistroGrandeza() {
           <h4 className="font-semibold mb-2">Parâmetros:</h4>
           {item.parametros.map((param) => (
             <div key={param.id} className="mb-2 pl-4">
-              {param.descricao}
+              <div className="flex flex-row gap-4">
+                {param.descricao}
+                <Tooltip
+                  title={`Excluir registro: ${param.id}`}
+                  open={tooltipVisible.deleteParam === param.id}
+                >
+                  <button
+                    onMouseEnter={() => handleMouseEnterParam(param.id)}
+                    onMouseLeave={handleMouseLeaveParam}
+                    onClick={() => handleDeleteParam(param.id)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 448 512"
+                      width="16"
+                      className="fill-gray-600 border-2"
+                    >
+                      <path d="M135.2 17.8l9.8 22H312l9.8-22c5.4-12 17.3-17.8 28.2-17.8h32c13.3 0 24 10.7 24 24V56H16V24c0-13.3 10.7-24 24-24h32c10.9 0 22.8 5.8 28.2 17.8zM32 96h384l-20.4 368c-1.5 26.5-24 48-50.5 48H102.9c-26.5 0-49-21.5-50.5-48L32 96zm80 48v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16zm96 0v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16zm96 0v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16z" />
+                    </svg>
+                  </button>
+                </Tooltip>
+              </div>
             </div>
           ))}
         </div>
-        
+
         <div>
           <h4 className="font-semibold mb-2">Unidades:</h4>
           {item.unidades.map((unidade) => (
             <div key={unidade.id} className="mb-2 pl-4">
-              {unidade.abreviacao} - {unidade.unidade}
+              <div className="flex items-center gap-2">
+                {unidade.abreviacao} - {unidade.unidade}
+                <Tooltip
+                  title={`Excluir registro: ${unidade.id}`}
+                  open={tooltipVisible.deleteUni === unidade.id}
+                >
+                  <button
+                    onMouseEnter={() => handleMouseEnterUni(unidade.id)}
+                    onMouseLeave={handleMouseLeaveUni}
+                    onClick={() => handleDeleteUni(unidade.id)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 448 512"
+                      width="16"
+                      className="fill-gray-600 border-2"
+                    >
+                      <path d="M135.2 17.8l9.8 22H312l9.8-22c5.4-12 17.3-17.8 28.2-17.8h32c13.3 0 24 10.7 24 24V56H16V24c0-13.3 10.7-24 24-24h32c10.9 0 22.8 5.8 28.2 17.8zM32 96h384l-20.4 368c-1.5 26.5-24 48-50.5 48H102.9c-26.5 0-49-21.5-50.5-48L32 96zm80 48v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16zm96 0v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16zm96 0v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16z" />
+                    </svg>
+                  </button>
+                </Tooltip>
+              </div>
             </div>
           ))}
         </div>
-        
+
         <div className="flex gap-4 mt-4">
-          <Tooltip title={`Editar registro: ${item.id}`}>
-            <button onClick={() => toggleEditar(item.id)}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" className="fill-blue-600 hover:fill-orange-500">
+          <Tooltip
+            title={`Editar registro: ${item.id}`}
+            open={tooltipVisible.edit === item.id}
+          >
+            <button
+              onMouseEnter={() => handleMouseEnterEdit(item.id)}
+              onMouseLeave={handleMouseLeaveEdit}
+              onClick={() => toggleEditar(item.id)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+                width="16"
+                className="fill-blue-600 hover:fill-orange-500"
+              >
                 <path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z" />
               </svg>
             </button>
           </Tooltip>
-          
-          <Tooltip title={`Excluir registro: ${item.id}`}>
-            <button onClick={() => handleDelete(item.id)}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="16" className="fill-red-500">
+
+          <Tooltip
+            title={`Excluir registro: ${item.id}`}
+            open={tooltipVisible.delete === item.id} 
+            // Se quiser tooltip principal de “excluir grandeza”, crie também campo deletePrincipal no estado
+          >
+            <button onClick={() => handleDelete(item.id)} onMouseEnter={() => handleMouseEnterDelete(item.id)} onMouseLeave={handleMouseLeaveDelete}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 448 512"
+                width="16"
+                className="fill-red-500"
+              >
                 <path d="M135.2 17.8l9.8 22H312l9.8-22c5.4-12 17.3-17.8 28.2-17.8h32c13.3 0 24 10.7 24 24V56H16V24c0-13.3 10.7-24 24-24h32c10.9 0 22.8 5.8 28.2 17.8zM32 96h384l-20.4 368c-1.5 26.5-24 48-50.5 48H102.9c-26.5 0-49-21.5-50.5-48L32 96zm80 48v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16zm96 0v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16zm96 0v288c0 8.8 7.2 16 16 16s16-7.2 16-16V144c0-8.8-7.2-16-16-16s-16 7.2-16 16z" />
               </svg>
             </button>
@@ -170,75 +237,53 @@ export function AdminRegistroGrandeza() {
       </div>
     ),
   }));
-  
+
   return (
     <div className="w-full h-full bg-gray-100 p-4">
-      <article className="flex flex-row justify-between pr-4">
-        <h2 className="text-lg"><strong>Registro de Grandezas</strong></h2>
-        <button onClick={()=>setShowModalAdd(true)} className="flex flex-row bg-blue-600 hover:brightness-125 text-white px-4 py-2 gap-2 rounded">
-        Adicionar
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="16" className="fill-white">
-            <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/>
-          </svg>
-        </button>
-      </article>
-
-      <div className="my-4 flex">
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => filter == "" ?alert("Defina um Filtro"):handleQuery(e.target.value, filter)} // Pegando o valor do input e passando a key
-        className="p-2 rounded-r-sm outline-none"
-        placeholder="Digite o valor"
+      <Cabecalho
+        dados={dados}
+        nivel={1}
+        setshowModalAdd={setShowModalAdd}
+        setDados={setDados}
+        tabela={tabela}
       />
 
-        {dados.length > 0 && (
-          <select name="filter" id="filter" value={filter} onChange={handleFilter} className="p-2 mr-1 rounded-l-sm outline-none">
-            <option value="">Selecione um filtro</option>
-            {Object.keys(dados[0]).map((key) => (
-            <option
-              key={key}
-              value={key}>{key}
-            </option>
-          ))}
-          </select>
-        )}
-        <button
-          onClick={handleReset}
-          className="bg-red-500 hover:brightness-125 text-white mx-4 px-4 py-2 rounded"
-        >
-          Limpar Filtro
-        </button>
-      </div>
-
       {showModalAdd && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-            <RegistrarDados dados={dados} param={false} table={"grandeza"} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
+            <AdicionarGrandeza
+              dados={dados}
+              param={false}
+              table={"grandeza"}
+              closeModal={() => setShowModalAdd(false)}
+            />
           </div>
         </div>
       )}
 
       {showModalEdit && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-            <AtualizarDados id={editId} param={false} table={"grandeza"} dados={dados} closeModal={() => setShowModalEdit(false)} />
+            <EditarGrandeza
+              id={editId}
+              param={false}
+              table={"grandeza"}
+              dados={dados}
+              closeModal={() => setShowModalEdit(false)}
+            />
           </div>
         </div>
       )}
-    <div className="w-full h-full bg-gray-100 p-4">
-      {/* Mantenha o cabeçalho e filtros existentes */}
-      
-      {/* Substitua a tabela pelo Collapse */}
+
       <div className="w-full border border-gray-300 rounded-lg bg-white shadow">
         <div className="grid bg-gray-200 text-base font-semibold text-gray-700 p-3 border-b grid-cols-5">
-          <div>ID</div>
-          <div>DESCRICAO</div>
-          <div>STATUS</div>
-          <div>PARÂMETROS</div>
-          <div>UNIDADES</div>
+          <div>Id</div>
+          <div>Descrição</div>
+          <div>Status</div>
+          <div>Parmâmetros</div>
+          <div>Unidades</div>
         </div>
-        
+
         <CollapseC
           items={collapseItems}
           bordered={false}
@@ -246,9 +291,6 @@ export function AdminRegistroGrandeza() {
           expandIconPosition="end"
         />
       </div>
-
-      {/* Mantenha os modais existentes */}
-    </div>
     </div>
   );
 }
