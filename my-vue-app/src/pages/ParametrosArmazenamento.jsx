@@ -24,8 +24,13 @@
         funcaoEnum: tabela  
       }
   })
-  .then(response => setDados(response.data))
-  .catch(err => {        if (err.response?.status === 401) {
+  .then(response => {      
+    const dadosComFuncao = response.data.map(item => ({
+        ...item,
+        funcao: tabela
+      }));
+      setDados(dadosComFuncao);})
+      .catch(err => {        if (err.response?.status === 401) {
           navigator('/login'); 
         }
         console.error("Erro ao buscar dados", err);
@@ -86,6 +91,7 @@
           dadosLen={dadosLen}
           tooltipVisible={tooltipVisible}
           setTooltipVisible={setTooltipVisible}
+          setDados={setDados}
         />
       </div>
     );

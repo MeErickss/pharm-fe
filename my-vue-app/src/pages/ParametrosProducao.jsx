@@ -12,6 +12,7 @@
     const [dell, setDell] = useState(0);
     const [tooltipVisible, setTooltipVisible] = useState({ edit: null, delete: null });
     const tabela = "PRODUCAO"
+    const body = {}
 
 
 
@@ -24,8 +25,13 @@
         funcaoEnum: tabela  
       }
   })
-  .then(response => setDados(response.data))
-  .catch(err => {        if (err.response?.status === 401) {
+  .then(response => {      
+    const dadosComFuncao = response.data.map(item => ({
+        ...item,
+        funcao: tabela
+      }));
+      setDados(dadosComFuncao);})
+    .catch(err => {        if (err.response?.status === 401) {
           navigator('/login'); 
         }
         console.error("Erro ao buscar dados", err);
@@ -37,7 +43,7 @@
       if (dados.length > 0) {
         setDadosLen(Object.keys(dados[0]).length);
       }
-    }, [dados]);
+    }, [dados, body]);
 
     useEffect(() => {
       if (!dell) return;
@@ -86,6 +92,7 @@
           dadosLen={dadosLen}
           tooltipVisible={tooltipVisible}
           setTooltipVisible={setTooltipVisible}
+          body={body}
         />
       </div>
     );

@@ -1,13 +1,12 @@
-import { Tooltip } from "antd";
+import { CheckOutlined } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
+import api from "../api";
 
 export function Grid({
   dados,
   dadosLen,
-  tooltipVisible,
-  setTooltipVisible,
-  onEdit,
-  onDelete,
+  setDados,
+  body
 }) {
   // Em vez de um único `valor`, vamos criar um objeto cujo chave será row.id
   const [valores, setValores] = useState({});
@@ -23,23 +22,52 @@ export function Grid({
     setValores(init);
   }, [dados]);
 
-  const handleMouseEnter = (type, id) => {
-    setTooltipVisible((prev) => ({ ...prev, [type]: id }));
-  };
-
-  const handleMouseLeave = (type) => {
-    setTooltipVisible((prev) => ({ ...prev, [type]: null }));
-  };
-
-  // Ao alterar o input de uma linha, atualizamos apenas aquela chave em `valores`
-  const handleChangeValor = (rowId, novoValor) => {
+  const handleChangeValor = async (rowId, novoValor) => {
     setValores(prev => ({
       ...prev,
       [rowId]: novoValor
     }));
   };
 
+  const handleSubmit = async (rowId) => {
+
+    body = {
+      id:dados[rowId].id,
+      descricao:dados[rowId].descricao,
+      vlmin:Number(dados[rowId].vlMin),
+      vlmax:Number(dados[rowId].vlMax),
+      valor:Number(dados[rowId].valor),
+      statusenum:dados[rowId].status,
+      grandezaDesc:dados[rowId].grandeza,
+      unidadeDesc:dados[rowId].unidade,
+      funcao: dados[rowId].funcao
+    }
+
+    console.log(body)
+    
+    try {
+      await api.put("/parametro", body, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      });
+      alert("✅ Registro inserido com sucesso!")
+          setDados(prevDados =>
+          prevDados.map(item =>
+            item.id === rowId
+              ? { ...item, valor: Number(valores[rowId]) } // atualiza só o campo modificado
+              : item
+          ))
+    } catch (error) {
+      if (error.response?.status === 401) navigator("/login");
+      console.error("❌ Erro ao inserir registro:", error);
+      alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
+    }
+  //   finally{
+  //     window.location.reload()
+  // }
+  };
+
   return (
+    <div>
     <div className="w-full border border-gray-300 rounded-lg bg-white shadow">
       {dados.length > 0 && (
         <div
@@ -48,8 +76,8 @@ export function Grid({
             gridTemplateColumns: `
               minmax(3rem, auto)
               minmax(24.5rem, 1fr)
-              ${Array.from({ length: dadosLen - 2 })
-                .map(() => 'minmax(4rem, 1fr)')
+              ${Array.from({ length: dadosLen - 1 })
+                .map(() => 'minmax(2rem, 1fr)')
                 .join(' ')}`
           }}
         >
@@ -69,7 +97,7 @@ export function Grid({
             gridTemplateColumns: `
               minmax(3rem, auto)
               minmax(25rem, 1fr)
-              ${Array.from({ length: dadosLen - 2 })
+              ${Array.from({ length: dadosLen - 1 })
                 .map(() => 'minmax(4rem, 1fr)')
                 .join(' ')}`
           }}
@@ -80,18 +108,26 @@ export function Grid({
                 {value}
               </div>
             ) : (
+              <>
               <input
                 type="number"
-                key={idx}
+                key={row}
                 className="px-2 outline-none border-b-2 border-orange-400"
-                // Use o estado específico para esta linha
+                min={row.vlMin}
+                max={row.vlMax}
                 value={valores[row.id] ?? ""}
                 onChange={(e) => handleChangeValor(row.id, e.target.value)}
               />
+                <button onClick={()=>handleSubmit(row.id)} className="flex flex-row w-[6rem] p-2 bg-blue-600 hover:brightness-125 text-white gap-2 rounded">
+                  Confirmar
+                  <CheckOutlined />
+                </button>
+              </>
             )
           )}
         </div>
       ))}
+    </div>
     </div>
   );
 }
