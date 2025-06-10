@@ -1,7 +1,7 @@
 // src/LoginPage.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api';           // instância axios comCredentials
+import api from '../api';          
 import logo from './images/logo.svg';
 
 export function PaginaLogin() {
