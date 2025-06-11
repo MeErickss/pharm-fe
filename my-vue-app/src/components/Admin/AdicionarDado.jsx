@@ -54,9 +54,9 @@ export function AdicionarDado({ dados, closeModal, table, param }) {
       console.error("❌ Erro ao inserir registro:", error);
       alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
     }
-    // finally{
-    //   window.location.reload()
-    // }
+    finally{
+      window.location.reload()
+    }
   };
   
 

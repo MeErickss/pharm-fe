@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { LogAlarme } from "../components/Admin/LogAlarme.jsx";
+import { LogAlarme } from "../components/LogAlarme.jsx";
 import { LogProducao } from "../components/LogProducao.jsx";
 import imagem from "./images/p.png";
 import api from "../api.js";
@@ -18,7 +18,7 @@ export function Producao() {
   const [totalPagesAlarme, setTotalPagesAlarme] = useState(0);
   const [showModalEmergencia, setShowModalEmergencia] = useState(false)
 
-  const [size] = useState(6); // tamanho da página
+  const [size] = useState(5); // tamanho da página
 
   // ----- Fetch para Log de Produção -----
   const fetchLogProducao = (pageToLoad = 0) => {

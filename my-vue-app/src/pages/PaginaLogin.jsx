@@ -64,6 +64,8 @@ export function PaginaLogin() {
             required
           />
 
+          <div className='w-full text-end my-2'><button className='text-sm text-blue-500 border-b-2 border-blue-600'>Esqueceu a senha?</button></div>
+
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
           <div className="text-center mt-6">

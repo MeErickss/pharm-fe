@@ -73,6 +73,8 @@ export function AdicionarParametro({ dados, closeModal, param }) {
       if (error.response?.status === 401) navigator("/login");
       console.error("❌ Erro ao inserir registro:", error);
       alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
+    } finally{
+      window.location.reload()
     }
   };
   

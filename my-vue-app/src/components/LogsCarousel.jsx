@@ -2,7 +2,7 @@ import React from 'react';
 import { Carousel } from 'antd';
 import { LogProducao } from '../components/LogProducao';
 import { LogArmazenamento } from '../components/LogArmazenamento';
-import { LogAlarme } from '../components/Admin/LogAlarme';
+import { LogAlarme } from '../components/LogAlarme';
 import './carousel-overrides.css';
 
 export function LogsCarousel({

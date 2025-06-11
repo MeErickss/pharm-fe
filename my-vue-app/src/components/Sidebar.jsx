@@ -1,6 +1,7 @@
 // src/Sidebar.jsx
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { SafetyOutlined } from "@ant-design/icons"; 
 import ArrowUpFromBracket from "./pharmProduction/images/ArrowUpFromBracket.svg";
 import CaretDown from "./pharmProduction/images/CaretDown.svg";
 import CaretUp from "./pharmProduction/images/CaretUp.svg";
@@ -45,8 +46,11 @@ export function Sidebar() {
         <div className="grid grid-rows-[auto_1fr_auto] h-screen bg-slate-100 text-sm w-52">
             {/* Topo - Logo e usuário */}
             <div className="flex flex-col py-6 items-center">
-                <img width={200} src={logo} alt="logo" />
-                <span className="font-bold text-base">{login}</span>
+                <img className="p-2" width={200} src={logo} alt="logo" />
+                <div className="flex gap-2 border-b-2 border-violet-800">
+                    <span className="font-bold text-base">{login}</span>
+                    <SafetyOutlined />
+                </div>
             </div>
 
             {/* Meio - Botões de navegação */}

@@ -97,7 +97,7 @@ export function LogAlarme({
               id="filter"
               value={filter}
               onChange={handleFilterChange}
-              className="w-4 h-10 bg-neutral-100 rounded outline-none absolute ml-auto"
+              className={filter == "dataHora" ? "hidden" :"w-4 h-10 bg-neutral-100 rounded-l-sm outline-none absolute ml-[12rem]"}
             >
               <option value=""></option>
               {dadosAlarme.length > 0 &&

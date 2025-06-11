@@ -47,6 +47,7 @@ export function LogProducao({
   };
 
   const handleQueryChange = (e) => {
+    console.log(e.target.value)
     setQuery(e.target.value);
   };
 
@@ -171,7 +172,7 @@ export function LogProducao({
         {(filteredDados || []).map((item, index) => (
           <div
             key={index}
-            className="grid cursor-pointer grid-cols-2 grid-rows-2 w-[47rem] h-[3.5rem] bg-gray-200 my-1 p-2 rounded"
+            className="grid cursor-pointer grid-cols-2 grid-rows-2 w-11/12 bg-gray-200 my-1 p-2 rounded"
             onClick={() => setModalParametro({ bool: true, item })}
           >
             <p className="text-sm font-medium">{item.descricao}</p>
@@ -208,7 +209,7 @@ export function LogProducao({
               id="filter"
               value={filter}
               onChange={handleFilterChange}
-              className="w-4 h-10 bg-neutral-100 rounded-l-sm outline-none absolute ml-[12rem]"
+              className={filter == "dataHora" ? "hidden" :"w-4 h-10 bg-neutral-100 rounded-l-sm outline-none absolute ml-[12rem]"}
             >
               <option value="">Selecione um filtro</option>
               {dadosProd.length > 0 &&

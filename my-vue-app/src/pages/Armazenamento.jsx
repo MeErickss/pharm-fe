@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { LogAlarme } from "../components/Admin/LogAlarme.jsx";
+import { LogAlarme } from "../components/LogAlarme.jsx";
 import imagem from "./images/a.png";
 import api from "../api.js";
 import { LogArmazenamento } from "../components/LogArmazenamento.jsx";
@@ -16,7 +16,7 @@ export function Armazenamento() {
   const [totalPagesProd, setTotalPagesProd] = useState(0);
   const [totalPagesAlarme, setTotalPagesAlarme] = useState(0);
 
-  const [size] = useState(6); // tamanho da página
+  const [size] = useState(5); // tamanho da página
 
   // ----- Fetch para Log de Produção -----
   const fetchLogProducao = (pageToLoad = 0) => {

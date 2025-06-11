@@ -208,7 +208,7 @@ export function LogArmazenamento({
               id="filter"
               value={filter}
               onChange={handleFilterChange}
-              className="w-4 h-10 bg-neutral-100 rounded-l-sm outline-none absolute ml-[12rem]"
+              className={filter == "dataHora" ? "hidden" :"w-4 h-10 bg-neutral-100 rounded-l-sm outline-none absolute ml-[12rem]"}
             >
               <option value="">Selecione um filtro</option>
               {dadosArmazenamento.length > 0 &&
