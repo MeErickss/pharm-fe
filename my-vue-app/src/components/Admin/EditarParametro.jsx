@@ -60,17 +60,20 @@ const handleSubmit = async e => {
   console.log("body")
 
   try {
-    await api.put("/parametro", body, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-    });
+    await api.put("/parametro", body,         {
+          params: {
+            userLogin: localStorage.getItem("login")
+          },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        });
     alert("✅ Registro inserido com sucesso!");
     closeModal();
   } catch (error) {
     if (error.response?.status === 401) navigator("/login");
     console.error("❌ Erro ao inserir registro:", error);
     alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
-  } finally{
-      window.location.reload()
   }
 };
 

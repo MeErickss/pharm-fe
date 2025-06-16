@@ -8,27 +8,26 @@ export function AdicionarDado({ dados, closeModal, table, param }) {
     Object.fromEntries(Object.keys(dados[0]).map((key) => [key, dados[0][key] || ""]))
   );
 
-  console.log(valores)
-
 
 
   const handleEdit = (value, key) => {
     setValores(prev => {
       const updated = { ...prev };
       if (key === "grandeza" && typeof value === "object") {
-        updated.grandeza = value.grandeza;
-        updated.unidade = value.unidade;
+        const { grandeza: novaGrandeza, unidade: novaUnidade } = value;
+        updated.grandeza = novaGrandeza;
+     if (novaUnidade) {
+       updated.unidade = novaUnidade;
+     }
       } else {
         updated[key] = value;
       }
-      // Ajuste automático de limites
       if (key === "vlMin" && parseFloat(updated.vlMin) > parseFloat(updated.vlMax)) {
         updated.vlMax = updated.vlMin;
       }
       if (key === "vlMax" && parseFloat(updated.vlMax) < parseFloat(updated.vlMin)) {
         updated.vlMin = updated.vlMax;
       }
-      console.log(updated)
       return updated;
     });
   };

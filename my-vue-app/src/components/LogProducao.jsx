@@ -12,6 +12,8 @@ export function LogProducao({
   const [filteredDados, setFilteredDados] = useState(dadosProd);
   const [modalParametro, setModalParametro] = useState({ bool: false, item: "" });
 
+  console.log(dadosProd)
+
   useEffect(() => {
     setFilteredDados(dadosProd);
   }, [dadosProd]);
@@ -56,6 +58,7 @@ export function LogProducao({
       {modalParametro.bool && (() => {
         const itemWrapper = modalParametro.item;
         const parametro = itemWrapper.parametro;
+        const parametroAnterior = itemWrapper.parametroAnterior;
         // quando faltar parametro, mostramos fallback
         if (!parametro) {
           return (
@@ -102,14 +105,14 @@ export function LogProducao({
                 className="absolute top-2 right-2 p-1"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="16" className="fill-red-500 hover:fill-red-900">
-                  <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
+                  <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
                 </svg>
               </button>
 
               <div className="grid grid-cols-2 grid-rows-1">
                 <h1 className="flex flex-col border-r-2 border-gray-200 justify-center items-center text-black font-bold text-center p-6">
                   {itemWrapper.descricao}
-                  <span className="w-1/3 border-b-2 border-blue-400 ml-2">
+                  <span className="w-full border-b-2 border-blue-400 ml-2">
                     Parâmetro: {parametro.descricao}
                   </span>
                 </h1>
@@ -163,6 +166,48 @@ export function LogProducao({
                   );
                 })}
               </div>
+
+              {/* Se existir parametroAnterior, renderiza outra grid */}
+              
+              {parametroAnterior && (
+                <>
+                <span className="p-4 font-bold text-black">Parametro Anterior a Alterações: </span>
+                  <div
+                    className="grid bg-gray-200 text-base font-semibold text-gray-700 p-3 border-b"
+                    style={{
+                      gridTemplateColumns: `minmax(10rem, auto) ${Array.from({ length: dadosLen - 1 })
+                        .map(() => "minmax(4rem, 1fr)")
+                        .join(" ")}`,
+                    }}
+                  >
+                    {fields.map((key) => (
+                      <div key={key} className="px-2">
+                        {key === "vlMin" ? "ANTIGO MÍNIMO" : key === "vlMax" ? "ANTIGO MÁXIMO" : key.toUpperCase()}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div
+                    className="grid text-sm p-3 px-2 border-b"
+                    style={{
+                      gridTemplateColumns: `minmax(10rem, auto) ${Array.from({ length: dadosLen - 1 })
+                        .map(() => "minmax(4rem, 1fr)")
+                        .join(" ")}`,
+                    }}
+                  >
+                    {fields.map((key, idx) => {
+                      let value = parametroAnterior[key];
+                      if (key === "grandeza") value = parametroAnterior.grandeza?.descricao;
+                      if (key === "unidade") value = parametroAnterior.unidade?.abreviacao;
+                      return (
+                        <div key={idx} className="px-2">
+                          {value ?? "—"}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         );

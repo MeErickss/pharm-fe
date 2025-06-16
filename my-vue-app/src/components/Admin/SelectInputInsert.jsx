@@ -17,7 +17,10 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
       .get(`/${table}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
-      .then(res => setOptions(res.data))
+      .then(res => {
+        setOptions(res.data)
+        console.log(res.data)
+      })
       .catch(err => {
         if (err.response?.status === 401) navigator("/login");
         console.error(`Erro ao buscar opções para ${table}:`, err);
@@ -65,7 +68,6 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
     <div>
       <select
         className="w-11/12 border p-1 rounded"
-        value={mainValue}
         defaultValue={""}
         onChange={e => {
           const val = e.target.value;
@@ -77,7 +79,7 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
           }
         }}
       >
-        <option value="">Selecione</option>
+        <option value="" defaultValue="">Selecione</option>
         {renderMainOptions()}
       </select>
 
@@ -86,7 +88,7 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
         <select
           className="w-11/12 border p-1 rounded mt-2"
           value={unidade}
-          defaultValue={""}
+          defaultValue=""
           onChange={e => {
             const u = e.target.value;
             setUnidade(u);
