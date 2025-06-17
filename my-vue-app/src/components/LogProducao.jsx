@@ -158,7 +158,7 @@ export function LogProducao({
                 {fields.map((key, idx) => {
                   let value = parametro[key];
                   if (key === "grandeza") value = parametro.grandeza?.descricao;
-                  if (key === "unidade") value = parametro.unidade?.abreviacao;
+                  if (key === "unidade") value = parametro.unidade?.unidade;
                   return (
                     <div key={idx} className="px-2">
                       {value ?? "—"}
@@ -170,8 +170,8 @@ export function LogProducao({
               {/* Se existir parametroAnterior, renderiza outra grid */}
               
               {parametroAnterior && (
-                <>
-                <span className="p-4 font-bold text-black">Parametro Anterior a Alterações: </span>
+                <div className="w-full h-full">
+                <div className="text-center"><span className="text-center p-4 font-bold text-black">Parametro Anterior a Alterações: </span></div>
                   <div
                     className="grid bg-gray-200 text-base font-semibold text-gray-700 p-3 border-b"
                     style={{
@@ -196,9 +196,10 @@ export function LogProducao({
                     }}
                   >
                     {fields.map((key, idx) => {
-                      let value = parametroAnterior[key];
-                      if (key === "grandeza") value = parametroAnterior.grandeza?.descricao;
-                      if (key === "unidade") value = parametroAnterior.unidade?.abreviacao;
+                      let value = parametroAnterior[key.toLowerCase()];
+                      console.log(key)
+                      if (key === "grandeza") {value = parametroAnterior.grandezaDesc; console.log(key);console.log("a")}
+                      if (key === "unidade") value = parametroAnterior.unidadeDesc;
                       return (
                         <div key={idx} className="px-2">
                           {value ?? "—"}
@@ -206,7 +207,7 @@ export function LogProducao({
                       );
                     })}
                   </div>
-                </>
+                </div>
               )}
             </div>
           </div>

@@ -84,6 +84,7 @@
         <Grid
           dados={dados}
           dadosLen={dadosLen}
+          funcao={"ARMAZENAMENTO"}
           tooltipVisible={tooltipVisible}
           setTooltipVisible={setTooltipVisible}
         />

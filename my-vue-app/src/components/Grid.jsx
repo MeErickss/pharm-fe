@@ -44,9 +44,14 @@ export function Grid({
     console.log("Enviando body:", body);
 
     try {
-      await api.put("/parametro", body, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+    await api.put("/parametro", body,         {
+          params: {
+            userLogin: localStorage.getItem("login")
+          },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        });
       alert("✅ Registro atualizado com sucesso!");
       // closeModal(); // se tiver modal, chame aqui
     } catch (error) {
