@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { LogAlarme } from "../components/LogAlarme.jsx";
 import { LogProducao } from "../components/LogProducao.jsx";
-import imagem from "./images/p.png";
+import { Farmacia } from "./images/Farmacia.jsx";
 import api from "../api.js";
 import { ModalEmergencia } from "../components/ModalEmergencia.jsx";
 
@@ -80,7 +80,7 @@ export function Producao() {
   return (
     <main className="grid grid-cols-4 grid-rows-4 gap-4 w-full h-full bg-gray-100">
       <div className="flex flex-col justify-between items-center col-span-2 row-span-3 p-4 bg-white shadow-md rounded-2xl">
-        <img width={1000} src={imagem} alt="Produção" />
+        <Farmacia/>
       </div>
 
       {/* Log de Produção */}

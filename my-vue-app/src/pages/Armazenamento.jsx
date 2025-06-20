@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { LogAlarme } from "../components/LogAlarme.jsx";
-import imagem from "./images/a.png";
 import api from "../api.js";
 import { LogArmazenamento } from "../components/LogArmazenamento.jsx";
+import { Distribuicao } from "./images/distribuicao.jsx";
 
 export function Armazenamento() {
   const [error, setError] = useState("");
@@ -78,7 +78,7 @@ export function Armazenamento() {
   return (
     <main className="grid grid-cols-4 grid-rows-4 gap-4 w-full h-full bg-gray-100">
       <div className="flex flex-col justify-between items-center col-span-2 row-span-3 p-4 bg-white shadow-md rounded-2xl">
-        <img width={1000} src={imagem} alt="Produção" />
+        <Distribuicao/>
       </div>
 
       {/* Log de Produção */}
