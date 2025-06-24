@@ -11,9 +11,6 @@ export function LogArmazenamento({
   const [query, setQuery] = useState("");
   const [filteredDados, setFilteredDados] = useState(dadosArmazenamento);
   const [modalParametro, setModalParametro] = useState({ bool: false, item: "" });
-  console.log("dadosArmazenamento")
-  console.log(dadosArmazenamento)
-  console.log("dadosArmazenamento")
 
   useEffect(() => {
     setFilteredDados(dadosArmazenamento);
@@ -22,6 +19,9 @@ export function LogArmazenamento({
   useEffect(() => {
     if (filter === "" || query === "") {
       setFilteredDados(dadosArmazenamento);
+      console.log("filteredDados")
+      console.log(filteredDados)
+      console.log("filteredDados")
       return;
     }
 
@@ -119,7 +119,7 @@ export function LogArmazenamento({
                     Parâmetro: {parametro.descricao}
                   </span>
                 </h1>
-                  <h1 className="text-xs font-semibold text-black">Data: {itemWrapper.dataHora}</h1>
+                  <h1 className="text-xs font-semibold text-black">Data: {itemWrapper.datahora}</h1>
                   <h1 className="text-xs font-semibold text-black">Status: {itemWrapper.status}</h1>
                   {localStorage.getItem('nivel') === "ADMIN" ? (
                     <NavLink to="/usuarios" className="hover:cursor-pointer border-b-2 border-green-400 text-xs font-semibold text-black">
@@ -225,7 +225,7 @@ export function LogArmazenamento({
             onClick={() => setModalParametro({ bool: true, item })}
           >
             <p className="text-sm font-medium">{item.descricao}</p>
-            <p className="text-xs text-gray-600">{item.dataHora}</p>
+            <p className="text-xs text-gray-600">{item.datahora}</p>
             <p className="text-xs text-gray-800">Status: {item.status}</p>
             <p className="text-xs text-gray-800">Usuário: {item.user.login}</p>
           </div>

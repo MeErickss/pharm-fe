@@ -194,8 +194,18 @@ export function Sidebar() {
                                 className={({ isActive }) => 
                                     `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
                                 } 
+                                to="/teste"
+                            >
+                                <img width={10} src={AdminProduction}/> Teste
+                            </NavLink>
+
+                            <NavLink 
+                                className={({ isActive }) => 
+                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
+                                } 
                                 to="/usuarios"
                             >
+                                
                                 <img width={10} src={AdminUsers}/> Cadastro Usuários
                             </NavLink>
                         </div>

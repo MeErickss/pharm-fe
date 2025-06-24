@@ -37,11 +37,11 @@ export function Cabecalho({ dados, nivel, setshowModalAdd, setDados, tabela }) {
               type="text"
               value={query}
               onChange={(e) => filter == "" ?alert("Defina um Filtro"):handleQuery(e.target.value, filter)} // Pegando o valor do input e passando a key
-              className="p-2 rounded-r-sm outline-none"
+              className="p-2 rounded-l-lg outline-none"
               placeholder="Digite o valor"
             />
               {dados.length > 0 && (
-                <select name="filter" id="filter" value={filter} onChange={handleFilter} className="p-2 mr-1 rounded-l-sm outline-none">
+                <select name="filter" id="filter" value={filter} onChange={handleFilter} className="p-2 mr-1 rounded-r-lg outline-none">
                   <option value="">Selecione um filtro</option>
                   {Object.keys(dados[0]).map((key) => (
                   <option

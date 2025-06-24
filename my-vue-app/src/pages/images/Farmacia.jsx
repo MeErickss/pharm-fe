@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../../api";
 import farmaciaImg from "./Tudo/farmacia.png";
 import valvula1Img from "./Tudo/valvula1.png";
 import valvula2Img from "./Tudo/valvula2.png";
@@ -11,8 +13,7 @@ import barra2Img from "./Tudo/barra2.png";
 const ORIGINAL_WIDTH = 591;
 const ORIGINAL_HEIGHT = 435;
 
-// 1) Removi completamente qualquer linha de `typeof` ou `as const`
-// 2) Ciclo de status
+// Ciclo de status local
 const STATUSES = [
   "desligado",
   "ativo",
@@ -20,7 +21,7 @@ const STATUSES = [
   "estragado",
 ];
 
-// 3) Filtros CSS para cada status
+// Filtros CSS mapeados
 const filters = {
   desligado:  "none",
   ativo:      "grayscale(1) sepia(1) saturate(5) hue-rotate(90deg) brightness(1)",
@@ -28,53 +29,209 @@ const filters = {
   estragado:  "grayscale(1) brightness(0.2)",
 };
 
+// Mapeamento de prefixos de nomePadronizado para imagem
+const prefixImageMap = {
+  "valvula1": valvula1Img,
+  "valvula2": valvula2Img,
+  "sensor1":  sensor1Img,
+  "sensor2":  sensor2Img,
+  "bomba":    bombaImg,
+  "nivel_ta": barra1Img,
+  "nivel_tm": barra2Img,
+};
 
-const elementos = [
-  { key: 'valvula1-1', label: 'Válvula 1-1', img: valvula1Img, coordsPx: { x:112, y:277, w:40,  h:40 } },
-  { key: 'valvula1-2', label: 'Válvula 1-2', img: valvula1Img, coordsPx: { x:27,  y:90,  w:40,  h:40 } },
-  { key: 'valvula1-3', label: 'Válvula 1-3', img: valvula1Img, coordsPx: { x:440, y:173, w:40,  h:40 } },
-  { key: 'valvula1-4', label: 'Válvula 1-4', img: valvula1Img, coordsPx: { x:394, y:213, w:40,  h:40 } },
-  { key: 'valvula1-5', label: 'Válvula 1-5', img: valvula1Img, coordsPx: { x:438, y:324, w:40,  h:40 } },
-  { key: 'valvula1-6', label: 'Válvula 1-6', img: valvula1Img, coordsPx: { x:502, y:325, w:40,  h:40 } },
-  { key: 'valvula2',   label: 'Válvula 2',   img: valvula2Img, coordsPx: { x:91,  y:305, w:40,  h:40 } },
-  { key: 'sensor1',    label: 'Sensor 1',    img: sensor1Img, coordsPx: { x:312, y:80,  w:50,  h:50 } },
-  { key: 'sensor2-1',  label: 'Sensor 2-1',  img: sensor2Img, coordsPx: { x:160, y:142, w:32, h:40 } },
-  { key: 'sensor2-2',  label: 'Sensor 2-2',  img: sensor2Img, coordsPx: { x:160, y:172, w:32, h:40 } },
-  { key: 'sensor2-3',  label: 'Sensor 2-3',  img: sensor2Img, coordsPx: { x:160, y:207, w:32, h:40 } },
-  { key: 'bomba',      label: 'Bomba',       img: bombaImg,  coordsPx: { x:280, y:305, w:80,  h:80 } },
-  { key: 'bomba-2',    label: 'Bomba-2',     img: bombaImg,  coordsPx: { x:280, y:305, w:80,  h:80 } },
-  { key: 'Nivel_ta',   label: 'Nivel_ta',    img: barra1Img, coordsPx: { x:220, y:105, w:70, h:135 } },
-  { key: 'Nivel_tm',   label: 'Nivel_tm',    img: barra2Img, coordsPx: { x:106,  y:155, w:50,  h:84 } },
-];
+// Fallback por tipo, se desejar
+const tipoImageMap = {
+  VALVULA: valvula1Img,
+  SENSOR:  sensor1Img,
+  BOMBA:   bombaImg,
+  INDICADOR_VOLUME: barra1Img,
+};
 
 export function Farmacia() {
-  // 4) statusMap inicial: cada key começa em "desligado"
-  const [statusMap, setStatusMap] = useState(() => {
-    const init = {};
-    elementos.forEach(el => { init[el.key] = STATUSES[0]; });
-    return init;
-  });
+  const navigate = useNavigate();
+  // estado com dados brutos vindos da API (array de objetos com id, nomePadronizado, endereco, posicaoNoLayout, tipo, statusEnum, ...)
+  const [farmacia, setFarmacia] = useState([]);
+  // array de elementos transformados para render: { id, key, label, coordsPx, img, statusEnum }
+  const [elementosData, setElementosData] = useState([]);
+  // status local por key (lowercase): usado para filtro visual em STATUSES
+  const [statusMap, setStatusMap] = useState({});
+  const [error, setError] = useState("");
+  // conjunto de ids em atualização, para desabilitar clique enquanto PUT pendente
+  const [updatingIds, setUpdatingIds] = useState(new Set());
 
-  // 5) no clique, avança para o próximo STATUS
-  const handleToggle = (key) => {
-    setStatusMap(prev => {
-      const current = prev[key];
-      const idx = STATUSES.indexOf(current);
-      const next = STATUSES[(idx + 1) % STATUSES.length];
-      console.log(`${key} → ${next}`); // DEBUG: veja no console
-      return { ...prev, [key]: next };
+  // 1) Fetch inicial dos dados
+  useEffect(() => {
+    api.get("/farmacia", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+    .then(response => {
+      const data = response.data;
+      if (Array.isArray(data)) {
+        setFarmacia(data);
+      } else {
+        console.warn("Resposta /farmacia não é array:", data);
+        setFarmacia([]);
+      }
+    })
+    .catch(err => {
+      if (err.response?.status === 401) {
+        navigate('/login');
+      }
+      console.error("Erro ao buscar dados", err);
+      setError("Não foi possível carregar os dados");
+      setFarmacia([]);
     });
+  }, [navigate]);
+
+  // 2) Função para escolher imagem a partir de nomePadronizado ou tipo
+  const selectImageForElemento = (nomePadronizado, tipo) => {
+    if (!nomePadronizado) return null;
+    const keyLower = nomePadronizado.toLowerCase();
+    for (const [prefix, img] of Object.entries(prefixImageMap)) {
+      if (keyLower.startsWith(prefix.toLowerCase())) {
+        return img;
+      }
+    }
+    if (tipo && tipoImageMap[tipo]) {
+      return tipoImageMap[tipo];
+    }
+    return null;
+  };
+
+  // 3) Quando muda o estado `farmacia`, converte em `elementosData` e inicializa/atualiza statusMap
+  useEffect(() => {
+    if (!Array.isArray(farmacia) || farmacia.length === 0) {
+      setElementosData([]);
+      setStatusMap({});
+      return;
+    }
+    const novos = farmacia.map(item => {
+      const key = item.nomePadronizado;
+      const label = item.nomePadronizado;
+      // parse posicaoNoLayout (string JSON) para { x, y, w, h }
+      let coordsPx = { x: 0, y: 0, w: 0, h: 0 };
+      if (typeof item.posicaoNoLayout === "string") {
+        try {
+          const parsed = JSON.parse(item.posicaoNoLayout);
+          if (
+            typeof parsed.x === "number" &&
+            typeof parsed.y === "number" &&
+            typeof parsed.w === "number" &&
+            typeof parsed.h === "number"
+          ) {
+            coordsPx = { x: parsed.x, y: parsed.y, w: parsed.w, h: parsed.h };
+          } else {
+            console.warn(`posicaoNoLayout inválido para ${key}:`, parsed);
+          }
+        } catch (e) {
+          console.warn(`Erro ao parsear posicaoNoLayout para ${key}:`, item.posicaoNoLayout, e);
+        }
+      } else {
+        console.warn(`posicaoNoLayout não é string para ${key}:`, item.posicaoNoLayout);
+      }
+      const img = selectImageForElemento(item.nomePadronizado, item.tipo);
+      // item.statusEnum vem do backend, ex: "ATIVO", "DESLIGADO"...
+      return { 
+        id: item.id, 
+        key, 
+        label, 
+        coordsPx, 
+        img, 
+        statusEnum: item.statusEnum 
+      };
+    });
+    setElementosData(novos);
+
+    // Inicializar ou manter statusMap: converte statusEnum (uppercase) para lowercase em STATUSES
+    setStatusMap(prev => {
+      const next = {};
+      novos.forEach(el => {
+        let initialStatus = STATUSES[0]; // "desligado"
+        if (el.statusEnum && typeof el.statusEnum === "string") {
+          const statusLower = el.statusEnum.toLowerCase();
+          if (STATUSES.includes(statusLower)) {
+            initialStatus = statusLower;
+          }
+        }
+        next[el.key] = prev[el.key] || initialStatus;
+      });
+      return next;
+    });
+  }, [farmacia]);
+
+  // 4) Handler de clique: alterna status local e faz PUT /farmacia com DTO completo
+  const handleToggle = async (key, id) => {
+    const current = statusMap[key] || STATUSES[0];
+    const idx = STATUSES.indexOf(current);
+    const next = STATUSES[(idx + 1) % STATUSES.length];
+    // converte p/ uppercase para enviar ao backend
+    const nextStatusEnum = next.toUpperCase();
+
+    // encontrar item original em farmacia
+    const itemOriginal = farmacia.find(item => item.id === id);
+    if (!itemOriginal) {
+      console.warn("Item não encontrado em state farmacia, id:", id);
+      return;
+    }
+    // Monta DTO completo: tem que incluir todos os campos que o endpoint espera
+    const dto = {
+      id: itemOriginal.id,
+      nomePadronizado: itemOriginal.nomePadronizado,
+      endereco: itemOriginal.endereco,
+      posicaoNoLayout: itemOriginal.posicaoNoLayout,
+      tipo: itemOriginal.tipo,
+      statusEnum: nextStatusEnum,
+      // Se houver outros campos no DTO, inclua aqui também, por ex. descrição, etc.
+    };
+
+    // Otimistic update local
+    setStatusMap(prev => ({ ...prev, [key]: next }));
+    setUpdatingIds(prev => {
+      const s = new Set(prev);
+      s.add(id);
+      return s;
+    });
+
+    try {
+      // Chama PUT /farmacia com o DTO completo
+      const response = await api.put("/farmacia", dto, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+      // A resposta retorna o objeto atualizado:
+      const updated = response.data;
+      // Atualiza o estado farmacia substituindo o item
+      setFarmacia(prev => prev.map(item => item.id === id ? updated : item));
+      // error limpa se tiver algum
+      setError("");
+    } catch (err) {
+      console.error(`Erro ao atualizar status do elemento ${key} (id ${id}):`, err);
+      // Reverter status local
+      setStatusMap(prev => ({ ...prev, [key]: current }));
+      setError(`Falha ao atualizar ${key}.`);
+    } finally {
+      setUpdatingIds(prev => {
+        const s = new Set(prev);
+        s.delete(id);
+        return s;
+      });
+    }
   };
 
   // conversão px → %
   const toPct = (px, total) => `${(px/total)*100}%`;
 
+  // 5) Renderização
   return (
-    <div
-      className="relative w-full max-w-xl"
-      style={{ aspectRatio: `${ORIGINAL_WIDTH} / ${ORIGINAL_HEIGHT}` }}
-    >
-      {/* fundo */}
+    <div className="relative w-full max-w-xl" style={{ aspectRatio: `${ORIGINAL_WIDTH} / ${ORIGINAL_HEIGHT}` }}>
+      {error && (
+        <div className="text-red-600 mb-2">{error}</div>
+      )}
+      {/* Fundo da planta */}
       <img
         src={farmaciaImg}
         alt="Diagrama Farmácia"
@@ -87,16 +244,24 @@ export function Farmacia() {
         }}
       />
 
-      {/* overlays */}
-      {elementos.map(el => {
-        const st = statusMap[el.key];
+      {/* Overlays de elementos */}
+      {elementosData.map(el => {
+        const st = statusMap[el.key] || STATUSES[0];
         const { x, y, w, h } = el.coordsPx;
-
+        if (!el.img) {
+          return null;
+        }
+        const isUpdating = updatingIds.has(el.id);
         return (
           <button
             key={el.key}
-            onClick={() => handleToggle(el.key)}
+            onClick={() => {
+              if (!isUpdating) {
+                handleToggle(el.key, el.id);
+              }
+            }}
             aria-label={`${el.label} está ${st}`}
+            disabled={isUpdating}
             style={{
               position: "absolute",
               left:   toPct(x, ORIGINAL_WIDTH),
@@ -105,16 +270,16 @@ export function Farmacia() {
               height: toPct(h, ORIGINAL_HEIGHT),
               padding: 0,
               margin: 0,
-              cursor: "pointer",
+              cursor: isUpdating ? "wait" : "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              border: "2px dashed red"
+              opacity: isUpdating ? 0.6 : 1,
             }}
           >
             <img
               src={el.img}
-              alt=""
+              alt={el.label}
               style={{
                 width: "100%",
                 height: "100%",

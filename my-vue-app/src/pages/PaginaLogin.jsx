@@ -35,16 +35,6 @@ export function PaginaLogin() {
     }
   };
 
-  const changePassword = async (e) =>{
-    e.preventDefault();
-    setError('')
-
-    const usuario = await api.post('/usuario/login', {
-      login: login,
-      senha: password
-    });
-  }
-
   return (
     <div className="flex flex-col gap-10 justify-center items-center w-screen h-screen bg-slate-500">
       <img width={200} src={logo} alt="logo" />
