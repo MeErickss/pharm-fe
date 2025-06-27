@@ -1,7 +1,7 @@
 import ModbusTcp from 'react-native-modbus-tcp';
 
 // Connect to Modbus TCP Master (parameters [ip, port])
-const modBus = ModbusTcp.connectToModbusMaster('192.168.137.32', 502, (res) => {
+const modBus = ModbusTcp.connectToModbusMaster('127.0.0.1', 502, (res) => {
   if (res.error) {
     console.error('Erro ao se conectar com o clp: ', res.error);
   } else {
