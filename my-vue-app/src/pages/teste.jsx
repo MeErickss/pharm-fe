@@ -1,132 +1,65 @@
-import { GridAdmin } from "../components/Admin/GridAdmin"
 import { useState, useEffect } from "react";
-import api from "../api";
+import axios from "axios";
+
 
 export function Teste() {
-  const [farmacia, setFarmacia] = useState([])
-  const [farmaciaLen, setFarmaciaLen] = useState(0);
-  const [distribuicao, setDistribuicao] = useState([])
-  const [distribuicaLen, setDistribuicaoLen] = useState(0);
-  const [dell, setDell] = useState(0);
-  const [editId, setEditId] = useState(null);
-  const [error, setError] = useState("");
-  const [tooltipVisible, setTooltipVisible] = useState({ edit: null, delete: null });
-
-
+  const [log, setLog] = useState([]);
+  const [data, setData] = useState(null);
+  const append = msg => setLog(l => [...l, msg]);
 
   useEffect(() => {
-    api.get("/farmacia", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`
+    async function run() {
+      try {
+        append("Conectando…");
+        await axios.post("http://localhost:3001/api/modbus/connect", {
+          host: "192.168.1.9",
+          port: 502,
+          slaveId: 1
+        });
+        append("Conectado");
+
+        append("Lendo registradores");
+        const readRes = await axios.post("http://localhost:3001/api/modbus/read", {
+          address: 1,
+          length: 10,
+          type:"holding"
+        });
+        append("Dados: " + readRes.data.data.join(", "));
+        setData(readRes.data.data);
+
+        append("Escrevendo registrador 5 = 123");
+        await axios.post("http://localhost:3001/api/modbus/write", {
+          address: 6,
+          value: 12,
+          type:"holding"
+        });
+        append("Escrito com sucesso");
+
+        append("Fechando conexão");
+        await axios.post("http://localhost:3001/api/modbus/close");
+        append("Conexão fechada");
+      } catch (e) {
+        append("Erro: " + e.message);
       }
-  })
-  .then(response => {      
-      setFarmacia(response.data);
-      console.log(response.data)
-    })
-  .catch(err => {        if (err.response?.status === 401) {
-          navigator('/login'); 
-        }
-        console.error("Erro ao buscar dados", err);
-        setError("Não foi possível carregar os dados");
-      });
+    }
+    run();
   }, []);
-
-    useEffect(() => {
-      if (farmacia.length > 0) {
-        setFarmaciaLen(Object.keys(farmacia[0]).length);
-      }
-    }, [farmacia]);
-
-    /////////////////////////////////////
-
-
-  useEffect(() => {
-    api.get("/distribuicao", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      }
-  })
-  .then(response => {      
-      setDistribuicao(response.data);})
-  .catch(err => {        if (err.response?.status === 401) {
-          navigator('/login'); 
-        }
-        console.error("Erro ao buscar dados", err);
-        setError("Não foi possível carregar os dados");
-      });
-  }, []);
-
-    useEffect(() => {
-      if (farmacia.length > 0) {
-        setDistribuicaoLen(Object.keys(farmacia[0]).length);
-      }
-    }, [distribuicao]);
-
-    useEffect(() => {
-      if (!dell) return;
-    
-      const fetchData = async () => {
-        try {
-          var option = ""
-          var question=confirm(`Deseja excluir o Registro ${dell}`);
-          if (question==true)
-            {
-            option="Opção de exclusão selecionada";
-            const response = await api.delete(`/farmacia/${dell}`)
-      
-            if (!response.ok) {
-              throw new Error(`Erro na requisição: ${response.statusText}`);
-            }
-      
-            console.log("Registro deletado com sucesso");
-              setFarmacia((prevDados) => prevDados.filter((item) => item.id !== dell));
-            }
-          else
-            {
-            option="You pressed Cancel!";
-            }
-        } catch (error) {
-          console.error("Erro ao deletar dados:", error);
-        }
-      };
-    
-      fetchData();
-    }, [dell]);
-    
-    
-    const handleDelete = (id) => {
-      setDell(id);
-      window.location.reload()
-    };
-    
-
-    const toggleEditar = (id) => {
-      setEditId(id);
-      setShowModalEdit(true);
-      console.log(editId)
-    };
-
+  
 
   return (
-    <div className="w-screen h-screen flex flex-wrap">
-      {/* <GridAdmin
-        dados={farmacia}
-        dadosLen={farmaciaLen}
-        tooltipVisible={tooltipVisible}
-        setTooltipVisible={setTooltipVisible}
-        onEdit={toggleEditar}
-        onDelete={handleDelete}
-      /> */}
-
-      <GridAdmin
-        dados={distribuicao}
-        dadosLen={distribuicaLen}
-        tooltipVisible={tooltipVisible}
-        setTooltipVisible={setTooltipVisible}
-        onEdit={toggleEditar}
-        onDelete={handleDelete}
-      />
+    <div className="p-12">
+      <h2>Teste Modbus via HTTP</h2>
+      <pre style={{ background: "#f5f5f5", padding: 10, minHeight: 100 }}>
+        {log.map((l,i) => <div key={i}>{l}</div>)}
+      </pre>
+      {data && (
+        <>
+          <h3>Valores Lidos:</h3>
+          <ul>
+            {data.map((v,i) => <li key={i}>[{i}] = {v}</li>)}
+          </ul>
+        </>
+      )}
     </div>
-  )
+  );
 }

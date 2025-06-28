@@ -12,10 +12,6 @@ export function LogAlarme({
   const [filteredDados, setFilteredDados] = useState(dadosAlarme);
   const [modalParametro, setModalParametro] = useState({ bool: false, item: "" });
 
-  console.log("dadosAlarme")
-  console.log(dadosAlarme)
-  console.log("dadosAlarme")
-
   useEffect(() => {
     setFilteredDados(dadosAlarme);
   }, [dadosAlarme]);

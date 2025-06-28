@@ -50,17 +50,13 @@ const tipoImageMap = {
 
 export function Farmacia() {
   const navigate = useNavigate();
-  // estado com dados brutos vindos da API (array de objetos com id, nomePadronizado, endereco, posicaoNoLayout, tipo, statusEnum, ...)
-  const [farmacia, setFarmacia] = useState([]);
-  // array de elementos transformados para render: { id, key, label, coordsPx, img, statusEnum }
+
+  // estado com dados transformados: inclui coords, img, statusLocal
   const [elementosData, setElementosData] = useState([]);
-  // status local por key (lowercase): usado para filtro visual em STATUSES
-  const [statusMap, setStatusMap] = useState({});
   const [error, setError] = useState("");
-  // conjunto de ids em atualização, para desabilitar clique enquanto PUT pendente
   const [updatingIds, setUpdatingIds] = useState(new Set());
 
-  // 1) Fetch inicial dos dados
+  // Fetch inicial
   useEffect(() => {
     api.get("/farmacia", {
       headers: {
@@ -69,149 +65,80 @@ export function Farmacia() {
     })
     .then(response => {
       const data = response.data;
+      console.log(data)
       if (Array.isArray(data)) {
-        setFarmacia(data);
+        const mapped = data.map(item => {
+          const key = item.nomePadronizado;
+          let coordsPx = { x: 0, y: 0, w: 0, h: 0 };
+          try {
+            const p = JSON.parse(item.posicaoNoLayout || '{}');
+            if (["x", "y", "w", "h"].every(k => typeof p[k] === 'number')) {
+              coordsPx = { x: p.x, y: p.y, w: p.w, h: p.h };
+            }
+          } catch (e) {
+            console.warn(`Erro ao parsear posicaoNoLayout para ${key}:`, e);
+          }
+
+          const selectImage = () => {
+            const lower = key.toLowerCase();
+            for (const [prefix, img] of Object.entries(prefixImageMap)) {
+              if (lower.startsWith(prefix.toLowerCase())) return img;
+            }
+            return item.tipo && tipoImageMap[item.tipo] ? tipoImageMap[item.tipo] : null;
+          };
+
+          const sl = item.status?.toLowerCase();
+          console.log
+          const initialStatus = STATUSES.includes(sl) ? sl : STATUSES[0];
+
+          return {
+            id: item.id,
+            key,
+            label: key,
+            coordsPx,
+            img: selectImage(),
+            statusLocal: initialStatus,
+            original: item,
+          };
+        });
+        setElementosData(mapped);
       } else {
-        console.warn("Resposta /farmacia não é array:", data);
-        setFarmacia([]);
+        setElementosData([]);
       }
     })
     .catch(err => {
-      if (err.response?.status === 401) {
-        navigate('/login');
-      }
-      console.error("Erro ao buscar dados", err);
+      if (err.response?.status === 401) navigate('/');
       setError("Não foi possível carregar os dados");
-      setFarmacia([]);
+      setElementosData([]);
     });
   }, [navigate]);
 
-  // 2) Função para escolher imagem a partir de nomePadronizado ou tipo
-  const selectImageForElemento = (nomePadronizado, tipo) => {
-    if (!nomePadronizado) return null;
-    const keyLower = nomePadronizado.toLowerCase();
-    for (const [prefix, img] of Object.entries(prefixImageMap)) {
-      if (keyLower.startsWith(prefix.toLowerCase())) {
-        return img;
-      }
-    }
-    if (tipo && tipoImageMap[tipo]) {
-      return tipoImageMap[tipo];
-    }
-    return null;
-  };
-
-  // 3) Quando muda o estado `farmacia`, converte em `elementosData` e inicializa/atualiza statusMap
-  useEffect(() => {
-    if (!Array.isArray(farmacia) || farmacia.length === 0) {
-      setElementosData([]);
-      setStatusMap({});
-      return;
-    }
-    const novos = farmacia.map(item => {
-      const key = item.nomePadronizado;
-      const label = item.nomePadronizado;
-      // parse posicaoNoLayout (string JSON) para { x, y, w, h }
-      let coordsPx = { x: 0, y: 0, w: 0, h: 0 };
-      if (typeof item.posicaoNoLayout === "string") {
-        try {
-          const parsed = JSON.parse(item.posicaoNoLayout);
-          if (
-            typeof parsed.x === "number" &&
-            typeof parsed.y === "number" &&
-            typeof parsed.w === "number" &&
-            typeof parsed.h === "number"
-          ) {
-            coordsPx = { x: parsed.x, y: parsed.y, w: parsed.w, h: parsed.h };
-          } else {
-            console.warn(`posicaoNoLayout inválido para ${key}:`, parsed);
-          }
-        } catch (e) {
-          console.warn(`Erro ao parsear posicaoNoLayout para ${key}:`, item.posicaoNoLayout, e);
-        }
-      } else {
-        console.warn(`posicaoNoLayout não é string para ${key}:`, item.posicaoNoLayout);
-      }
-      const img = selectImageForElemento(item.nomePadronizado, item.tipo);
-      // item.statusEnum vem do backend, ex: "ATIVO", "DESLIGADO"...
-      return { 
-        id: item.id, 
-        key, 
-        label, 
-        coordsPx, 
-        img, 
-        statusEnum: item.statusEnum 
-      };
-    });
-    setElementosData(novos);
-
-    // Inicializar ou manter statusMap: converte statusEnum (uppercase) para lowercase em STATUSES
-    setStatusMap(prev => {
-      const next = {};
-      novos.forEach(el => {
-        let initialStatus = STATUSES[0]; // "desligado"
-        if (el.statusEnum && typeof el.statusEnum === "string") {
-          const statusLower = el.statusEnum.toLowerCase();
-          if (STATUSES.includes(statusLower)) {
-            initialStatus = statusLower;
-          }
-        }
-        next[el.key] = prev[el.key] || initialStatus;
-      });
-      return next;
-    });
-  }, [farmacia]);
-
-  // 4) Handler de clique: alterna status local e faz PUT /farmacia com DTO completo
-  const handleToggle = async (key, id) => {
-    const current = statusMap[key] || STATUSES[0];
-    const idx = STATUSES.indexOf(current);
+  // Handler de clique
+  const handleToggle = async (el) => {
+    const { id, key, statusLocal, original } = el;
+    const idx = STATUSES.indexOf(statusLocal);
     const next = STATUSES[(idx + 1) % STATUSES.length];
-    // converte p/ uppercase para enviar ao backend
-    const nextStatusEnum = next.toUpperCase();
+    const nextEnum = next.toUpperCase();
 
-    // encontrar item original em farmacia
-    const itemOriginal = farmacia.find(item => item.id === id);
-    if (!itemOriginal) {
-      console.warn("Item não encontrado em state farmacia, id:", id);
-      return;
-    }
-    // Monta DTO completo: tem que incluir todos os campos que o endpoint espera
-    const dto = {
-      id: itemOriginal.id,
-      nomePadronizado: itemOriginal.nomePadronizado,
-      endereco: itemOriginal.endereco,
-      posicaoNoLayout: itemOriginal.posicaoNoLayout,
-      tipo: itemOriginal.tipo,
-      statusEnum: nextStatusEnum,
-      // Se houver outros campos no DTO, inclua aqui também, por ex. descrição, etc.
-    };
+    const dto = { ...original, statusEnum: nextEnum };
 
-    // Otimistic update local
-    setStatusMap(prev => ({ ...prev, [key]: next }));
-    setUpdatingIds(prev => {
-      const s = new Set(prev);
-      s.add(id);
-      return s;
-    });
+    setElementosData(prev => prev.map(e => e.id === id ? { ...e, statusLocal: next } : e));
+    setUpdatingIds(prev => new Set(prev).add(id));
 
     try {
-      // Chama PUT /farmacia com o DTO completo
       const response = await api.put("/farmacia", dto, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
-      // A resposta retorna o objeto atualizado:
       const updated = response.data;
-      // Atualiza o estado farmacia substituindo o item
-      setFarmacia(prev => prev.map(item => item.id === id ? updated : item));
-      // error limpa se tiver algum
+      setElementosData(prev => prev.map(e => e.id === id ? {
+        ...e,
+        original: { ...e.original, ...updated },
+        statusLocal: next,
+      } : e));
       setError("");
     } catch (err) {
-      console.error(`Erro ao atualizar status do elemento ${key} (id ${id}):`, err);
-      // Reverter status local
-      setStatusMap(prev => ({ ...prev, [key]: current }));
+      console.error(`Erro ao atualizar ${key} (id ${id}):`, err);
+      setElementosData(prev => prev.map(e => e.id === id ? { ...e, statusLocal } : e));
       setError(`Falha ao atualizar ${key}.`);
     } finally {
       setUpdatingIds(prev => {
@@ -225,48 +152,31 @@ export function Farmacia() {
   // conversão px → %
   const toPct = (px, total) => `${(px/total)*100}%`;
 
-  // 5) Renderização
   return (
     <div className="relative w-full max-w-xl" style={{ aspectRatio: `${ORIGINAL_WIDTH} / ${ORIGINAL_HEIGHT}` }}>
-      {error && (
-        <div className="text-red-600 mb-2">{error}</div>
-      )}
-      {/* Fundo da planta */}
+      {error && <div className="text-red-600 mb-2">{error}</div>}
+
       <img
         src={farmaciaImg}
         alt="Diagrama Farmácia"
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-        }}
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
       />
 
-      {/* Overlays de elementos */}
       {elementosData.map(el => {
-        const st = statusMap[el.key] || STATUSES[0];
         const { x, y, w, h } = el.coordsPx;
-        if (!el.img) {
-          return null;
-        }
+        if (!el.img || w === 0 || h === 0) return null;
         const isUpdating = updatingIds.has(el.id);
         return (
           <button
-            key={el.key}
-            onClick={() => {
-              if (!isUpdating) {
-                handleToggle(el.key, el.id);
-              }
-            }}
-            aria-label={`${el.label} está ${st}`}
+            key={el.id}
+            onClick={() => !isUpdating && handleToggle(el)}
+            aria-label={`${el.label} está ${el.statusLocal}`}
             disabled={isUpdating}
             style={{
               position: "absolute",
-              left:   toPct(x, ORIGINAL_WIDTH),
-              top:    toPct(y, ORIGINAL_HEIGHT),
-              width:  toPct(w, ORIGINAL_WIDTH),
+              left: toPct(x, ORIGINAL_WIDTH),
+              top: toPct(y, ORIGINAL_HEIGHT),
+              width: toPct(w, ORIGINAL_WIDTH),
               height: toPct(h, ORIGINAL_HEIGHT),
               padding: 0,
               margin: 0,
@@ -280,14 +190,7 @@ export function Farmacia() {
             <img
               src={el.img}
               alt={el.label}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
-                pointerEvents: "none",
-                filter: filters[st],
-                transition: "filter 0.3s",
-              }}
+              style={{ width: "100%", height: "100%", objectFit: "contain", pointerEvents: "none", filter: filters[el.statusLocal] || 'none', transition: "filter 0.3s" }}
             />
           </button>
         );

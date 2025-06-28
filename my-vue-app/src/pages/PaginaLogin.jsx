@@ -64,10 +64,6 @@ export function PaginaLogin() {
             required
           />
 
-          <div className='w-full text-end my-2'>
-            <a className='text-sm text-blue-500 border-b-2 border-blue-600' href="mailto:ivan.djuric@railsware.com?subject=Mailtrap%20is%20awesome&body=Hey%0D%0A%0D%0AJust%20wanted%20to%20let%20you%20know%20your%20service%20rocks!%0D%0A%0D%0ACheers,%0D%0ASatisfied%20user%20%3A%29">Esqueceu a Senha?</a>
-          </div>
-
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
           <div className="text-center mt-6">

@@ -11,9 +11,6 @@ export function LogProducao({
   const [query, setQuery] = useState("");
   const [filteredDados, setFilteredDados] = useState(dadosProd);
   const [modalParametro, setModalParametro] = useState({ bool: false, item: "" });
-  console.log("dadosProd")
-  console.log(dadosProd)
-  console.log("dadosProd")
 
   useEffect(() => {
     setFilteredDados(dadosProd);
