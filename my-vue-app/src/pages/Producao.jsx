@@ -111,11 +111,14 @@ export function Producao() {
 
       <LogAlarme dadosAlarme={dadosAlarme} pageAlarme={pageAlarme} fetchLogAlarme={fetchLogAlarme} totalPagesAlarme={totalPagesAlarme}/>
 
-      <div className="grid grid-cols-4 col-span-2 bg-black w-full h-full text-white p-4 rounded-2xl">
+      <div className="grid grid-rows-2 grid-cols-4 col-span-2 bg-neutral-400 w-full h-full text-white p-4 rounded-2xl">
         {formula.map((dados)=>(
-          <button>Formula {dados[0].toUpperCase() + dados.substring(1)}</button>
+          <button className="bg-blue-500 m-auto w-36 h-16 p-4 rounded-lg">Formula {dados[0].toUpperCase() + dados.substring(1)}</button>
         ))}
-        <button onClick={() => setShowModalEmergencia(!showModalEmergencia)}>EMERGENCIA</button>  
+        <button className="bg-blue-500 m-auto w-36 h-16 p-4 rounded-lg" onClick={() => setShowModalEmergencia(!showModalEmergencia)}>EMERGENCIA</button>
+        
+        <button className="bg-blue-500 m-auto w-36 h-16 rounded-lg" onClick={() => setShowModalEmergencia(!showModalEmergencia)}>Modo Manutenção</button>
+
       </div>
       {showModalEmergencia && ( <ModalEmergencia setShowModalEmergencia={setShowModalEmergencia} showModalEmergencia={showModalEmergencia} /> )}
     </main>

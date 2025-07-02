@@ -9,6 +9,7 @@ import sensor2Img from "./Tudo/sensor2.png";
 import bombaImg from "./Tudo/bomba.png";
 import barra1Img from "./Tudo/barra1.png";
 import barra2Img from "./Tudo/barra2.png";
+import modbusApi from "../../modbusApi";
 
 const ORIGINAL_WIDTH = 591;
 const ORIGINAL_HEIGHT = 435;
@@ -50,12 +51,14 @@ export function Farmacia() {
   const [error, setError] = useState("");
   const [updatingIds, setUpdatingIds] = useState(new Set());
 
+
   useEffect(() => {
     api.get("/farmacia", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     })
     .then(response => {
       const data = response.data;
+      console.log(data)
       if (Array.isArray(data)) {
         const mapped = data.map(item => {
           const key = item.nomePadronizado;
@@ -96,19 +99,70 @@ export function Farmacia() {
     });
   }, [navigate]);
 
+  useEffect(() => {
+    let isMounted = true;
+    async function connectModbus() {
+      try {
+        await modbusApi.post("/connect", {
+          host: "192.168.1.11",
+          port: 502,
+          slaveId: 1
+        });
+      } catch (e) {
+        console.error("Erro conexão Modbus:", e);
+        setError("Não foi possível conectar ao Modbus");
+      }
+    }
+    connectModbus();
+
+    return () => {
+      // ao desmontar, fecha conexão Modbus
+      modbusApi.post("/close").catch(err => {
+        console.warn("Erro ao fechar Modbus:", err);
+      });
+    };
+  }, []);
+
+      // 3) Lê status via Modbus após ter elementos
+  useEffect(() => {
+    if (!elementosData.length) return;
+    async function fetchStatuses() {
+      try {
+        const res = await modbusApi.post("/read", {
+          type: "holding",
+          address: 0,
+          length: 100
+        });
+        const regs = res.data.data;
+        setElementosData(prev => prev.map((el, idx) => {
+          const code = regs[idx];
+          return { ...el, statusLocal: STATUSES[code] || STATUSES[0] };
+        }));
+      } catch (e) {
+        console.error("Erro ao ler status Modbus:", e);
+        setError("Falha ao ler status dos equipamentos");
+      }
+    }
+    fetchStatuses();
+  }, [elementosData]);
+
   const handleToggle = async (el) => {
-    const { id, label, statusLocal, original } = el;
-    const next = STATUSES[(STATUSES.indexOf(statusLocal) + 1) % STATUSES.length];
-    const dto = { ...original, statusEnum: next.toUpperCase() };
-    setElementosData(prev => prev.map(e => e.id===id?{...e,statusLocal:next}:e));
+    const { id, label, statusLocal } = el;
+    const nextIdx = (STATUSES.indexOf(statusLocal) + 1) % STATUSES.length;
+    const next = STATUSES[nextIdx];
+    setElementosData(prev => prev.map(e => e.id===id?{...e, statusLocal:next}:e));
     setUpdatingIds(prev => new Set(prev).add(id));
     try {
-      const updated = (await api.put("/farmacia", dto, { headers:{ Authorization:`Bearer ${localStorage.getItem("token")}` } })).data;
-      setElementosData(prev => prev.map(e => e.id===id?{...e, original:{...e.original, ...updated}, statusLocal:next}:e));
+      await modbusApi.post("/write", {
+        type: "holding",
+        address: elementosData.findIndex(e => e.id===id),
+        value: nextIdx
+      });
+      
       setError("");
     } catch {
       setError(`Falha ao atualizar ${label}.`);
-      setElementosData(prev => prev.map(e => e.id===id?{...e,statusLocal}:e));
+      setElementosData(prev => prev.map(e => e.id===id?{...e, statusLocal}:e));
     } finally {
       setUpdatingIds(prev => { prev.delete(id); return new Set(prev); });
     }
@@ -130,19 +184,20 @@ export function Farmacia() {
         const labelTop = y + 32;
         return (
           <>
-            <div className="mx-6 text-center" key={`${el.id}-label`} aria-hidden style={{
+            <div className={el.original.nomePadronizado.includes("bomba") ? "mx-24 my-4":"mx-9"} key={`${el.id}-label`} aria-hidden style={{
               position:'absolute',
-              left: toPct(x,ORIGINAL_WIDTH),
-              top: toPct(labelTop,ORIGINAL_HEIGHT),
+              left: toPct(x, ORIGINAL_WIDTH),
+              top: toPct(labelTop, ORIGINAL_HEIGHT),
               transform:'translateY(-100%)',
               padding:'2px 4px',
-              backgroundColor:'rgba(255,255,255,0.8)',
+              color:'yellow',
+              backgroundColor:'black',
               borderRadius:'4px',
-              fontSize:'0.75rem',
+              fontSize:'1rem',
               whiteSpace:'nowrap',
               pointerEvents:'none'
             }}>
-              {el.nome}
+            {el.nome}
             </div>
             <button key={el.id} onClick={() => !isUpdating && handleToggle(el)} aria-label={`${el.nome} está ${el.statusLocal}`} disabled={isUpdating} style={{
               position:'absolute',

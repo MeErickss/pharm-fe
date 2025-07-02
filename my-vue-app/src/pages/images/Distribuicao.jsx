@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../api";
-
+import api from "../../api";           // Backend API para dados não relacionados a Modbus
+import modbusApi from "../../modbusApi"; // API para Modbus
 import distribuicaoImg from "./Tudo/distribuicao.png";
 import valvula1Img from "./Tudo/valvula1.png";
 import valvula2Img from "./Tudo/valvula2.png";
@@ -14,7 +14,6 @@ import barra2Img from "./Tudo/barra2.png";
 const ORIGINAL_WIDTH = 520;
 const ORIGINAL_HEIGHT = 400;
 
-// Ciclo de status local (lowercase)
 const STATUSES = [
   "desligado",
   "ativo",
@@ -22,7 +21,6 @@ const STATUSES = [
   "estragado",
 ];
 
-// Filtros CSS mapeados
 const filters = {
   desligado:  "none",
   ativo:      "grayscale(1) sepia(0.7) saturate(8) hue-rotate(90deg) brightness(0.9)",
@@ -30,7 +28,6 @@ const filters = {
   estragado:  "grayscale(1) brightness(0.2)",
 };
 
-// Mapeamento de prefixos de nomePadronizado para imagem
 const prefixImageMap = {
   "valvula1": valvula1Img,
   "valvula2": valvula2Img,
@@ -41,7 +38,6 @@ const prefixImageMap = {
   "nivel_tm": barra2Img,
 };
 
-// Fallback por tipo
 const tipoImageMap = {
   VALVULA: valvula1Img,
   SENSOR:  sensor1Img,
@@ -55,6 +51,7 @@ export function Distribuicao() {
   const [error, setError] = useState("");
   const [updatingIds, setUpdatingIds] = useState(new Set());
 
+  // 1) Carrega layout e posições do banco de dados
   useEffect(() => {
     api.get("/distribuicao", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
@@ -66,9 +63,7 @@ export function Distribuicao() {
         let coordsPx = { x: 0, y: 0, w: 0, h: 0 };
         try {
           const p = JSON.parse(item.posicaoNoLayout || '{}');
-          if (["x","y","w","h"].every(k => typeof p[k] === 'number')) {
-            coordsPx = p;
-          }
+          if (["x","y","w","h"].every(k => typeof p[k] === 'number')) coordsPx = p;
         } catch {}
 
         const lower = item.nomePadronizado.toLowerCase();
@@ -79,17 +74,14 @@ export function Distribuicao() {
           return tipoImageMap[item.tipo] ?? null;
         };
 
-        const sl = (item.status || '').toLowerCase();
-        const initialStatus = STATUSES.includes(sl) ? sl : STATUSES[0];
-
         return {
           id: item.id,
           key: item.nomePadronizado,
           label: item.nomePadronizado,
           coordsPx,
-          nome:item.nome,
+          nome: item.nome,
           img: selectImage(),
-          statusLocal: initialStatus,
+          statusLocal: STATUSES[0], // inicializa como 'desligado'
           original: item,
         };
       });
@@ -103,36 +95,73 @@ export function Distribuicao() {
     });
   }, [navigate]);
 
+  // 2) Conecta ao Modbus ao montar e fecha ao desmontar
+  useEffect(() => {
+    async function connectModbus() {
+      try {
+        await modbusApi.post("/connect", {
+          host: "192.168.1.11",
+          port: 502,
+          slaveId: 1
+        });
+      } catch (e) {
+        console.error("Erro conexão Modbus:", e);
+        setError("Não foi possível conectar ao Modbus");
+      }
+    }
+    connectModbus();
+    return () => { modbusApi.post("/close").catch(() => {}); };
+  }, []);
+
+  // 3) Lê status via Modbus após carregar elementos
+  useEffect(() => {
+    if (!elementosData.length) return;
+    async function fetchStatuses() {
+      try {
+        const res = await modbusApi.post("/read", {
+          type: "holding",
+          address: 0,
+          length: elementosData.length
+        });
+        const regs = res.data.data;
+        setElementosData(prev => prev.map((el, idx) => {
+          const code = regs[idx] ?? 0;
+          return { ...el, statusLocal: STATUSES[code] || STATUSES[0] };
+        }));
+      } catch (e) {
+        console.error("Erro ao ler status Modbus:", e);
+        setError("Falha ao ler status dos equipamentos");
+      }
+    }
+    fetchStatuses();
+  }, [elementosData]);
+
+  // 4) Alterna status local e escreve Modbus
   const handleToggle = async (el) => {
-    const { id, statusLocal, original, key } = el;
-    const idx = STATUSES.indexOf(statusLocal);
-    const next = STATUSES[(idx + 1) % STATUSES.length];
-    const nextEnum = next.toUpperCase();
-    const dto = { ...original, statusEnum: nextEnum };
-
-    setElementosData(prev => prev.map(e => e.id === id ? { ...e, statusLocal: next } : e));
+    const { id, label, statusLocal } = el;
+    const nextIdx = (STATUSES.indexOf(statusLocal) + 1) % STATUSES.length;
+    const next = STATUSES[nextIdx];
+    setElementosData(prev => prev.map(e => e.id===id?{...e, statusLocal:next}:e));
     setUpdatingIds(prev => new Set(prev).add(id));
-    setError("");
-
     try {
-      const response = await api.put("/distribuicao", dto, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      await modbusApi.post("/write", {
+        type: "holding",
+        address: elementosData.findIndex(e => e.id===id),
+        value: nextIdx
       });
-      const updated = response.data;
-      setElementosData(prev => prev.map(e => e.id === id ? { ...e, original: { ...e.original, ...updated }, statusLocal: next } : e));
+      setError("");
     } catch {
-      setElementosData(prev => prev.map(e => e.id === id ? { ...e, statusLocal } : e));
-      setError(`Falha ao atualizar ${key}.`);
+      setError(`Falha ao atualizar ${label}.`);
+      setElementosData(prev => prev.map(e => e.id===id?{...e, statusLocal}:e));
     } finally {
-      setUpdatingIds(prev => { const s = new Set(prev); s.delete(id); return s; });
+      setUpdatingIds(prev => { prev.delete(id); return new Set(prev); });
     }
   };
 
-  // px to %
   const toPct = (px, total) => `${(px/total)*100}%`;
 
   return (
-    <div className="relative top-20 w-full max-w-xl" style={{ transform:'scale(1.5)' ,aspectRatio:`${ORIGINAL_WIDTH}/${ORIGINAL_HEIGHT}` }}>
+    <div className="relative top-20 w-full max-w-xl" style={{ transform:'scale(1.5)', aspectRatio:`${ORIGINAL_WIDTH}/${ORIGINAL_HEIGHT}` }}>
       {error && <div className="text-red-600 mb-2">{error}</div>}
       <img
         src={distribuicaoImg}
@@ -143,25 +172,25 @@ export function Distribuicao() {
         const { x, y, w, h } = el.coordsPx;
         if (!el.img || w === 0 || h === 0) return null;
         const isUpdating = updatingIds.has(el.id);
-        // Label acima
-        const labelTop = y - 22;
+        const labelTop = y + 30;
         return (
           <>
             <div
-            className="mx-12"
+              className={el.original.nomePadronizado.includes("bomba") ? "mx-24 my-4":"mx-9"}
               key={`${el.id}-label`}
               aria-hidden
               style={{
                 position: 'absolute',
-                left: toPct(x, ORIGINAL_WIDTH),
-                top: toPct(labelTop, ORIGINAL_HEIGHT),
+                left:   toPct(x, ORIGINAL_WIDTH),
+                top:    toPct(labelTop, ORIGINAL_HEIGHT),
                 transform: 'translateY(-100%)',
                 padding: '2px 4px',
-                backgroundColor: 'rgba(255,255,255,0.8)',
+                backgroundColor: 'black',
+                color: 'yellow',
                 borderRadius: '4px',
-                fontSize: '0.75rem',
+                fontSize: '1rem',
                 whiteSpace: 'nowrap',
-                pointerEvents: 'none',
+                pointerEvents: 'none'
               }}
             >
               {el.nome}
@@ -172,24 +201,24 @@ export function Distribuicao() {
               aria-label={`${el.label} está ${el.statusLocal}`}
               disabled={isUpdating}
               style={{
-                position: "absolute",
+                position: 'absolute',
                 left:   toPct(x, ORIGINAL_WIDTH),
                 top:    toPct(y, ORIGINAL_HEIGHT),
                 width:  toPct(w, ORIGINAL_WIDTH),
                 height: toPct(h, ORIGINAL_HEIGHT),
                 padding: 0,
-                margin: 0,
-                cursor: isUpdating ? "wait" : "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                opacity: isUpdating ? 0.6 : 1,
+                margin:  0,
+                cursor:  isUpdating ? 'wait' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: isUpdating ? 0.6 : 1
               }}
             >
               <img
                 src={el.img}
                 alt={el.label}
-                style={{ width: "100%", height: "100%", objectFit: "contain", pointerEvents: "none", filter: filters[el.statusLocal], transition: "filter 0.3s" }}
+                style={{ width:'100%', height:'100%', objectFit:'contain', pointerEvents:'none', filter: filters[el.statusLocal], transition: 'filter 0.3s' }}
               />
             </button>
           </>

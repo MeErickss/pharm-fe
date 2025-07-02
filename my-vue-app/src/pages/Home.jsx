@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import image from "./images/g.png";
 import farmacia from "./images/farmacia.png";
 import filtros from "./images/filtros.png";
 import purifier from "./images/purifier.png";
@@ -15,10 +14,10 @@ export function Home() {
 
       <div className="flex flex-row w-1/2 mt-20 ml-[-12rem]">
         <div className="w-full">
-          <Farmacia></Farmacia>
+          <Farmacia/>
         </div>
         <div className="w-full">
-          <Distribuicao></Distribuicao>
+          <Distribuicao/>
         </div>
       </div>
 

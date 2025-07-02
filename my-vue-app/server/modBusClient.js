@@ -1,7 +1,8 @@
-import ModbusSerial from "modbus-serial";
+// modbusClient.js
+import ModbusRTU from "modbus-serial";
 
-// Cria instância compartilhada
-const client = new ModbusSerial();
+// Instância singleton do cliente Modbus
+export const client = new ModbusRTU();
 let isConnected = false;
 
 /**
@@ -10,7 +11,7 @@ let isConnected = false;
  * @param {number} port - Porta TCP do Modbus (default: 502)
  * @param {number} slaveId - ID do escravo Modbus (default: 1)
  */
-export async function connect(host = "172.17.0.1", port = 502, slaveId = 1) {
+export async function connect(host = "192.168.1.9", port = 502, slaveId = 1) {
   if (isConnected) {
     console.warn("Já conectado ao Modbus");
     return;
@@ -37,9 +38,3 @@ export function close() {
   isConnected = false;
   console.log("🔒 Conexão Modbus fechada");
 }
-
-// Exporta instância e status para casos especiais
-export default {
-  connect,
-  close,
-};

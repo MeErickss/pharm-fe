@@ -1,6 +1,6 @@
+// Teste.jsx
 import { useState, useEffect } from "react";
-import axios from "axios";
-
+import modbusApi from "../modbusApi";  // <–– aqui!
 
 export function Teste() {
   const [log, setLog] = useState([]);
@@ -11,32 +11,32 @@ export function Teste() {
     async function run() {
       try {
         append("Conectando…");
-        await axios.post("http://localhost:3001/api/modbus/connect", {
-          host: "192.168.1.1",
+        await modbusApi.post("/connect", {
+          host: "192.168.1.11",
           port: 502,
           slaveId: 1
         });
         append("Conectado");
 
         append("Lendo registradores");
-        const readRes = await axios.post("http://localhost:3001/api/modbus/read", {
+        const readRes = await modbusApi.post("/read", {
           address: 1,
           length: 10,
-          type:"holding"
+          type: "holding"
         });
         append("Dados: " + readRes.data.data.join(", "));
         setData(readRes.data.data);
 
-        append("Escrevendo registrador 5 = 123");
-        await axios.post("http://localhost:3001/api/modbus/write", {
+        append("Escrevendo registrador 6 = 12");
+        await modbusApi.post("/write", {
           address: 6,
           value: 12,
-          type:"holding"
+          type: "holding"
         });
         append("Escrito com sucesso");
 
         append("Fechando conexão");
-        await axios.post("http://localhost:3001/api/modbus/close");
+        await modbusApi.post("/close");
         append("Conexão fechada");
       } catch (e) {
         append("Erro: " + e.message);
@@ -44,7 +44,6 @@ export function Teste() {
     }
     run();
   }, []);
-  
 
   return (
     <div className="p-12">

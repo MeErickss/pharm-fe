@@ -1,15 +1,25 @@
+// server.js
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-
-import {
-  connect,
-  close,
-} from "./modbusClient.js";
+import { client, connect, close } from "./modBusClient.js";
 
 const app = express();
-app.use(cors());
+
+// CORS configurado para permitir credenciais e origem específica
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+  methods: ["GET","POST","PUT","OPTIONS"],
+  allowedHeaders: ["Content-Type","Authorization"],
+}));
 app.use(bodyParser.json());
+
+// Permitir preflight
+app.options("/*", cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 
 // Conecta ao Modbus
 app.post("/api/modbus/connect", async (req, res) => {
@@ -22,53 +32,44 @@ app.post("/api/modbus/connect", async (req, res) => {
   }
 });
 
-// Rota única para múltiplos tipos de leitura
+// Leitura Modbus
 app.post("/api/modbus/read", async (req, res) => {
   const { type, address, length } = req.body;
-  // Mapeamento de funções de leitura
-  const leitura = {
+  const handlers = {
     holding: () => client.readHoldingRegisters(address, length),
     coil:    () => client.readCoils(address, length),
     discrete:() => client.readDiscreteInputs(address, length),
     input:   () => client.readInputRegisters(address, length)
   };
-
-  if (!leitura[type]) {
-    return res.status(400).json({ error: `Tipo de leitura inválido: ${type}` });
-  }
-
+  const fn = handlers[type];
+  if (!fn) return res.status(400).json({ error: `Tipo inválido: ${type}` });
   try {
-    const data = await leitura[type]();
+    const resp = await fn();
+    const data = Array.isArray(resp) ? resp : resp.data || resp.payload || [];
     res.json({ data });
   } catch (err) {
-    console.error(`⚠️ Erro em /api/modbus/read [${type}]:`, err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// Escreve em registrador
+// Escrita Modbus
 app.post("/api/modbus/write", async (req, res) => {
   const { type = "holding", address, value } = req.body;
-  // mapeia cada tipo no método de escrita correspondente
   const writers = {
-    holding:    () => client.writeRegister(address, value),      // registrador (holding register)
-    coil:       () => client.writeCoil(address, value),   // coil (escreve um bit)
+    holding: () => client.writeRegister(address, value),
+    coil:    () => client.writeCoil(address, value)
   };
-
-  const writer = writers[type];
-  if (!writer) {
-    return res.status(400).json({ error: `Tipo inválido: ${type}` });
-  }
-
+  const fn = writers[type];
+  if (!fn) return res.status(400).json({ error: `Tipo inválido: ${type}` });
   try {
-    await writer();
+    await fn();
     res.json({ ok: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Fecha a conexão
+// Fecha conexão
 app.post("/api/modbus/close", (req, res) => {
   close();
   res.json({ ok: true });
