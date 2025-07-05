@@ -11,7 +11,16 @@ export function GridAdmin({
   onDelete,
 }) {
 
-  console.log(dados)
+  const style = {
+    "UM":"w-10/12 border-b-2 border-b-cyan-300 px-2",
+    "DOIS":"w-10/12 border-b-2 border-b-teal-600 px-2",
+    "TRES":"w-10/12 border-b-2 border-b-violet-600 px-2",
+    "ATIVO":"w-10/12 border-b-2 border-b-green-400 px-2",
+    "BLOQUEADO":"w-10/12 border-b-2 border-b-red-600 px-2",
+    "INATIVO":"w-10/12 border-b-2 border-b-yellow-400 px-2",
+    "PRODUCAO":"w-10/12 border-b-2 border-b-gray-300 px-2",
+    "ARMAZENAMENTO":"w-10/12 border-b-2 border-b-amber-950 px-2",
+  }
 
   const handleMouseEnter = (type, id) => {
     setTooltipVisible((prev) => ({ ...prev, [type]: id }));
@@ -22,12 +31,12 @@ export function GridAdmin({
   };
 
   return (
-    <div className="w-full border border-gray-300 rounded-lg bg-white shadow">
+    <div className="w-full border border--300 rounded-lg bg-white shadow">
       {dados.length > 0 && (
         <div
           className="grid bg-gray-200 text-base font-semibold text-gray-700 p-3 border-b"
           style={{
-            gridTemplateColumns: `minmax(3rem, auto) minmax(40rem, 1fr) ${Array.from({ length: dadosLen - 1 })
+            gridTemplateColumns: `minmax(3rem, auto) minmax(28rem, 1fr) ${Array.from({ length: dadosLen - 1 })
               .map(() => 'minmax(4rem, 1fr)')
               .join(' ')}`
           }}
@@ -46,13 +55,13 @@ export function GridAdmin({
           key={row.id}
           className="grid text-sm p-3 px-2 border-b"
           style={{
-            gridTemplateColumns: `minmax(4rem, auto) minmax(40rem, 1fr) ${Array.from({ length: dadosLen - 1 })
+            gridTemplateColumns: `minmax(4rem, auto) minmax(28rem, 1fr) ${Array.from({ length: dadosLen - 1 })
               .map(() => 'minmax(4rem, 1fr)')
               .join(' ')}`
           }}
         >
           {Object.values(row).map((value, idx) => (
-            <div key={idx} className={value == "ATIVO" ? "w-1/2 border-b-2 border-green-400 px-2": value == "INATIVO" ? "w-1/2 border-b-2 border-b-yellow-400 px-2" : value == "BLOQUEADO" ? "w-1/2 border-b-2 border-b-red-400 px-2" : "px-2"}>
+            <div key={idx} className={value in style ? style[value] : "px-2 w-full"}>
               {value}
             </div>
           ))}

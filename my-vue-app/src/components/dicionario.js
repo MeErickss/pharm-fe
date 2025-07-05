@@ -5,7 +5,25 @@ const correcoes = {
     "Funcao":"Função",
     "Abreviacao":"Abreviação",
     "Nivel":"Nível",
-    "Formula":"Fórmula"
+    "Formula":"Fórmula",
+    "id":"Id",
+    "descricao":"Descrição",
+    "vl Min":"Valor Mínimo",
+    "vl Max":"Valor Máximo",
+    "status":"Status",
+    "formula Enum":"Fórmula",
+    "grandeza":"Grandeza",
+    "unidade":"Unidade",
+    "funcao":"Função",
+    "formula Enum":"Fórmula",
+    "valor":"Valor",
+    "UM":"Um",
+    "DOIS":"Dois",
+    "TRES":"Três",
+    "QUATRO":"Quatro",
+    "vlMin":"Valor Mínimo",
+    "vlMax":"Valor Máximo",
+    "formula":"Fórmula",
 }
 
 export default correcoes;

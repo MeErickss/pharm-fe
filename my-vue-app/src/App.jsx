@@ -33,16 +33,16 @@ export default function App() {
         {/* Rotas protegidas com layout */}
         <Route path="/" element={<Layout />}>
           <Route path="home" element={<Home />} />
-          <Route path="producao" element={<Producao />} />
-          <Route path="armazenamento" element={<Armazenamento />} />
-          <Route path="parametroproducao" element={<ParametrosProducao />} />
-          <Route path="parametroarmazem" element={<ParametrosArmazenamento />} />
-          <Route path="usuarios" element={<AdminRegistroUsuarios />} />
-          <Route path="adminparametrosproducao" element={<AdminRegistroProducao />} />
-          <Route path="adminparametrosarmazem" element={<AdminRegistroArmazenamento/>} />
-          <Route path="adminparametrosunidade" element={<AdminRegistroUnidade/>} />
-          <Route path="adminparametrosgrandeza" element={<AdminRegistroGrandeza/>} />
-          <Route path="adminlogs" element={<LogSistema/>} />
+          <Route path="producao/monitoramento" element={<Producao />} />
+          <Route path="armazenagem/monitoramento/:id" element={<Armazenamento />} />
+          <Route path="producao/parametros" element={<ParametrosProducao />} />
+          <Route path="armazenagem/parametros/:id" element={<ParametrosArmazenamento />} />
+          <Route path="admin/usuarios" element={<AdminRegistroUsuarios />} />
+          <Route path="admin/producao" element={<AdminRegistroProducao />} />
+          <Route path="admin/armazem" element={<AdminRegistroArmazenamento/>} />
+          <Route path="admin/unidade" element={<AdminRegistroUnidade/>} />
+          <Route path="admin/grandezas" element={<AdminRegistroGrandeza/>} />
+          <Route path="admin/logs" element={<LogSistema/>} />
           <Route path="maintencefunctions" element={<ManutencaoFuncao/>} />
           <Route path="maintencestatus" element={<Status/>} />
           <Route path="teste" element={<Teste/>} />

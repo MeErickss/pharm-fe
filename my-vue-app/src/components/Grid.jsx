@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";// importe também closeModal se for necessário
+import correcoes from "./dicionario";
 
 export function Grid({
   dados,
@@ -9,6 +10,17 @@ export function Grid({
 }) {
   const [valores, setValores] = useState({});
   const navigate = useNavigate();
+
+    const style = {
+    "UM":"w-10/12 border-b-2 border-b-cyan-300 px-2",
+    "DOIS":"w-10/12 border-b-2 border-b-teal-600 px-2",
+    "TRES":"w-10/12 border-b-2 border-b-violet-600 px-2",
+    "ATIVO":"w-10/12 border-b-2 border-b-green-400 px-2",
+    "BLOQUEADO":"w-10/12 border-b-2 border-b-red-600 px-2",
+    "INATIVO":"w-10/12 border-b-2 border-b-yellow-400 px-2",
+    "PRODUCAO":"w-10/12 border-b-2 border-b-gray-300 px-2",
+    "ARMAZENAMENTO":"w-10/12 border-b-2 border-b-amber-950 px-2",
+  }
 
   useEffect(() => {
     const init = {};
@@ -77,9 +89,9 @@ export function Grid({
                 .join(" ")}`,
           }}
         >
-          {Object.keys(dados[0]).map((key) => (
-            <div key={key} className="px-2">
-              {key[0].toUpperCase() + key.substring(1)}
+          {Object.entries(dados[0]).map(([campo, valor]) => (
+            <div key={campo} className="px-2">
+              {correcoes[campo]}
             </div>
           ))}
         </div>
@@ -100,7 +112,7 @@ export function Grid({
         >
           {Object.values(row).map((value, idx) =>
             idx !== 2 ? (
-              <div key={idx} className="px-2">
+              <div key={idx} className={value in style ? style[value] : "px-2"}>
                 {value ?? "—"}
               </div>
             ) : (

@@ -1,268 +1,135 @@
 // src/Sidebar.jsx
-import { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { SafetyOutlined } from "@ant-design/icons"; 
-import ArrowUpFromBracket from "./pharmProduction/images/ArrowUpFromBracket.svg";
-import CaretDown from "./pharmProduction/images/CaretDown.svg";
-import CaretUp from "./pharmProduction/images/CaretUp.svg";
-import Clipboard from "./pharmProduction/images/Clipboard.svg";
-import Grip from "./pharmProduction/images/Grip.svg";
-import House from "./pharmProduction/images/House.svg";
-import Industry from "./pharmProduction/images/Industry.svg";
-import RightToBracket from "./pharmProduction/images/RightToBracket.svg";
-import Admin from "./pharmProduction/images/Admin.svg";
-import AdminUsers from "./pharmProduction/images/AdminUsers.svg";
-import AdminProduction from "./pharmProduction/images/AdminProduction.svg";
-import AdminStorage from "./pharmProduction/images/AdminStorage.svg";
-import logo from '../pages/images/logo.svg';
-import maintence from "./pharmProduction/images/Maintence.svg";
-
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import logo from "../pages/images/logo.svg"
+import {
+  SafetyOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  AppstoreOutlined,
+  PieChartOutlined,
+  DesktopOutlined,
+  ContainerOutlined,
+  MailOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
+import { Menu, Button } from "antd";
+import api from "../api";
+import correcoes from "./dicionario";
 
 export function Sidebar() {
+  const [collapsed, setCollapsed] = useState(false);
   const [login, setLogin] = useState("");
-  const [producao, setProducao] = useState(false);
-  const [armazenamento, setArmazenamento] = useState(false);
-  const [cadastro, setCadastro] = useState(false);
-  const [manutencao, setManutencao] = useState(false);
   const [nivel, setNivel] = useState("");
+  const [formulaItems, setFormulaItems] = useState([]);
+  const [storageItems, setStorageItems] = useState([]);
+  const [openKeys, setOpenKeys] = useState([]);  // controla submenus abertos
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedLogin = localStorage.getItem("login");
-    if (!storedLogin) {
-      navigate("/");
-    } else {
-      setLogin(storedLogin);
-      setNivel(localStorage.getItem('nivel').toLowerCase())
-    }
+    const stored = localStorage.getItem("login");
+    if (!stored) return navigate("/");
+    setLogin(stored);
+    const lvl = localStorage.getItem("nivel");
+    setNivel(lvl?.toLowerCase() || "");
   }, [navigate]);
+
 
   const handleLogout = () => {
     localStorage.removeItem("login");
     navigate("/");
   };
 
-    return (
-        <div className="grid grid-rows-[auto_1fr_auto] h-screen bg-slate-100 text-sm w-52">
-            {/* Topo - Logo e usuário */}
-            <div className="flex flex-col py-6 items-center">
-                <img className="p-2" width={200} src={logo} alt="logo" />
-                <div className="flex gap-2 border-b-2 border-violet-800">
-                    <span className="font-bold text-base">{login}</span>
-                    <SafetyOutlined />
-                </div>
-            </div>
+    useEffect(() => {
+    api
+      .get("/formula", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((response) => setFormulaItems(response.data))
+      .catch((err) => {
+        if (err.response?.status === 401) navigator("/");
+        console.error("Erro ao buscar fórmulas", err);
+        setError("Erro ao carregar fórmulas");
+      });
+  }, []);
 
-            {/* Meio - Botões de navegação */}
-            <div className="flex flex-col w-full">
-                <NavLink 
-                    className={({ isActive }) => 
-                        `w-full flex items-center gap-2 p-4 text-left hover:bg-gray-300 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                    } 
-                    to="/home"
-                >
-                    <img width={15} src={House}/> Página Inicial
-                </NavLink>
+  const items = [
+    { label: "Página Inicial", key: "home", icon: <PieChartOutlined /> },
+    {
+      label: "Produção",
+      key: "producao",
+      icon: <AppstoreOutlined />,
+      children: [
+        { label: "Monitoramento", key: "producao:monitoramento", icon: <PieChartOutlined /> },
+        { label: "Parâmetros",           key: "producao:parametros",      icon: <DesktopOutlined /> },
+      ],
+    },
+    {
+      label: "Armazenamento",
+      key: "armazenagem",
+      icon: <ContainerOutlined />,
+      children: formulaItems.map((value) =>({
+          label: `Formula ${correcoes[value]}`,
+          key: `armazenagem:submenu${value}`,
+          icon: <MenuUnfoldOutlined />,
+          children: [
+            { label: `Armazem ${correcoes[value]}`, key: `armazenagem:monitoramento:${correcoes[value]}` },
+            { label: "Parâmetros", key: `armazenagem:parametros:${correcoes[value]}`},
+          ],
+      }))
+    },
+    nivel === "admin" && {
+      label: "Cadastros Admin",
+      key: "admin",
+      icon: <SettingOutlined />,
+      children: [
+        { label: "Parâmetros Produção", key: "admin:producao", icon: <AppstoreOutlined /> },
+        { label: "Parâmetros Armazém",   key: "admin:armazem",  icon: <AppstoreOutlined /> },
+        { label: "Cadastro Unidade",    key: "admin:unidade",  icon: <AppstoreOutlined /> },
+        { label: "Cadastro Grandezas",   key: "admin:grandezas", icon: <AppstoreOutlined /> },
+        { label: "Logs Sistema",         key: "admin:logs",      icon: <AppstoreOutlined /> },
+        { label: "Cadastro Usuários",    key: "admin:usuarios",  icon: <SettingOutlined /> },
+      ],
+    },
+    nivel === "manutencao" && {
+      label: "Cadastros Manutenção",
+      key: "manutencao",
+      icon: <ContainerOutlined />,
+    },
+    { label: "Sair", key: "logout", icon: <MenuFoldOutlined /> },
+  ].filter(Boolean);
 
-                <div className="w-full">
-                    <button
-                        className={`w-full flex items-center gap-2 p-4 text-left ${
-                            producao ? "bg-gray-400 font-bold" : "text-black"
-                        }`}
-                        onClick={() => setProducao(!producao)}
-                    >
-                        <img width={15} src={Industry}/>
-                        Produção
-                        {producao ? <img width={8} src={CaretUp}/> : <img width={8} src={CaretDown}/>}
-                    </button>
-                    {producao && (
-                        <div className="grid w-full bg-gray-200">
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/producao"
-                            >
-                                <img width={10} src={Grip}/> Tela de Monitoramento
-                            </NavLink>
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/parametroproducao"
-                            >
-                                <img width={10} src={Clipboard}/> Parâmetros
-                            </NavLink>
-                        </div>
-                    )}
-                </div>
+  const onClick = e => {
+    const [group, id, action] = e.key.split(":");
+    console.log(group, id, action)
+    if (group === "home") return navigate("/home");
+    if (group === "producao") return navigate(`/${e.key.replace(/:/g, "/")}`);
+    if (group === "armazenagem") return navigate(`/${e.key.replace(/:/g, "/")}`);
+    if (group === "admin") return navigate(`/${e.key.replace(/:/g, "/")}`);
+    if (group === "manutencao") return navigate(`/${e.key.replace(/:/g, "/")}`);
+    if (group === "logout") return handleLogout();
+  };
 
-                <div className="w-full">
-                    <button
-                        className={`w-full flex items-center gap-2 p-4 text-left ${
-                            armazenamento ? "bg-gray-400 font-bold" : "text-black"
-                        }`}
-                        onClick={() => setArmazenamento(!armazenamento)}
-                    >
-                        <img width={15} src={ArrowUpFromBracket}/>
-                        Armazenamento
-                        {armazenamento ? <img width={8} src={CaretUp}/> : <img width={8} src={CaretDown}/>}
-                    </button>
-                    {armazenamento && (
-                        <div className="grid w-full bg-gray-200">
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/armazenamento"
-                            >
-                                <img width={10} src={Grip}/> Tela de Monitoramento
-                            </NavLink>
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/parametroarmazem"
-                            >
-                                <img width={10} src={Clipboard}/> Parâmetros
-                            </NavLink>
-                        </div>
-                    )}
-                </div>
+  const onOpenChange = keys => {
+    setOpenKeys(keys);
+  };
 
-                
-                
-                {nivel==="admin" && <div className="w-full">
-                    <button
-                        className={`w-full flex items-center gap-2 p-4 text-left ${
-                            cadastro ? "bg-gray-400 font-bold" : "text-black"
-                        }`}
-                        onClick={() => setCadastro(!cadastro)}
-                    >
-                        <img width={15} src={Admin}/>
-                        Cadastros Admin
-                        {cadastro ? <img width={8} src={CaretUp}/> : <img width={8} src={CaretDown}/>}
-                    </button>
-                    {cadastro && (
-                        <div className="grid w-full bg-gray-200">
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 ml-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/adminparametrosproducao"
-                            >
-                                <img width={10} src={AdminProduction}/> Parâmetros Produção
-                            </NavLink>
-
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 ml-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/adminparametrosarmazem"
-                            >
-                                <img width={10} src={AdminProduction}/> Parâmetros Armazém
-                            </NavLink>
-
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/adminparametrosunidade"
-                            >
-                                <img width={10} src={AdminProduction}/> Cadastro Unidade
-                            </NavLink>
-
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/adminparametrosgrandeza"
-                            >
-                                <img width={10} src={AdminProduction}/> Cadastro Grandezas
-                            </NavLink>
-
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/adminlogs"
-                            >
-                                <img width={10} src={AdminProduction}/> Logs Sistema
-                            </NavLink>
-
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/teste"
-                            >
-                                <img width={10} src={AdminProduction}/> Teste
-                            </NavLink>
-
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/usuarios"
-                            >
-                                
-                                <img width={10} src={AdminUsers}/> Cadastro Usuários
-                            </NavLink>
-                        </div>
-                    )}
-                </div>}
-
-                {nivel==="manutencao" && <div className="w-full">
-                    <button
-                        className={`w-full flex items-center gap-2 p-4 text-left ${
-                            manutencao ? "bg-gray-400 font-bold" : "text-black"
-                        }`}
-                        onClick={() => setManutencao(!manutencao)}
-                    >
-                        <img width={15} src={maintence}/>
-                        Cadastros Manutenção
-                        {manutencao ? <img width={8} src={CaretUp}/> : <img width={8} src={CaretDown}/>}
-                    </button>
-                    {manutencao && (
-                        <div className="grid w-full bg-gray-200">
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/maintencefunctions"
-                            >
-                                <img width={10} src={AdminStorage}/> Funções Manutenção
-                            </NavLink>
-
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/maintencestatus"
-                            >
-                                <img width={10} src={AdminStorage}/> Status Manutenção
-                            </NavLink>
-
-                            <NavLink 
-                                className={({ isActive }) => 
-                                    `p-4 mx-2 flex items-center gap-2 ${isActive ? "text-blue-500 font-bold" : "text-black"}`
-                                } 
-                                to="/usuarios"
-                            >
-                                <img width={10} src={AdminUsers}/> Usuários
-                            </NavLink>
-                        </div>
-                    )}
-                </div>}
-                
-                <button 
-                    className="w-full flex items-center gap-2 p-4 text-left hover:text-red-600 hover:bg-gray-300" 
-                    onClick={handleLogout}
-                >
-                    <img width={15} src={RightToBracket}/>
-                    Sair
-                </button>
-            </div>
+  return (
+    <div className="w-full h-full text-center p-2">
+        <img src={logo}/>
+        <div className="flex justify-center items-center w-full">
+            <h1 className="w-10/12 py-2 border-b-indigo-600 border-b-2 text-neutral-700">{login} <SafetyOutlined /></h1>
         </div>
-    );
+      <Menu
+        mode="inline"
+        theme="light"
+        style={{ backgroundColor: "white", fontWeight:"bold", color: "black", marginLeft: "-1.5rem", width:"15rem", display:"flex", flexDirection:"column", justifyContent:"center" }}
+        inlineCollapsed={collapsed}
+        items={items}
+        onClick={onClick}
+        openKeys={openKeys}
+        onOpenChange={onOpenChange}
+      />
+    </div>
+  );
 }
