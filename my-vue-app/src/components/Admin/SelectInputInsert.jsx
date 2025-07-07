@@ -67,7 +67,7 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
   return (
     <div>
       <select
-        className="w-11/12 border p-1 rounded"
+        className="w-11/12 border p-1 rounded bg-gray-50 text-neutral-500 border-gray-300"
         defaultValue={""}
         onChange={e => {
           const val = e.target.value;
@@ -86,7 +86,7 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
 
       {table === "grandeza" && isUnidade && param && unidadeOptions.length > 0 && (
         <select
-          className="w-11/12 border p-1 rounded mt-2"
+          className="w-11/12 border p-1 rounded mt-2 bg-gray-50 text-neutral-500 border-gray-300"
           value={unidade}
           defaultValue=""
           onChange={e => {

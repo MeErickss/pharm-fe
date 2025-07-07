@@ -63,7 +63,7 @@ export function LogSistema() {
   useEffect(() => { fetchLogAlarme(0); }, [fetchLogAlarme]);
 
   return (
-    <div className="p-6">
+    <div className="w-full rounded h-full bg-gray-100 p-4">
       <h2 className="text-2xl font-bold mb-4">Logs do Sistema</h2>
       <LogsCarousel
         // Produção

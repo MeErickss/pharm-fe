@@ -111,7 +111,7 @@ export function Armazenamento() {
   };
 
   return (
-    <main className="grid grid-cols-4 grid-rows-4 gap-4 w-full h-full bg-gray-100">
+    <main className="grid rounded-xl grid-cols-4 grid-rows-4 gap-4 w-full h-full bg-gray-100">
       <div className="flex flex-col justify-start items-center col-span-2 row-span-3 p-4 bg-white shadow-md rounded-2xl">
         <h1 className="font-bold text-5xl">Distribuição</h1>
         <Distribuicao />
