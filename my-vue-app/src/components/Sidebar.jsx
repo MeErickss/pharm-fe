@@ -87,8 +87,9 @@ export function Sidebar() {
         { label: "Parâmetros Armazém",   key: "admin:armazem",  icon: <AppstoreOutlined /> },
         { label: "Cadastro Unidade",    key: "admin:unidade",  icon: <AppstoreOutlined /> },
         { label: "Cadastro Grandezas",   key: "admin:grandezas", icon: <AppstoreOutlined /> },
-        { label: "Logs Sistema",         key: "admin:logs",      icon: <AppstoreOutlined /> },
         { label: "Cadastro Usuários",    key: "admin:usuarios",  icon: <SettingOutlined /> },
+        { label: "Logs Sistema",         key: "admin:logs",      icon: <AppstoreOutlined /> },
+        { label: "Teste",         key: "admin:teste",      icon: <AppstoreOutlined /> },
       ],
     },
     nivel === "manutencao" && {

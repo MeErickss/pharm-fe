@@ -45,7 +45,7 @@ export default function App() {
           <Route path="admin/logs" element={<LogSistema/>} />
           <Route path="maintencefunctions" element={<ManutencaoFuncao/>} />
           <Route path="maintencestatus" element={<Status/>} />
-          <Route path="teste" element={<Teste/>} />
+          <Route path="admin/teste" element={<Teste/>} />
         </Route>
 
         <Route path="*" element={<Pagina404 />} />

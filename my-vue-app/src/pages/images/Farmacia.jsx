@@ -177,11 +177,54 @@ export function Farmacia() {
 
       {elementosData.map(el => {
         // Skip specific elements
-        if (["Nivel_ta","Nivel_tm"].includes(el.label)) return null;
         const { x,y,w,h } = el.coordsPx;
         if (!el.img || w===0 || h===0) return null;
         const isUpdating = updatingIds.has(el.id);
         const labelTop = y + 32;
+        if (["Nivel_ta","Nivel_tm"].includes(el.label)) return (
+        <div
+          key={el.label}
+          className="flex flex-col items-center"
+          style={{
+            position: "absolute",
+            left: toPct(x, ORIGINAL_WIDTH),
+            top: toPct(y, ORIGINAL_HEIGHT),
+            width: toPct(w, ORIGINAL_WIDTH),
+            height: toPct(h, ORIGINAL_HEIGHT),
+          }}
+        >
+          {/* Track */}
+          <div
+            className="relative bg-gray-200 rounded-sm w-8 mr-2 h-full"
+          >
+            {/* Fill */}
+            <div
+              className="absolute bottom-0 bg-blue-400 rounded-t-sm"
+              style={{
+                width: "100%",
+                height: `${20}%`, 
+              }}
+            />
+
+            {/* Marker */}
+            <div
+              className="absolute"
+              style={{
+                bottom: `calc(${20}% - 0.5rem)`,  // 0.5rem = metade da altura do marker
+                left: "50%",
+                transform: "translateX(-50%)",
+              }}
+            >
+              <div className="w-8 h-2 bg-gray-400 rounded-sm" />
+            </div>
+          </div>
+            
+          {/* Label abaixo */}
+          <span className="absolute mr-2 text-sm font-medium text-gray-700">
+            {20}L
+          </span>
+        </div>
+        );
         return (
           <>
             <div className={el.original.nomePadronizado.includes("bomba") ? "mx-24 my-4":"mx-9"} key={`${el.id}-label`} aria-hidden style={{

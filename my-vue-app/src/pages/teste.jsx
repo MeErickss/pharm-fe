@@ -1,64 +1,47 @@
-// Teste.jsx
-import { useState, useEffect } from "react";
-import modbusApi from "../modbusApi";  // <–– aqui!
+import React from "react";
 
 export function Teste() {
-  const [log, setLog] = useState([]);
-  const [data, setData] = useState(null);
-  const append = msg => setLog(l => [...l, msg]);
+  const valor = 20;      // valor de 0 a 100
+  const trackHeight = 200; // altura total em px
+  const trackWidth = 16;   // largura em px
 
-  useEffect(() => {
-    async function run() {
-      try {
-        append("Conectando…");
-        await modbusApi.post("/connect", {
-          host: "192.168.1.11",
-          port: 502,
-          slaveId: 1
-        });
-        append("Conectado");
-
-        append("Lendo registradores");
-        const readRes = await modbusApi.post("/read", {
-          address: 1,
-          length: 10,
-          type: "holding"
-        });
-        append("Dados: " + readRes.data.data.join(", "));
-        setData(readRes.data.data);
-
-        append("Escrevendo registrador 6 = 12");
-        await modbusApi.post("/write", {
-          address: 6,
-          value: 12,
-          type: "holding"
-        });
-        append("Escrito com sucesso");
-
-        append("Fechando conexão");
-        await modbusApi.post("/close");
-        append("Conexão fechada");
-      } catch (e) {
-        append("Erro: " + e.message);
-      }
-    }
-    run();
-  }, []);
+  // altura do fill em px
+  const fillHeight = (valor / 100) * trackHeight;
 
   return (
-    <div className="p-12">
-      <h2>Teste Modbus via HTTP</h2>
-      <pre style={{ background: "#f5f5f5", padding: 10, minHeight: 100 }}>
-        {log.map((l,i) => <div key={i}>{l}</div>)}
-      </pre>
-      {data && (
-        <>
-          <h3>Valores Lidos:</h3>
-          <ul>
-            {data.map((v,i) => <li key={i}>[{i}] = {v}</li>)}
-          </ul>
-        </>
-      )}
+    <div className="flex flex-col items-center">
+      {/* Track */}
+      <div
+        className="relative bg-gray-200 rounded-full"
+        style={{ width: `${trackWidth}px`, height: `${trackHeight}px` }}
+      >
+        {/* Fill */}
+        <div
+          className="absolute bottom-0 bg-blue-400 rounded-t-full"
+          style={{
+            width: "100%",
+            height: `${fillHeight}px`,
+          }}
+        />
+
+        {/* Marker */}
+        <div
+          className="absolute flex items-center justify-center"
+          style={{
+            // posiciona a bolinha no topo do fill:
+            bottom: `${fillHeight - 8}px`,
+            left: "50%",
+            transform: "translateX(-50%)",
+          }}
+        >
+          <div className="w-6 h-[0.5rem] bg-gray-400" />
+        </div>
+      </div>
+
+      {/* Label */}
+      <span className="mt-2 text-base font-medium text-gray-700">
+        {valor}
+      </span>
     </div>
   );
 }

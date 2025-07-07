@@ -27,6 +27,9 @@ export function Producao() {
   const [modalFormula, setModalFormula] = useState(false);
   const [showModalEmergencia, setShowModalEmergencia] = useState(false);
 
+  const [iniciar, setIniciar] = useState(false)
+  const [processo, setProcesso] = useState(false)
+
   // Tamanho da página
   const [size] = useState(6);
 
@@ -116,6 +119,13 @@ export function Producao() {
       <div className="flex flex-col justify-start items-center col-span-2 row-span-3 p-4 bg-white shadow-md rounded-2xl">
         <h1 className="font-bold text-5xl">Farmácia</h1>
         <Farmacia />
+        {iniciar && (
+          <div className="grid relative top-[10rem] text-white w-full grid-cols-3">
+            <button className="relative bg-green-500 hover:brightness-125 text-white mx-6 h-8 px-3 w-1/2 py-1 rounded-lg" onClick={() => setProcesso(true)}>Iniciar</button>
+            {processo && (<><button className="relative bg-red-500 hover:brightness-125 text-white w-1/2 mx-6 h-8 px-3 py-1 rounded-lg" onClick={() => {setProcesso(false);setIniciar(false)}}>Parar</button>
+            <button className="relative bg-orange-500 hover:brightness-125 text-white mx-6 h-8 px-3 w-1/2 py-1 rounded-lg" onClick={() => setProcesso(false)}>Reiniciar</button></>)}
+          </div>
+        )}
       </div>
 
       {/* Log de Produção */}
@@ -135,19 +145,25 @@ export function Producao() {
       />
 
       {/* Grid de Botões de Fórmula ou Modal */}
-        <div className="grid items-center grid-cols-4 col-span-2 bg-neutral-400 w-full h-full text-white p-4 rounded-2xl gap-4">
-          {formula.map((f) => (
+        <div className="grid items-center grid-cols-4 grid-rows-2 col-span-2 bg-neutral-400 w-full h-full text-white p-4 rounded-2xl gap-4">
+          <div className="grid grid-cols-4 w-full h-full col-span-4 bg-neutral-200 text-black rounded">
+            <span>Alarme</span>
+            <span>Descricao</span>
+            <span>Ação</span>
+            <span>Fechado Valuvla 2</span>
+          </div>
+          {!iniciar && formula.map((f) => (
             <button
               key={f}
               onClick={() => fetchParametrosFormula(f)}
-              className="bg-blue-500 m-auto w-36 h-16 p-4 rounded-lg"
+              className="bg-blue-500 hover:brightness-125 text-white mx-6 h-8 px-3 py-1 rounded-lg"
             >
               Fórmula {correcoes[f]}
             </button>
           ))}
 
           <button
-            className="bg-blue-500 m-auto w-36 h-16 p-4 rounded-lg"
+            className="bg-blue-500 hover:brightness-125 text-white mx-6 h-8 px-3 py-1 rounded-lg"
             onClick={() => setShowModalEmergencia((p) => !p)}
           >
             EMERGÊNCIA
@@ -162,7 +178,7 @@ export function Producao() {
 
 
         {modalFormula && (<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="w-full max-w-4xl max-h-[90vh] overflow-auto bg-neutral-100 p-6 rounded-2xl shadow-lg relative">
+          <div className="w-full max-w-5xl max-h-[90vh] overflow-auto bg-neutral-100 p-6 rounded-2xl shadow-lg relative">
           <h1><strong>Parametros da Formula param</strong></h1>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="16" onClick={() => setModalFormula(!modalFormula)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 fill-red-500 hover:fill-red-900">
             <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
@@ -172,24 +188,24 @@ export function Producao() {
             {parametrosFormula.map((row) => (
               <div
                 key={row.id}
-                className="mb-6 bg-white p-6 rounded-lg shadow grid grid-cols-3 gap-4"
+                className="mb-6 bg-white p-6 rounded-lg shadow grid grid-cols-4 gap-4"
               >
                 {Object.entries(row).map(([field, value]) => (
-                  <div key={field} className="flex flex-col">
+                  ["valor","descricao","unidade"].includes(field.replace(/([A-Z])/g, " $1")) &&
+                  (<div key={field} className={field.replace(/([A-Z])/g, " $1") == "descricao" ? "flex flex-col col-span-3" : field.replace(/([A-Z])/g, " $1") == "valor" ? "flex flex-col w-1/3" : "w-1/3 flex flex-col"}>
                     <label className="text-xs font-bold text-black">
                       <strong>{correcoes[field.replace(/([A-Z])/g, " $1")]}</strong>
                     </label>
-
                     {<input
                       readOnly
                       value={
                         typeof value === "object"
-                          ? JSON.stringify(value)
+                          ? value.unidade
                           : value
                       }
                       className="mt-1 bg-gray-50 border text-neutral-500 border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
                     />}
-                  </div>
+                  </div>)
                 ))}
               </div>
             ))}
@@ -228,17 +244,10 @@ export function Producao() {
 
             <div className="flex justify-end gap-4">
               <button
-                onClick={() => setModalFormula(false)}
+                onClick={() => {setModalFormula(false);setIniciar(true)}}
                 className="mt-4 bg-green-500 text-white px-6 py-2 rounded hover:brightness-90"
               >
                 Carregar Receita
-              </button>
-
-              <button
-                onClick={() => setModalFormula(false)}
-                className="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-              >
-                Inicar
               </button>
             </div>
           </div>
