@@ -11,7 +11,7 @@ let isConnected = false;
  * @param {number} port - Porta TCP do Modbus (default: 502)
  * @param {number} slaveId - ID do escravo Modbus (default: 1)
  */
-export async function connect(host = "192.168.1.9", port = 502, slaveId = 1) {
+export async function connect(host = "192.168.1.11", port = 502, slaveId = 1) {
   if (isConnected) {
     console.warn("Já conectado ao Modbus");
     return;
