@@ -119,7 +119,7 @@ export function Grid({
               <div key={idx} className="relative">
                 <input
                   type="number"
-                  className="w-8/12 px-2 outline-none border-b-2 border-orange-400"
+                  className="w-8/12 px-2 outline-none border-b-2 border-orange-400 "
                   value={valores[row.id] ?? ""}
                   min={row.vlMin}
                   max={row.vlMax}
@@ -127,7 +127,7 @@ export function Grid({
                 />
                 <button
                   onClick={() => handleSubmit(row)}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 bg-orange-500 w-4/12 py-1 text-white rounded-r-lg"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 bg-orange-500 hover:brightness-90 w-4/12 py-1 text-white rounded-r-lg"
                 >
                   Editar
                 </button>

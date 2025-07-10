@@ -105,7 +105,7 @@ export function AdicionarDado({ dados, closeModal, table, param }) {
 
 
       <form onSubmit={handleSubmit} className="flex justify-end gap-4 mt-4">
-        <button type="submit" className="w-[12rem] bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+        <button type="submit" className="w-[12rem] bg-blue-500 hover:brightness-90 text-white py-2 px-4 rounded">
           Adicionar
         </button>
       </form>

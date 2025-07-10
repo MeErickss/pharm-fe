@@ -126,11 +126,10 @@ export function Producao() {
         <Farmacia />
         {iniciar && (
           <div className="grid justify-center items-center relative top-[10rem] text-white w-full grid-cols-4">
-            <button className="relative bg-green-500 hover:brightness-125 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={() => setProcesso(true)}>Iniciar</button>
-            {processo && (<><button className="relative bg-red-500 hover:brightness-125 text-white w-7/12 mx-16 h-8 px-3 py-1 rounded-lg" onClick={() => {setProcesso(false);setIniciar(false)}}>Parar</button>
-            <button className="relative bg-indigo-600 hover:brightness-125 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={()=>setShowModalPdf(true)}>Gerar PDF</button>
-            <button className="relative bg-orange-500 hover:brightness-125 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={() => setProcesso(false)}>Reiniciar</button></>)}
-
+            <button className="relative bg-green-500 hover:brightness-90 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={() => setProcesso(true)}>Iniciar</button>
+            {processo && (<><button className="relative bg-red-500 hover:brightness-90 text-white w-7/12 mx-16 h-8 px-3 py-1 rounded-lg" onClick={() => {setProcesso(false);setIniciar(false)}}>Parar</button>
+            <button className="relative bg-indigo-600 hover:brightness-90 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={()=>setShowModalPdf(true)}>Gerar PDF</button>
+            <button className="relative bg-orange-500 hover:brightness-90 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={() => setProcesso(false)}>Reiniciar</button></>)}
           </div>
         )}
       </div>
@@ -163,14 +162,14 @@ export function Producao() {
             <button
               key={f}
               onClick={() => fetchParametrosFormula(f)}
-              className="bg-blue-500 hover:brightness-125 text-white mx-6 h-8 px-3 py-1 rounded-lg"
+              className="bg-blue-500 hover:brightness-90 text-white mx-6 h-8 px-3 py-1 rounded-lg"
             >
               Fórmula {correcoes[f]}
             </button>
           ))}
 
           <button
-            className="bg-blue-500 hover:brightness-125 text-white mx-6 h-8 px-3 py-1 rounded-lg"
+            className="bg-blue-500 hover:brightness-90 text-white mx-6 h-8 px-3 py-1 rounded-lg"
             onClick={() => setShowModalEmergencia((p) => !p)}
           >
             EMERGÊNCIA

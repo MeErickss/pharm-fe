@@ -69,7 +69,7 @@ export function PaginaLogin() {
           <div className="text-center mt-6">
             <button
               type="submit"
-              className="w-1/2 h-10 bg-indigo-600 hover:bg-indigo-700 text-white rounded"
+              className="w-1/2 h-10 bg-indigo-600 hover:brightness-90 text-white rounded"
             >
               Entrar
             </button>

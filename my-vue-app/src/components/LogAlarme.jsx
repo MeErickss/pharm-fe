@@ -113,7 +113,7 @@ export function LogAlarme({
           <button
             onClick={() => fetchLogAlarme(pageAlarme - 1)}
             disabled={pageAlarme === 0}
-            className="bg-blue-500 hover:bg-blue-600 text-white h-8 px-3 py-1 rounded disabled:opacity-50"
+            className="bg-blue-500 hover:brightness-90 text-white h-8 px-3 py-1 rounded disabled:opacity-50"
           >
             Anterior
           </button>
@@ -125,7 +125,7 @@ export function LogAlarme({
           <button
             onClick={() => fetchLogAlarme(pageAlarme + 1)}
             disabled={pageAlarme + 1 >= totalPagesAlarme}
-            className="bg-blue-500 hover:bg-blue-600 text-white h-8 px-3 py-1 rounded disabled:opacity-50"
+            className="bg-blue-500 hover:brightness-90 text-white h-8 px-3 py-1 rounded disabled:opacity-50"
           >
             Próxima
           </button>
@@ -162,7 +162,7 @@ export function LogAlarme({
                 setQuery("");
                 setFilteredDados(dadosAlarme);
               }}
-              className="bg-red-500 hover:brightness-125 text-white mx-6 h-8 px-3 py-1 rounded"
+              className="bg-red-500 hover:brightness-90 text-white mx-6 h-8 px-3 py-1 rounded"
             >
               Limpar Filtro
             </button>
