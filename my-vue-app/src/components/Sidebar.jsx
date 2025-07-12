@@ -10,8 +10,9 @@ import {
   PieChartOutlined,
   DesktopOutlined,
   ContainerOutlined,
-  MailOutlined,
   SettingOutlined,
+  BarsOutlined,
+  HistoryOutlined
 } from "@ant-design/icons";
 import { Menu, Button } from "antd";
 import api from "../api";
@@ -83,13 +84,14 @@ export function Sidebar() {
       key: "admin",
       icon: <SettingOutlined />,
       children: [
-        { label: "Parâmetros Produção", key: "admin:producao", icon: <AppstoreOutlined /> },
-        { label: "Parâmetros Armazém",   key: "admin:armazem",  icon: <AppstoreOutlined /> },
-        { label: "Cadastro Unidade",    key: "admin:unidade",  icon: <AppstoreOutlined /> },
-        { label: "Cadastro Grandezas",   key: "admin:grandezas", icon: <AppstoreOutlined /> },
-        { label: "Cadastro Usuários",    key: "admin:usuarios",  icon: <SettingOutlined /> },
-        { label: "Logs Sistema",         key: "admin:logs",      icon: <AppstoreOutlined /> },
-        { label: "Teste",         key: "admin:teste",      icon: <AppstoreOutlined /> },
+        { label: "Parâmetros Produção", key: "admin:producao", icon: <BarsOutlined /> },
+        { label: "Parâmetros Armazém",   key: "admin:armazem",  icon: <BarsOutlined /> },
+        { label: "Cadastro Unidade",    key: "admin:unidade",  icon: <BarsOutlined /> },
+        { label: "Cadastro Grandezas",   key: "admin:grandezas", icon: <BarsOutlined /> },
+        { label: "Cadastro Ponto Controle",   key: "admin:pontocontrole", icon: <BarsOutlined /> },
+        { label: "Cadastro Usuários",    key: "admin:usuarios",  icon: <BarsOutlined /> },
+        { label: "Logs Sistema",         key: "admin:logs",      icon: <HistoryOutlined /> },
+        { label: "Teste",         key: "admin:teste",      icon: <BarsOutlined /> },
       ],
     },
     nivel === "manutencao" && {

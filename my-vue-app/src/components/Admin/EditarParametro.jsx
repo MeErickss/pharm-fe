@@ -55,7 +55,8 @@ const handleSubmit = async e => {
     grandezaDesc: valoresEditados.grandeza,
     unidadeDesc:  valoresEditados.unidade, 
     funcao:       valoresEditados.funcao,
-    formulaEnum: valoresEditados.formula
+    formulaEnum: valoresEditados.formula,
+    pontoControle: valoresEditados.pontoControle
   };
 
   console.log(body)
@@ -76,8 +77,6 @@ const handleSubmit = async e => {
     if (error.response?.status === 401) navigator("/login");
     console.error("❌ Erro ao inserir registro:", error);
     alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
-  } finally {
-    window.location.reload()
   }
 };
 
@@ -104,7 +103,7 @@ const handleSubmit = async e => {
           // exclui id e unidade, pois o componente SelectInputUpdate já faz cascata
           if (key === "id" || key === "unidade") return null;
 
-          const isSelect = ["status", "funcao", "grandeza", "formula"].includes(key);
+          const isSelect = ["status", "funcao", "grandeza", "formula", "pontoControle"].includes(key);
 
           return (
             <div key={key} className={key === "descricao" ? "col-span-3 w-[48.3rem]" : undefined}>

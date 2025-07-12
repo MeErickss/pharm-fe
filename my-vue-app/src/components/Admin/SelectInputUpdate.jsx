@@ -1,4 +1,3 @@
-// SelectInputUpdate.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
@@ -6,50 +5,73 @@ import api from "../../api";
 export function SelectInputUpdate({ table, onChange, value, param }) {
   const [options, setOptions] = useState([]);
   const [unidadeOptions, setUnidadeOptions] = useState([]);
-  const navigator = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    api.get(`/${table}`, {
+    api.get(`/${table.toLowerCase()}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     })
-    .then(res => {setOptions(res.data); console.log(res.data)})
+    .then(res => setOptions(res.data))
     .catch(err => {
-      if (err.response?.status === 401) navigator('/login');
+      if (err.response?.status === 401) navigate('/login');
       console.error(`Erro ao buscar opções para ${table}:`, err);
     });
-  }, [table, navigator]);
+  }, [table, navigate]);
 
   useEffect(() => {
     if (table === "grandeza") {
       const selected = typeof value === 'object' ? value.grandeza : value;
-      const found = options.find(o => o.descricao === selected || String(o.id) === String(selected));
+      const found = options.find(
+        o => o.descricao === selected || String(o.id) === String(selected)
+      );
       setUnidadeOptions(found?.unidades ?? []);
     }
   }, [table, options, value]);
 
+  // Determine the main select's controlled value
   let mainValue = "";
-  if (table === "grandeza") {
-    mainValue = typeof value === 'object' ? (value.grandeza ?? "") : (value ?? "");
-  } else if (table === "status") {
-    mainValue = typeof value === 'object' ? (value.status ?? "") : (value ?? "");
-  } else if (table === "funcao"){
-    mainValue = typeof value === 'object' ? (value.funcao ?? "") : (value ?? "");
-  } else if (table === "formula"){
-    mainValue = typeof value === 'object' ? (value.formula ?? "") : (value ?? "");
-  } else {
-    mainValue = value ?? ""
+  switch (table) {
+    case "grandeza":
+      mainValue = typeof value === 'object' ? (value.grandeza ?? "") : (value ?? "");
+      break;
+    case "status":
+      mainValue = typeof value === 'object' ? (value.status ?? "") : (value ?? "");
+      break;
+    case "funcao":
+      mainValue = typeof value === 'object' ? (value.funcao ?? "") : (value ?? "");
+      break;
+    case "formula":
+      mainValue = typeof value === 'object' ? (value.formula ?? "") : (value ?? "");
+      break;
+    case "pontoControle":
+      // Fix: use value.pontoControle instead of formula
+      mainValue = typeof value === 'object' ? (value.pontoControle ?? "") : (value ?? "");
+      break;
+    default:
+      mainValue = value ?? "";
   }
 
   const renderMainOptions = () => {
-    if (table === "status" || table === "funcao" || table === "nivel" || table === "formula") {
-      return options.map((st, i) => <option key={i} value={st}>{st}</option>);
+    if (["status", "funcao", "nivel", "formula"].includes(table)) {
+      return options.map((opt, i) => <option key={i} value={opt}>{opt}</option>);
+    }
+    if (table === "pontoControle") {
+      return options.map(o => (
+        <option key={o.id} value={o.pontoControle}>
+          {o.pontoControle}
+        </option>
+      ));
     }
     if (table === "grandeza") {
-      return options.map(o => <option key={o.id} value={o.descricao}>{o.descricao}</option>);
+      return options.map(o => (
+        <option key={o.id} value={o.descricao}>
+          {o.descricao}
+        </option>
+      ));
     }
     return options.map((o, i) => (
-      <option key={i} value={o.descricao}>
-        {o.descricao}
+      <option key={i} value={o.descricao || o}>
+        {o.descricao || o}
       </option>
     ));
   };
@@ -61,11 +83,9 @@ export function SelectInputUpdate({ table, onChange, value, param }) {
         value={mainValue}
         onChange={e => {
           const val = e.target.value;
-          console.log('Selecionado em', table, ':', val);
+          console.log(`Selecionado em ${table}:`, val);
           if (table === "grandeza" && param) {
             onChange({ grandeza: val, unidade: "" });
-          } else if (table === "status" || table === "funcao" || table === "nivel" || table === "formula") {
-            onChange(val);
           } else {
             onChange(val);
           }
@@ -87,7 +107,9 @@ export function SelectInputUpdate({ table, onChange, value, param }) {
         >
           <option value="">Selecione a unidade</option>
           {unidadeOptions.map(u => (
-            <option key={u.id} value={u.unidade}>{u.unidade}</option>
+            <option key={u.id} value={u.unidade}>
+              {u.unidade}
+            </option>
           ))}
         </select>
       )}

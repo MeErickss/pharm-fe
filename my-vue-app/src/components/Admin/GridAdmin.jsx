@@ -11,6 +11,8 @@ export function GridAdmin({
   onDelete,
 }) {
 
+  console.log(dados)
+
   const style = {
     "UM":"w-10/12 text-white text-center font-bold rounded-lg bg-cyan-300 px-2",
     "DOIS":"w-10/12 text-white text-center font-bold rounded-lg bg-teal-600 px-2",
