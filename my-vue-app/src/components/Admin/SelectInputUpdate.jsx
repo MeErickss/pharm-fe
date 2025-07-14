@@ -57,6 +57,7 @@ export function SelectInputUpdate({ table, onChange, value, param }) {
     }
     if (table === "pontoControle") {
       return options.map(o => (
+        o.status == "DESLIGADO" &&
         <option key={o.id} value={o.pontoControle}>
           {o.pontoControle}
         </option>

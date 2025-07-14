@@ -6,9 +6,14 @@ import api from "../api.js";
 import { ModalEmergencia } from "../components/ModalEmergencia.jsx";
 import correcoes from "../components/dicionario.js";
 import { PdfMakerModal } from "../components/PdfMaker.jsx";
+import { Steps } from "antd";
+import "antd/dist/reset.css";
+
 
 export function Producao() {
   const [error, setError] = useState("");
+  const { Step } = Steps;
+
 
   // Logs de Produção e Alarmes
   const [dadosProd, setDadosProd] = useState([]);
@@ -33,6 +38,8 @@ export function Producao() {
 
   const [iniciar, setIniciar] = useState(false)
   const [processo, setProcesso] = useState(false)
+
+  const [step, setStep] = useState(-1)
 
   // Tamanho da página
   const [size] = useState(6);
@@ -126,10 +133,10 @@ export function Producao() {
         <Farmacia />
         {iniciar && (
           <div className="grid justify-center items-center relative top-[10rem] text-white w-full grid-cols-4">
-            <button className="relative bg-green-500 hover:brightness-90 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={() => setProcesso(true)}>Iniciar</button>
-            {processo && (<><button className="relative bg-red-500 hover:brightness-90 text-white w-7/12 mx-16 h-8 px-3 py-1 rounded-lg" onClick={() => {setProcesso(false);setIniciar(false)}}>Parar</button>
-            <button className="relative bg-indigo-600 hover:brightness-90 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={()=>setShowModalPdf(true)}>Gerar PDF</button>
-            <button className="relative bg-orange-500 hover:brightness-90 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={() => setProcesso(false)}>Reiniciar</button></>)}
+            <button className="relative bg-green-500 hover:brightness-90 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={() => {setProcesso(true);setStep(1)}}>Iniciar</button>
+            {processo && (<><button className="relative bg-red-500 hover:brightness-90 text-white w-7/12 mx-16 h-8 px-3 py-1 rounded-lg" onClick={() => {setProcesso(false);setIniciar(false);setStep(-1)}}>Parar</button>
+            <button className="relative bg-indigo-600 hover:brightness-90 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={()=> {setShowModalPdf(true);setStep(2)}}>Gerar PDF</button>
+            <button className="relative bg-orange-500 hover:brightness-90 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={() => {setProcesso(false);setStep(0)}}>Reiniciar</button></>)}
           </div>
         )}
       </div>
@@ -151,12 +158,19 @@ export function Producao() {
       />
 
       {/* Grid de Botões de Fórmula ou Modal */}
-        <div className="grid items-center grid-cols-4 grid-rows-2 col-span-2 bg-neutral-400 w-full h-full text-white p-4 rounded-2xl gap-4">
-          <div className="grid grid-cols-4 w-full h-full col-span-4 bg-neutral-200 text-black rounded">
+        <div className="grid items-center grid-cols-4 grid-rows-2 col-span-2 bg-neutral-400 w-full h-[15.7rem] text-white p-4 rounded-2xl gap-4">
+          <div className="grid grid-cols-4 grid-rows-2 w-full h-full col-span-4 bg-neutral-200 text-black rounded">
             <span className="text-red-500">Alarme: ATIVADO</span>
-            <span>Falha na abertura da Valvula V2</span>
+            <span>Abertura Valvula V2</span>
             <span>Detetização</span>
             <span>Fechado Valuvla 2</span>
+                  <div className="col-span-4 -mt-[1.5rem]" style={{ padding: 24 }}>
+                    <Steps current={step}>
+                      <Step title="Inicio"/>
+                      <Step title="Processo"/>
+                      <Step title="Concluído"/>
+                    </Steps>
+                  </div>
           </div>
           {!iniciar && formula.map((f) => (
             <button
@@ -194,12 +208,12 @@ export function Producao() {
             {parametrosFormula.map((row) => (
               <div
                 key={row.id}
-                className="mb-6 bg-white p-6 rounded-lg shadow grid grid-cols-4 gap-4"
+                className="mb-6 bg-white p-6 rounded-lg shadow flex flex-wrap gap-4"
               >
                 {Object.entries(row).map(([field, value]) => (
                   ["valor","descricao","unidade"].includes(field.replace(/([A-Z])/g, " $1")) &&
-                  (<div key={field} className={field.replace(/([A-Z])/g, " $1") == "descricao" ? "flex flex-col col-span-3" : field.replace(/([A-Z])/g, " $1") == "valor" ? "flex flex-col w-1/3" : "w-1/3 flex flex-col"}>
-                    <label className="text-xs font-bold text-black">
+                  (<div key={field} className={field.replace(/([A-Z])/g, " $1") == "descricao" ? "flex flex-col w-7/12 col-span-3" : field.replace(/([A-Z])/g, " $1") == "valor" ? "flex flex-col w-2/12" : "w-2/12 flex flex-col"}>
+                    <label className=" text-xs font-bold text-black">
                       <strong>{correcoes[field.replace(/([A-Z])/g, " $1")]}</strong>
                     </label>
                     {<input
@@ -250,7 +264,7 @@ export function Producao() {
 
             <div className="flex justify-end gap-4">
               <button
-                onClick={() => {setModalFormula(false);setIniciar(true)}}
+                onClick={() => {setModalFormula(false);setIniciar(true);setStep(1)}}
                 className="mt-4 bg-green-500 text-white px-6 py-2 rounded hover:brightness-90"
               >
                 Carregar Receita
@@ -271,6 +285,7 @@ export function Producao() {
       {showModalPdf && (
         <PdfMakerModal
           setShowModalPdf={setShowModalPdf}
+          setStep={setStep}
         />
       )}
     </main>

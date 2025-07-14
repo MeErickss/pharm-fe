@@ -11,7 +11,10 @@ export function GridAdmin({
   onDelete,
 }) {
 
+  console.log("dados")
   console.log(dados)
+  console.log("dados")
+
 
   const style = {
     "UM":"w-10/12 text-white text-center font-bold rounded-lg bg-cyan-300 px-2",
@@ -63,8 +66,8 @@ export function GridAdmin({
           }}
         >
           {Object.values(row).map((value, idx) => (
-            <div key={idx} className={value in style ? style[value] : "px-2 w-full"}>
-              {value}
+            <div key={idx} className={value in style ? style[value] : value == null ? "bg-red-500 text-white font-bold text-center rounded-lg px-2 w-10/12" : "px-2 w-full"}>
+              {value ?? <strong>INDEFINIDO</strong>}
             </div>
           ))}
 

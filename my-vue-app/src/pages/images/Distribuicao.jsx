@@ -100,7 +100,7 @@ export function Distribuicao() {
     async function connectModbus() {
       try {
         await modbusApi.post("/connect", {
-          host: "192.168.1.11",
+          host: "127.0.0.1/8",
           port: 502,
           slaveId: 1
         });

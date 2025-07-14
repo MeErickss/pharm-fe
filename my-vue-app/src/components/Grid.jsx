@@ -112,8 +112,8 @@ export function Grid({
         >
           {Object.values(row).map((value, idx) =>
             idx !== 2 ? (
-              <div key={idx} className={value in style ? style[value] : "px-2"}>
-                {value ?? "—"}
+              <div key={idx} className={value in style ? style[value] : value == null ? "px-2 bg-red-500 rounded-lg text-center text-white font-bold w-10/12" : "px-2"}>
+                {value ?? <strong>INDEFINIDO</strong>}
               </div>
             ) : (
               <div key={idx} className="relative">

@@ -9,13 +9,15 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
   const [unidade, setUnidade] = useState("");
   const navigate = useNavigate();
 
+  console.log(value)
+
   // Fetch main options based on the table
   useEffect(() => {
     api
       .get(`/${table.toLowerCase()}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
-      .then(res => setOptions(res.data))
+      .then(res => {setOptions(res.data)})
       .catch(err => {
         if (err.response?.status === 401) navigate("/login");
         console.error(`Error fetching options for ${table}:`, err);
@@ -57,9 +59,11 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
 
       case "pontoControle":
         return options.map(o => (
+          o.status == "DESLIGADO" && (
           <option key={o.id} value={o.pontoControle}>
             {o.pontoControle}
           </option>
+          )
         ));
 
       default:
@@ -76,7 +80,7 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
     <div>
       <select
         className="w-11/12 border p-1 rounded bg-gray-50 text-neutral-500 border-gray-300"
-        value={mainValue}
+        defaultValue={""}
         onChange={e => {
           const val = e.target.value;
           if (table === "grandeza") {
