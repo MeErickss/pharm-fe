@@ -36,6 +36,7 @@ export function Armazenamento() {
   const [iniciar, setIniciar] = useState(false)
   const [processo, setProcesso] = useState(false)
 
+
   const [step, setStep] = useState(-1)
 
   const [size] = useState(6);
@@ -275,6 +276,7 @@ export function Armazenamento() {
         <PdfMakerModal
           setShowModalPdf={setShowModalPdf}
           setStep={setStep}
+          dados={parametrosFormula}
         />
       )}
     </main>

@@ -286,6 +286,7 @@ export function Producao() {
         <PdfMakerModal
           setShowModalPdf={setShowModalPdf}
           setStep={setStep}
+          dados={parametrosFormula}
         />
       )}
     </main>

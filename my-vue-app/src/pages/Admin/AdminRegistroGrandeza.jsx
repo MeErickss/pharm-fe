@@ -239,7 +239,7 @@ export function AdminRegistroGrandeza() {
   }));
 
   return (
-    <div className="w-full rounded h-full bg-gray-100 p-4">
+    <div className="w-full rounded h-full bg-gray-100 p-4 overflow-y-visible">
       <Cabecalho
         dados={dados}
         nivel={1}

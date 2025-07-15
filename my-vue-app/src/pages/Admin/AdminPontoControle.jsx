@@ -89,12 +89,12 @@ import { AdicionarDado } from "../../components/Admin/AdicionarDado";
     return (
       <div className="w-full rounded h-full bg-gray-100 p-4 overflow-y-visible">
 
-        <Cabecalho dados={dados} nivel={1} setshowModalAdd={setShowModalAdd} setDados={setDados} tabela={"Produção"}/>
+        <Cabecalho dados={dados} nivel={1} setshowModalAdd={setShowModalAdd} setDados={setDados} tabela={"Ponto de Controle"}/>
 
         {showModalAdd && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-              <AdicionarDado dados={dados} param={true} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
+              <AdicionarDado dados={dados} param={true} table={"pontocontrole"} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
             </div>
           </div>
         )}
@@ -102,7 +102,7 @@ import { AdicionarDado } from "../../components/Admin/AdicionarDado";
         {showModalEdit && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-              <EditarDado id={editId} param={true} dados={dados} closeModal={() => setShowModalEdit(false)} />
+              <EditarDado id={editId} param={true} table={"pontocontrole"} dados={dados} closeModal={() => setShowModalEdit(false)} />
             </div>
           </div>
         )}

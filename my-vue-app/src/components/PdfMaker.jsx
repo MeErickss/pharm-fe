@@ -6,55 +6,33 @@ import * as pdfjsLib from "pdfjs-dist/build/pdf";
 // Aponte para o worker estático em public/libs/pdfjs
 pdfjsLib.GlobalWorkerOptions.workerSrc = "/libs/pdfjs/pdf.worker.js";
 
-export function PdfMakerModal({ setShowModalPdf, setStep }) {
-  const [texto, setTexto] = useState("");
+export function PdfMakerModal({ setShowModalPdf, setStep, dados }) {
+  const textoGerado = dados
+    .map(item => 
+  `
+  Data: ${new Date()}
+  Descrição: ${item.descricao}
+  Valor atual: ${item.valor}
+  Min: ${item.vlMin} | Max: ${item.vlMax}
+  Unidade: ${item.unidade.unidade}
+  Clp: ${item.pontoControle == null ? "—" : `Clp: ${item.pontoControle.pontoControle}`}
+  `)
+  .join("\n\n");
+
+  const [texto, setTexto] = useState(textoGerado || "");
   const [error, setError] = useState(null);
   const previewRef = useRef();
-
-
-  // Baixar Markdown
-  const baixarMd = () => {
-    const blob = new Blob([texto], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "conteudo.md";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
 
   // Baixar PDF via html2pdf.js
   const baixarPdf = () => {
     const options = {
-      margin:       0.5,
+      margin:       2,
       filename:     "conteudo.pdf",
-      image:        { type: "jpeg", quality: 0.98 },
+      image:        { type: "jpeg", quality: 1 },
       html2canvas:  { scale: 2 },
       jsPDF:        { unit: "in", format: "a4", orientation: "portrait" }
     };
     html2pdf().set(options).from(previewRef.current).save();
-  };
-
-  // Upload e extração de texto de PDF
-  const handlePdfUpload = async (e) => {
-    setError(null);
-    const file = e.target.files[0];
-    if (!file) return;
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      let extracted = "";
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const content = await page.getTextContent();
-        const strings = content.items.map(item => item.str);
-        extracted += strings.join(" ") + "\n\n";
-      }
-      setTexto(extracted.trim());
-    } catch (err) {
-      console.error(err);
-      setError("Falha ao processar PDF");
-    }
   };
 
   return (
@@ -67,17 +45,6 @@ export function PdfMakerModal({ setShowModalPdf, setStep }) {
           </svg>
         </div>
 
-        {/* Envio de PDF */}
-        <div className="mb-4">
-          <label className="block mb-1 font-medium">Enviar PDF:</label>
-          <input
-            type="file"
-            accept="application/pdf"
-            onChange={handlePdfUpload}
-            className="border rounded p-1"
-          />
-          {error && <p className="text-red-600 mt-1">{error}</p>}
-        </div>
 
         {/* Editor Markdown */}
         <textarea
@@ -90,13 +57,7 @@ export function PdfMakerModal({ setShowModalPdf, setStep }) {
         {/* Botões de Ações */}
         <div className="flex space-x-2 mb-4">
           <button
-            onClick={baixarMd}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:brightness-90"
-          >
-            Baixar .md
-          </button>
-          <button
-            onClick={baixarPdf}
+            onClick={()=> {baixarPdf();setStep(3)}}
             className="px-4 py-2 bg-green-600 text-white rounded hover:brightness-90"
           >
             Baixar .pdf

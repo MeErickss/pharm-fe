@@ -49,14 +49,14 @@ export function EditarDado({ dados, closeModal, table, id }) {
         },
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
+
       alert("✅ Registro inserido com sucesso!");
       closeModal();
     } catch (error) {
       if (error.response?.status === 401) navigator("/login");
       console.error("❌ Erro ao inserir registro:", error);
       alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
-    }
-    finally{
+    } finally{
       window.location.reload()
     }
   };
@@ -81,8 +81,8 @@ export function EditarDado({ dados, closeModal, table, id }) {
         {Object.keys(dados[0]).map((key) =>
           key === "id" ? null : (
             <div key={key}>
-                <div key={key} className="px-2 text-black"><strong>{correcoes[key[0].toUpperCase() + key.substring(1)] || key[0].toUpperCase() + key.substring(1)}</strong></div>
-                { ["status", "grandeza", "nivel"].includes(key) ? (
+                <div key={key} className="px-2 text-black"><strong>{console.log(key)} {correcoes[key] ?? key[0].toUpperCase() + key.substring(1)}</strong></div>
+                { ["status", "grandeza", "nivel", "tipoUso", "clpTipo", "offset"].includes(key) ? (
                 <SelectInputUpdate
                   table={key}
                   value={valores[key]}
@@ -90,7 +90,7 @@ export function EditarDado({ dados, closeModal, table, id }) {
                 />
               ) : (
                 <input
-                  type={["valor", "vlMin", "vlMax"].includes(key) ? "number" : "text"}
+                  type={["valor", "vlMin", "vlMax", "EnderecoCLP"].includes(key) ? "number" : "text"}
                     className="w-11/12 border p-1 rounded mt-1 bg-gray-50 text-neutral-500 border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
                   value={valores[key]}
                   onChange={(e) => handleEdit(e.target.value, key)}

@@ -34,13 +34,14 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
     }
   }, [table, options, grandeza]);
 
-  // Determine the current value for the main select
-  const mainValue = value ?? "";
 
   // Render options based on table type
   const renderMainOptions = () => {
     switch (table) {
       case "status":
+      case "clpTipo":
+      case "tipoUso":
+      case "offset":
       case "funcao":
       case "nivel":
       case "formula":
@@ -67,7 +68,6 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
         ));
 
       default:
-        // Generic fallback for objects with descricao
         return options.map(o => (
           <option key={o.id || o} value={o.descricao || o}>
             {o.descricao || o}
@@ -79,7 +79,7 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
   return (
     <div>
       <select
-        className="w-11/12 border p-1 rounded bg-gray-50 text-neutral-500 border-gray-300"
+        className="w-11/12 border px-3 py-2 p-1 mt-1 rounded bg-gray-50 text-neutral-500 border-gray-300"
         defaultValue={""}
         onChange={e => {
           const val = e.target.value;
@@ -91,7 +91,7 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
           }
         }}
       >
-        <option value="">Selecione</option>
+        <option value={null}>Selecione</option>
         {renderMainOptions()}
       </select>
 

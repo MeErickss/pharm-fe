@@ -45,7 +45,7 @@ export default function App() {
           <Route path="admin/pontocontrole" element={<AdminPontoControle/>} />
           <Route path="admin/grandezas" element={<AdminRegistroGrandeza/>} />
           <Route path="admin/logs" element={<LogSistema/>} />
-          <Route path="maintencefunctions" element={<ManutencaoFuncao/>} />
+          <Route path="manutencao" element={<ManutencaoFuncao/>} />
           <Route path="maintencestatus" element={<Status/>} />
           <Route path="admin/teste" element={<Teste/>} />
         </Route>

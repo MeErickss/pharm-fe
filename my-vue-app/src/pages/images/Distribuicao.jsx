@@ -99,11 +99,11 @@ export function Distribuicao() {
   useEffect(() => {
     async function connectModbus() {
       try {
-        await modbusApi.post("/connect", {
-          host: "127.0.0.1/8",
-          port: 502,
-          slaveId: 1
-        });
+        await modbusApi.post(
+          "/connect",
+          { host: "192.168.1.8", port: 502, slaveId: 1 },
+          { timeout: 2000 } // timeout de 2s na conexão
+        );
       } catch (e) {
         console.error("Erro conexão Modbus:", e);
         setError("Não foi possível conectar ao Modbus");
@@ -113,16 +113,16 @@ export function Distribuicao() {
     return () => { modbusApi.post("/close").catch(() => {}); };
   }, []);
 
-  // 3) Lê status via Modbus após carregar elementos
+  // 3) Lê status via Modbus com timeout customizável
   useEffect(() => {
     if (!elementosData.length) return;
     async function fetchStatuses() {
       try {
-        const res = await modbusApi.post("/read", {
-          type: "holding",
-          address: 0,
-          length: elementosData.length
-        });
+        const res = await modbusApi.post(
+          "/read",
+          { type: "holding", address: 0, length: elementosData.length },
+          { timeout: 1500 } // timeout de 1.5s na leitura
+        );
         const regs = res.data.data;
         setElementosData(prev => prev.map((el, idx) => {
           const code = regs[idx] ?? 0;
@@ -136,7 +136,7 @@ export function Distribuicao() {
     fetchStatuses();
   }, [elementosData]);
 
-  // 4) Alterna status local e escreve Modbus
+  // 4) Alterna status local e escreve Modbus com timeout
   const handleToggle = async (el) => {
     const { id, label, statusLocal } = el;
     const nextIdx = (STATUSES.indexOf(statusLocal) + 1) % STATUSES.length;
@@ -144,11 +144,11 @@ export function Distribuicao() {
     setElementosData(prev => prev.map(e => e.id===id?{...e, statusLocal:next}:e));
     setUpdatingIds(prev => new Set(prev).add(id));
     try {
-      await modbusApi.post("/write", {
-        type: "holding",
-        address: elementosData.findIndex(e => e.id===id),
-        value: nextIdx
-      });
+      await modbusApi.post(
+        "/write",
+        { type: "holding", address: elementosData.findIndex(e => e.id===id), value: nextIdx },
+        { timeout: 1000 } // timeout de 1s na escrita
+      );
       setError("");
     } catch {
       setError(`Falha ao atualizar ${label}.`);
@@ -180,17 +180,9 @@ export function Distribuicao() {
               key={`${el.id}-label`}
               aria-hidden
               style={{
-                position: 'absolute',
-                left:   toPct(x, ORIGINAL_WIDTH),
-                top:    toPct(labelTop, ORIGINAL_HEIGHT),
-                transform: 'translateY(-100%)',
-                padding: '2px 4px',
-                backgroundColor: 'black',
-                color: 'yellow',
-                borderRadius: '4px',
-                fontSize: '1rem',
-                whiteSpace: 'nowrap',
-                pointerEvents: 'none'
+                position: 'absolute', left: toPct(x, ORIGINAL_WIDTH), top: toPct(labelTop, ORIGINAL_HEIGHT),
+                transform: 'translateY(-100%)', padding: '2px 4px', backgroundColor: 'black', color: 'yellow',
+                borderRadius: '4px', fontSize: '1rem', whiteSpace: 'nowrap', pointerEvents: 'none'
               }}
             >
               {el.nome}
@@ -201,24 +193,17 @@ export function Distribuicao() {
               aria-label={`${el.label} está ${el.statusLocal}`}
               disabled={isUpdating}
               style={{
-                position: 'absolute',
-                left:   toPct(x, ORIGINAL_WIDTH),
-                top:    toPct(y, ORIGINAL_HEIGHT),
-                width:  toPct(w, ORIGINAL_WIDTH),
-                height: toPct(h, ORIGINAL_HEIGHT),
-                padding: 0,
-                margin:  0,
-                cursor:  isUpdating ? 'wait' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: isUpdating ? 0.6 : 1
+                position: 'absolute', left: toPct(x, ORIGINAL_WIDTH), top: toPct(y, ORIGINAL_HEIGHT),
+                width: toPct(w, ORIGINAL_WIDTH), height: toPct(h, ORIGINAL_HEIGHT), padding: 0, margin: 0,
+                cursor: isUpdating ? 'wait' : 'pointer', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', opacity: isUpdating ? 0.6 : 1
               }}
             >
               <img
                 src={el.img}
                 alt={el.label}
-                style={{ width:'100%', height:'100%', objectFit:'contain', pointerEvents:'none', filter: filters[el.statusLocal], transition: 'filter 0.3s' }}
+                style={{ width:'100%', height:'100%', objectFit:'contain', pointerEvents:'none',
+                  filter: filters[el.statusLocal], transition: 'filter 0.3s' }}
               />
             </button>
           </>

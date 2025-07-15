@@ -43,6 +43,15 @@ export function SelectInputUpdate({ table, onChange, value, param }) {
     case "formula":
       mainValue = typeof value === 'object' ? (value.formula ?? "") : (value ?? "");
       break;
+    case "clpTipo":
+      mainValue = typeof value === 'object' ? (value.formula ?? "") : (value ?? "");
+      break;
+    case "offset":
+      mainValue = typeof value === 'object' ? (value.formula ?? "") : (value ?? "");
+      break;
+    case "tipoUso":
+      mainValue = typeof value === 'object' ? (value.formula ?? "") : (value ?? "");
+      break;
     case "pontoControle":
       // Fix: use value.pontoControle instead of formula
       mainValue = typeof value === 'object' ? (value.pontoControle ?? "") : (value ?? "");
@@ -80,7 +89,7 @@ export function SelectInputUpdate({ table, onChange, value, param }) {
   return (
     <div>
       <select
-        className="w-11/12 border p-1 rounded bg-gray-50 text-neutral-500 border-gray-300"
+        className="w-11/12 border p-1 px-3 py-2 mt-1 rounded bg-gray-50 text-neutral-500 border-gray-300"
         value={mainValue}
         onChange={e => {
           const val = e.target.value;
@@ -92,7 +101,7 @@ export function SelectInputUpdate({ table, onChange, value, param }) {
           }
         }}
       >
-        <option value="">Selecione</option>
+        <option value={null}>Selecione</option>
         {renderMainOptions()}
       </select>
 

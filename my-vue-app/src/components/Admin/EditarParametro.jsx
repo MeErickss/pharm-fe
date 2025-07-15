@@ -56,7 +56,7 @@ const handleSubmit = async e => {
     unidadeDesc:  valoresEditados.unidade, 
     funcao:       valoresEditados.funcao,
     formulaEnum: valoresEditados.formula,
-    pontoControle: valoresEditados.pontoControle
+    pontoControle: valoresEditados.pontoControle == "Selecione" ? null : valoresEditados.pontoControle
   };
 
   console.log(body)
