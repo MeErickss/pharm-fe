@@ -2,39 +2,84 @@ import { useState, useEffect } from "react";
 import farmacia from "./images/farmacia.png";
 import filtros from "./images/filtros.png";
 import purifier from "./images/purifier.png";
-import { Farmacia } from "./images/Farmacia";
-import { Distribuicao } from "./images/Distribuicao";
 
 export function Home() {
   const [width, setWidth] = useState(window.innerWidth);
 
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <div className="flex flex-wrap w-full h-full bg-gray-100">
-      <h1 className="text-3xl font-bold mb-4 p-8">Página Inicial</h1>
+    <div className="flex flex-col h-full w-full rounded-lg bg-white font-inter text-gray-800 overflow-y-auto">
 
-      <div className="flex flex-row w-1/2 mt-20 ml-[-12rem]">
-        <div className="w-full">
-          <Farmacia/>
+      {/* Hero Section */}
+      <section
+        id="home"
+        className="bg-white flex flex-col-reverse lg:flex-row items-center container mx-auto px-6 lg:px-20 py-24 gap-16"
+      >
+        <div className="lg:w-1/2 space-y-8">
+          <h1 className="text-4xl lg:text-5xl font-extrabold leading-tight text-gray-900">
+            Segurança e Saúde Ocupacional de Forma Simples
+          </h1>
+          <p className="text-lg text-gray-600">
+            Plataforma completa para gestão de documentos, monitoramento de indicadores e conformidade legal.
+          </p>
+          <a
+            href="http://healthsafe.com.br/"
+            className="inline-block bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg hover:bg-blue-500 transition"
+          >
+            Saiba Mais
+          </a>
         </div>
-        <div className="w-full">
-          <Distribuicao/>
+        <div className="lg:w-1/2 rounded-lg">
+          <div className="w-full h-72 lg:h-96 rounded-xl overflow-hidden shadow-xl">
+            <iframe
+              title="HealthSafe - Vila Mangalot"
+              className="w-full h-full"
+              src="https://maps.google.com/maps?q=-23.4893194,-46.743483&z=15&output=embed"
+              allowFullScreen
+              loading="lazy"
+            />
+          </div>
         </div>
-      </div>
+      </section>
 
-
-
-      {/* Barra lateral fixa */}
-      <div className="flex fixed right-0 h-screen flex-wrap flex-col px-4 gap-10 bg-gray-300">
-        <div className="rounded-tl-lg rounded-br-lg mt-4 hover:shadow-2xl">
-          <img className="bg-black" style={{ width: `${width/9}px` }} src={farmacia} alt="Farmácia" />
+      {/* Services Section */}
+      <section className="bg-white rounded-b-lg">
+        <div className="container mx-auto h-full w-full p-6 lg:px-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+          {[
+            {
+              title: 'Gestão de Documentos',
+              desc: 'Armazene e organize todos os documentos de SST em um só lugar, com acesso rápido e seguro.'
+            },
+            {
+              title: 'Monitoramento de Indicadores',
+              desc: 'Acompanhe métricas de acidentes, treinamentos e conformidades em dashboards intuitivos.'
+            },
+            {
+              title: 'Alertas Automáticos',
+              desc: 'Receba notificações sobre vencimentos de laudos e treinamentos para evitar multas e riscos.'
+            },
+            {
+              title: 'Relatórios Customizados',
+              desc: 'Gere relatórios detalhados para auditorias internas e externas com apenas alguns cliques.'
+            }
+          ].map((feature) => (
+            <div
+              key={feature.title}
+              className="bg-gray-50 rounded-2xl p-8 h-full hover:shadow-lg transition"
+            >
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">{feature.title}</h3>
+              <p className="text-gray-600 text-sm">{feature.desc}</p>
+            </div>
+          ))}
         </div>
-        <div className="rounded-tl-lg rounded-br-lg hover:shadow-2xl">
-          <img className="w-[280px]" style={{ width: `${width/9}px` }} src={filtros} alt="Filtros" />
-        </div>
-        <div className="rounded-tl-lg rounded-br-lg hover:shadow-2xl">
-          <img className="w-[280px]" style={{ width: `${width/9}px` }} src={purifier} alt="Purifier" />
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
