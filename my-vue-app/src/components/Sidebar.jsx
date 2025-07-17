@@ -119,7 +119,7 @@ export function Sidebar() {
   };
 
   return (
-    <div className="w-full h-full text-center p-2">
+    <div className="w-full h-full text-center p-2 overflow-hidden">
         <img src={logo}/>
         <div className="flex justify-center items-center w-full">
             <h1 className="w-10/12 py-2 border-b-indigo-600 border-b-2 text-neutral-700">{login} <SafetyOutlined /></h1>
