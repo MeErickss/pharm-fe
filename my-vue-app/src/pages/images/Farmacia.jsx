@@ -9,6 +9,7 @@ import sensor2Img from "./Tudo/sensor2.png";
 import bombaImg from "./Tudo/bomba.png";
 import barra1Img from "./Tudo/barra1.png";
 import barra2Img from "./Tudo/barra2.png";
+import barra3Img from "./Tudo/barra3.png"
 import modbusApi from "../../modbusApi";
 
 const ORIGINAL_WIDTH = 591;
@@ -36,6 +37,7 @@ const prefixImageMap = {
   "bomba":    bombaImg,
   "nivel_ta": barra1Img,
   "nivel_tm": barra2Img,
+  "pressao_ba": barra3Img,
 };
 
 const tipoImageMap = {

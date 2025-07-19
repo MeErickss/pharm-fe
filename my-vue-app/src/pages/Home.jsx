@@ -22,7 +22,8 @@ export function Home() {
         id="home"
         className="bg-white flex flex-col-reverse lg:flex-row items-center container mx-auto px-6 lg:px-20 py-24 gap-16"
       >
-        <div className="lg:w-1/2 space-y-8">
+        <div className="lg:w-1/2 space-y-8 border-b-2 pb-4 border-neutral-300">
+        <h1 className="text-6xl text-indigo-500 font-mono font-bold text-center">Health Safe</h1>
           <h1 className="text-4xl lg:text-5xl font-extrabold leading-tight text-gray-900">
             Segurança e Saúde Ocupacional de Forma Simples
           </h1>
