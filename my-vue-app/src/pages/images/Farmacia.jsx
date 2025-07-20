@@ -29,6 +29,7 @@ const filters = {
   estragado:  "grayscale(1) brightness(0.2)",
 };
 
+
 const prefixImageMap = {
   "valvula1": valvula1Img,
   "valvula2": valvula2Img,
