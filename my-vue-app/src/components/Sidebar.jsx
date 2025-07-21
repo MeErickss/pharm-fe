@@ -4,16 +4,18 @@ import { useNavigate } from "react-router-dom";
 import logo from "../pages/images/logo.svg"
 import {
   SafetyOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  AppstoreOutlined,
   PieChartOutlined,
   DesktopOutlined,
   ContainerOutlined,
-  MailOutlined,
   SettingOutlined,
+  HistoryOutlined,
+  BarsOutlined,
+  FormOutlined,
+  CodeOutlined,
+  LogoutOutlined
+
 } from "@ant-design/icons";
-import { Menu, Button } from "antd";
+import { Menu } from "antd";
 import api from "../api";
 import correcoes from "./dicionario";
 
@@ -58,10 +60,10 @@ export function Sidebar() {
     {
       label: "Produção",
       key: "producao",
-      icon: <AppstoreOutlined />,
+      icon: <ContainerOutlined />,
       children: [
-        { label: "Monitoramento", key: "producao:monitoramento", icon: <PieChartOutlined /> },
-        { label: "Parâmetros",           key: "producao:parametros",      icon: <DesktopOutlined /> },
+        { label: "Monitoramento", key: "producao:monitoramento", icon: <DesktopOutlined /> },
+        { label: "Parâmetros",           key: "producao:parametros",      icon: <FormOutlined /> },
       ],
     },
     {
@@ -71,10 +73,10 @@ export function Sidebar() {
       children: formulaItems.map((value) =>({
           label: `Formula ${correcoes[value]}`,
           key: `armazenagem:submenu${value}`,
-          icon: <MenuUnfoldOutlined />,
+          icon: <BarsOutlined />,
           children: [
-            { label: `Armazem ${correcoes[value]}`, key: `armazenagem:monitoramento:${correcoes[value]}` },
-            { label: "Parâmetros", key: `armazenagem:parametros:${correcoes[value]}`},
+            { label: `Armazem ${correcoes[value]}`, key: `armazenagem:monitoramento:${correcoes[value]}`, icon:<DesktopOutlined /> },
+            { label: "Parâmetros", key: `armazenagem:parametros:${correcoes[value]}`, icon: <FormOutlined />},
           ],
       }))
     },
@@ -83,13 +85,14 @@ export function Sidebar() {
       key: "admin",
       icon: <SettingOutlined />,
       children: [
-        { label: "Parâmetros Produção", key: "admin:producao", icon: <AppstoreOutlined /> },
-        { label: "Parâmetros Armazém",   key: "admin:armazem",  icon: <AppstoreOutlined /> },
-        { label: "Cadastro Unidade",    key: "admin:unidade",  icon: <AppstoreOutlined /> },
-        { label: "Cadastro Grandezas",   key: "admin:grandezas", icon: <AppstoreOutlined /> },
-        { label: "Cadastro Usuários",    key: "admin:usuarios",  icon: <SettingOutlined /> },
-        { label: "Logs Sistema",         key: "admin:logs",      icon: <AppstoreOutlined /> },
-        { label: "Teste",         key: "admin:teste",      icon: <AppstoreOutlined /> },
+        { label: "Parâmetros Produção", key: "admin:producao", icon: <FormOutlined /> },
+        { label: "Parâmetros Armazém",   key: "admin:armazem",  icon: <FormOutlined /> },
+        { label: "Unidades",    key: "admin:unidade",  icon: <FormOutlined /> },
+        { label: "Grandezas",   key: "admin:grandezas", icon: <FormOutlined /> },
+        { label: "Pontos Controle",   key: "admin:pontocontrole", icon: <FormOutlined /> },
+        { label: "Usuários",    key: "admin:usuarios",  icon: <FormOutlined /> },
+        { label: "Logs Sistema",         key: "admin:logs",      icon: <HistoryOutlined /> },
+        { label: "Teste",         key: "admin:teste",      icon: <CodeOutlined /> },
       ],
     },
     nivel === "manutencao" && {
@@ -97,7 +100,7 @@ export function Sidebar() {
       key: "manutencao",
       icon: <ContainerOutlined />,
     },
-    { label: "Sair", key: "logout", icon: <MenuFoldOutlined /> },
+    { label: "Sair", key: "logout", icon: <LogoutOutlined /> },
   ].filter(Boolean);
 
   const onClick = e => {
@@ -116,7 +119,7 @@ export function Sidebar() {
   };
 
   return (
-    <div className="w-full h-full text-center p-2">
+    <div className="w-full h-full text-center p-2 overflow-hidden">
         <img src={logo}/>
         <div className="flex justify-center items-center w-full">
             <h1 className="w-10/12 py-2 border-b-indigo-600 border-b-2 text-neutral-700">{login} <SafetyOutlined /></h1>

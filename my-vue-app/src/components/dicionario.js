@@ -24,6 +24,10 @@ const correcoes = {
     "vlMin":"Valor Mínimo",
     "vlMax":"Valor Máximo",
     "formula":"Fórmula",
+    "enderecoCLP":"Endereco CLP",
+    "tipoUso":"Tipo de Uso",
+    "pontoControle":"Ponto Controle",
+    "clpTipo":"CLP Tipo",
 }
 
 export default correcoes;

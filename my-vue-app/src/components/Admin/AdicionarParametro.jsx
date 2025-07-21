@@ -15,7 +15,7 @@ export function AdicionarParametro({ dados, closeModal, param }) {
   const [valores, setValores] = useState(inicial);
 
   // Campos que usam SelectInputInsert
-  const selectFields = ["status", "funcao", "grandeza", "formula"];
+  const selectFields = ["status", "funcao", "grandeza", "formula","pontoControle"];
 
   const handleEdit = (value, key) => {
     setValores(prev => {
@@ -50,34 +50,33 @@ export function AdicionarParametro({ dados, closeModal, param }) {
       unidadeDesc:  valores.unidade, 
       grandezaDesc: valores.grandeza,
       funcao:       valores.funcao,
-      formulaEnum: valores.formula
+      formulaEnum: valores.formula,
+      pontoControle: valores.pontoControle == "Selecione" ? null : valores.pontoControle 
     };
 
     console.log(body)
 
   
-    try {
-      await api.post(
-        "/parametro",
-        body,
-        {
-          params: {
-            userLogin: localStorage.getItem("login")
-          },
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
+  try {
+    await api.post(
+      "/parametro",
+      body,
+      {
+        params: { userLogin: localStorage.getItem("login") },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
         }
-      );
-      alert("✅ Registro inserido com sucesso!");
-      closeModal();
-    } catch (error) {
-      if (error.response?.status === 401) navigator("/login");
-      console.error("❌ Erro ao inserir registro:", error);
-      alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
-    } finally{
-      window.location.reload()
-    }
+      }
+    );
+    alert("✅ Registro inserido com sucesso!");
+    closeModal();
+  } catch (error) {
+    console.error("❌ Erro ao inserir registro:", error.response?.data || error);
+    alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
+    if (error.response?.status === 401) navigator("/login");
+  }finally{
+    window.location.reload()
+  }
   };
   
 
@@ -124,7 +123,7 @@ export function AdicionarParametro({ dados, closeModal, param }) {
       )}
 
       <form onSubmit={handleSubmit} className="flex justify-end gap-4 mt-4">
-        <button type="submit" className="w-[12rem] bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+        <button type="submit" className="w-[12rem] bg-blue-500 hover:brightness-90 text-white py-2 px-4 rounded">
           Adicionar
         </button>
       </form>

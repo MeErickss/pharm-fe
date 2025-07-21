@@ -11,15 +11,20 @@ export function GridAdmin({
   onDelete,
 }) {
 
+  console.log("dados")
+  console.log(dados)
+  console.log("dados")
+
+
   const style = {
-    "UM":"w-10/12 border-b-2 border-b-cyan-300 px-2",
-    "DOIS":"w-10/12 border-b-2 border-b-teal-600 px-2",
-    "TRES":"w-10/12 border-b-2 border-b-violet-600 px-2",
-    "ATIVO":"w-10/12 border-b-2 border-b-green-400 px-2",
-    "BLOQUEADO":"w-10/12 border-b-2 border-b-red-600 px-2",
-    "INATIVO":"w-10/12 border-b-2 border-b-yellow-400 px-2",
-    "PRODUCAO":"w-10/12 border-b-2 border-b-gray-300 px-2",
-    "ARMAZENAMENTO":"w-10/12 border-b-2 border-b-amber-950 px-2",
+    "UM":"w-10/12 text-white text-center font-bold rounded-lg bg-cyan-300 px-2",
+    "DOIS":"w-10/12 text-white text-center font-bold rounded-lg bg-teal-600 px-2",
+    "TRES":"w-10/12 text-white text-center font-bold rounded-lg bg-violet-600 px-2",
+    "ATIVO":"w-10/12 text-white text-center font-bold rounded-lg bg-green-400 px-2",
+    "BLOQUEADO":"w-10/12 text-white text-center font-bold rounded-lg bg-red-600 px-2",
+    "INATIVO":"w-10/12 text-white text-center font-bold rounded-lg bg-yellow-400 px-2",
+    "PRODUCAO":"w-10/12 text-white text-center font-bold rounded-lg bg-gray-300 px-2",
+    "ARMAZENAMENTO":"w-full text-[0.72rem] text-white text-center font-bold rounded-lg bg-amber-950 px-2",
   }
 
   const handleMouseEnter = (type, id) => {
@@ -61,8 +66,8 @@ export function GridAdmin({
           }}
         >
           {Object.values(row).map((value, idx) => (
-            <div key={idx} className={value in style ? style[value] : "px-2 w-full"}>
-              {value}
+            <div key={idx} className={value in style ? style[value] : value == null ? "bg-red-500 text-white font-bold text-center rounded-lg px-2 w-10/12" : "px-2 w-full"}>
+              {value ?? <strong>INDEFINIDO</strong>}
             </div>
           ))}
 

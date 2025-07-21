@@ -11,15 +11,15 @@ export function Grid({
   const [valores, setValores] = useState({});
   const navigate = useNavigate();
 
-    const style = {
-    "UM":"w-10/12 border-b-2 border-b-cyan-300 px-2",
-    "DOIS":"w-10/12 border-b-2 border-b-teal-600 px-2",
-    "TRES":"w-10/12 border-b-2 border-b-violet-600 px-2",
-    "ATIVO":"w-10/12 border-b-2 border-b-green-400 px-2",
-    "BLOQUEADO":"w-10/12 border-b-2 border-b-red-600 px-2",
-    "INATIVO":"w-10/12 border-b-2 border-b-yellow-400 px-2",
-    "PRODUCAO":"w-10/12 border-b-2 border-b-gray-300 px-2",
-    "ARMAZENAMENTO":"w-10/12 border-b-2 border-b-amber-950 px-2",
+  const style = {
+    "UM":"w-10/12 text-white text-center font-bold rounded-lg bg-cyan-300 px-2",
+    "DOIS":"w-10/12 text-white text-center font-bold rounded-lg bg-teal-600 px-2",
+    "TRES":"w-10/12 text-white text-center font-bold rounded-lg bg-violet-600 px-2",
+    "ATIVO":"w-10/12 text-white text-center font-bold rounded-lg bg-green-400 px-2",
+    "BLOQUEADO":"w-10/12 text-white text-center font-bold rounded-lg bg-red-600 px-2",
+    "INATIVO":"w-10/12 text-white text-center font-bold rounded-lg bg-yellow-400 px-2",
+    "PRODUCAO":"w-10/12 text-white text-center font-bold rounded-lg bg-gray-300 px-2",
+    "ARMAZENAMENTO":"w-10/12 text-[0.72rem] text-white text-center font-bold rounded-lg bg-amber-950 px-2",
   }
 
   useEffect(() => {
@@ -112,14 +112,14 @@ export function Grid({
         >
           {Object.values(row).map((value, idx) =>
             idx !== 2 ? (
-              <div key={idx} className={value in style ? style[value] : "px-2"}>
-                {value ?? "—"}
+              <div key={idx} className={value in style ? style[value] : value == null ? "px-2 bg-red-500 rounded-lg text-center text-white font-bold w-10/12" : "px-2"}>
+                {value ?? <strong>INDEFINIDO</strong>}
               </div>
             ) : (
               <div key={idx} className="relative">
                 <input
                   type="number"
-                  className="w-8/12 px-2 outline-none border-b-2 border-orange-400"
+                  className="w-8/12 px-2 outline-none border-b-2 border-orange-400 "
                   value={valores[row.id] ?? ""}
                   min={row.vlMin}
                   max={row.vlMax}
@@ -127,7 +127,7 @@ export function Grid({
                 />
                 <button
                   onClick={() => handleSubmit(row)}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 bg-orange-500 w-4/12 py-1 text-white rounded-r-lg"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 bg-orange-500 hover:brightness-90 w-4/12 py-1 text-white rounded-r-lg"
                 >
                   Editar
                 </button>

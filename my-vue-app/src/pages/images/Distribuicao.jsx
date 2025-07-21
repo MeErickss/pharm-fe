@@ -51,12 +51,12 @@ export function Distribuicao() {
   const [error, setError] = useState("");
   const [updatingIds, setUpdatingIds] = useState(new Set());
 
-  // 1) Carrega layout e posições do banco de dados
   useEffect(() => {
     api.get("/distribuicao", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     })
     .then(({ data }) => {
+      console.log(data)
       if (!Array.isArray(data)) return setElementosData([]);
 
       const mapped = data.map(item => {
@@ -81,8 +81,9 @@ export function Distribuicao() {
           coordsPx,
           nome: item.nome,
           img: selectImage(),
-          statusLocal: STATUSES[0], // inicializa como 'desligado'
+          statusLocal: STATUSES[0],
           original: item,
+          clpAddress: Number(item.pontoControle.enderecoCLP),
         };
       });
 
@@ -95,15 +96,14 @@ export function Distribuicao() {
     });
   }, [navigate]);
 
-  // 2) Conecta ao Modbus ao montar e fecha ao desmontar
   useEffect(() => {
     async function connectModbus() {
       try {
-        await modbusApi.post("/connect", {
-          host: "192.168.1.11",
-          port: 502,
-          slaveId: 1
-        });
+        await modbusApi.post(
+          "/connect",
+          { host: "192.168.1.8", port: 502, slaveId: 1 },
+          { timeout: 2000 }
+        );
       } catch (e) {
         console.error("Erro conexão Modbus:", e);
         setError("Não foi possível conectar ao Modbus");
@@ -113,21 +113,29 @@ export function Distribuicao() {
     return () => { modbusApi.post("/close").catch(() => {}); };
   }, []);
 
-  // 3) Lê status via Modbus após carregar elementos
   useEffect(() => {
     if (!elementosData.length) return;
     async function fetchStatuses() {
       try {
-        const res = await modbusApi.post("/read", {
-          type: "holding",
-          address: 0,
-          length: elementosData.length
-        });
+        const addresses = elementosData.map(el => el.clpAddress - 1);
+        const minAddr = Math.min(...addresses);
+        const maxAddr = Math.max(...addresses);
+        const length = maxAddr - minAddr + 1;
+
+        const res = await modbusApi.post(
+          "/read",
+          { type: "holding", address: minAddr, length },
+          { timeout: 1500 }
+        );
         const regs = res.data.data;
-        setElementosData(prev => prev.map((el, idx) => {
-          const code = regs[idx] ?? 0;
-          return { ...el, statusLocal: STATUSES[code] || STATUSES[0] };
-        }));
+
+        setElementosData(prev =>
+          prev.map(el => {
+            const idx = el.clpAddress - 1 - minAddr;
+            const code = regs[idx] ?? 0;
+            return { ...el, statusLocal: STATUSES[code] || STATUSES[0] };
+          })
+        );
       } catch (e) {
         console.error("Erro ao ler status Modbus:", e);
         setError("Falha ao ler status dos equipamentos");
@@ -136,7 +144,6 @@ export function Distribuicao() {
     fetchStatuses();
   }, [elementosData]);
 
-  // 4) Alterna status local e escreve Modbus
   const handleToggle = async (el) => {
     const { id, label, statusLocal } = el;
     const nextIdx = (STATUSES.indexOf(statusLocal) + 1) % STATUSES.length;
@@ -144,11 +151,11 @@ export function Distribuicao() {
     setElementosData(prev => prev.map(e => e.id===id?{...e, statusLocal:next}:e));
     setUpdatingIds(prev => new Set(prev).add(id));
     try {
-      await modbusApi.post("/write", {
-        type: "holding",
-        address: elementosData.findIndex(e => e.id===id),
-        value: nextIdx
-      });
+      await modbusApi.post(
+        "/write",
+        { type: "holding", address: el.clpAddress - 1, value: nextIdx },
+        { timeout: 1000 }
+      );
       setError("");
     } catch {
       setError(`Falha ao atualizar ${label}.`);
@@ -180,17 +187,9 @@ export function Distribuicao() {
               key={`${el.id}-label`}
               aria-hidden
               style={{
-                position: 'absolute',
-                left:   toPct(x, ORIGINAL_WIDTH),
-                top:    toPct(labelTop, ORIGINAL_HEIGHT),
-                transform: 'translateY(-100%)',
-                padding: '2px 4px',
-                backgroundColor: 'black',
-                color: 'yellow',
-                borderRadius: '4px',
-                fontSize: '1rem',
-                whiteSpace: 'nowrap',
-                pointerEvents: 'none'
+                position: 'absolute', left: toPct(x, ORIGINAL_WIDTH), top: toPct(labelTop, ORIGINAL_HEIGHT),
+                transform: 'translateY(-100%)', padding: '2px 4px', backgroundColor: 'black', color: 'yellow',
+                borderRadius: '4px', fontSize: '1rem', whiteSpace: 'nowrap', pointerEvents: 'none'
               }}
             >
               {el.nome}
@@ -201,24 +200,17 @@ export function Distribuicao() {
               aria-label={`${el.label} está ${el.statusLocal}`}
               disabled={isUpdating}
               style={{
-                position: 'absolute',
-                left:   toPct(x, ORIGINAL_WIDTH),
-                top:    toPct(y, ORIGINAL_HEIGHT),
-                width:  toPct(w, ORIGINAL_WIDTH),
-                height: toPct(h, ORIGINAL_HEIGHT),
-                padding: 0,
-                margin:  0,
-                cursor:  isUpdating ? 'wait' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: isUpdating ? 0.6 : 1
+                position: 'absolute', left: toPct(x, ORIGINAL_WIDTH), top: toPct(y, ORIGINAL_HEIGHT),
+                width: toPct(w, ORIGINAL_WIDTH), height: toPct(h, ORIGINAL_HEIGHT), padding: 0, margin: 0,
+                cursor: isUpdating ? 'wait' : 'pointer', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', opacity: isUpdating ? 0.6 : 1
               }}
             >
               <img
                 src={el.img}
                 alt={el.label}
-                style={{ width:'100%', height:'100%', objectFit:'contain', pointerEvents:'none', filter: filters[el.statusLocal], transition: 'filter 0.3s' }}
+                style={{ width:'100%', height:'100%', objectFit:'contain', pointerEvents:'none',
+                  filter: filters[el.statusLocal], transition: 'filter 0.3s' }}
               />
             </button>
           </>

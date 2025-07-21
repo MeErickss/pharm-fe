@@ -53,8 +53,7 @@ export function AdicionarDado({ dados, closeModal, table, param }) {
       if (error.response?.status === 401) navigator("/login");
       console.error("❌ Erro ao inserir registro:", error);
       alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
-    }
-    finally{
+    } finally{
       window.location.reload()
     }
   };
@@ -74,12 +73,12 @@ export function AdicionarDado({ dados, closeModal, table, param }) {
       </div>
 
       {dados.length > 0 && (
-        <div className="grid grid-cols-3 bg-gray-200 font-semibold text-gray-700 p-3 border-b gap-2">
+        <div className="grid grid-cols-3 items-center justify-center bg-gray-200 font-semibold text-gray-700 p-3 border-b gap-2">
           {Object.entries(dados[0]).map(([key]) =>
             key !== "id" && (
               <div key={key}>
-                <div className="px-2 text-black"><strong>{correcoes[key[0].toUpperCase() + key.substring(1)] || key[0].toUpperCase() + key.substring(1)}</strong></div>
-                {["status", "grandeza", "funcao", "nivel"].includes(key) ? (
+                <div className="px-2 text-black"><strong>{correcoes[key] ?? key[0].toUpperCase() + key.substring(1)}</strong></div>
+                {["status", "grandeza", "funcao", "nivel", "clpTipo", "offset", "tipoUso"].includes(key) ? (
                   <SelectInputInsert
                     table={key}
                     param={param}
@@ -88,9 +87,9 @@ export function AdicionarDado({ dados, closeModal, table, param }) {
                   />
                 ) : (
                   <input
-                    type={key === "valor" || key === "vlMin" || key === "vlMax" ? "number" : "text"}
+                    type={["valor", "vlMin", "vlMax", "enderecoCLP", "tamanho" ].includes(key) ? "number" : "text"}
                     className="w-11/12 border p-1 rounded mt-1 bg-gray-50 text-neutral-500 border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-                    onChange={(e) => handleEdit(e.target.value, key)} // Corrigido aqui
+                    onChange={(e) => handleEdit(e.target.value, key)}
                     min={key === "valor" ? valores.vlMin : ""}
                     max={key === "valor" ? valores.vlMax : ""}
                     placeholder={`Digite ${correcoes[key[0].toUpperCase() + key.substring(1)] || key[0].toUpperCase() + key.substring(1)}`}
@@ -105,7 +104,7 @@ export function AdicionarDado({ dados, closeModal, table, param }) {
 
 
       <form onSubmit={handleSubmit} className="flex justify-end gap-4 mt-4">
-        <button type="submit" className="w-[12rem] bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+        <button type="submit" className="w-[12rem] bg-blue-500 hover:brightness-90 text-white py-2 px-4 rounded">
           Adicionar
         </button>
       </form>

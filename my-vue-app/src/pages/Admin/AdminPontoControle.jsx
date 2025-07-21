@@ -1,13 +1,12 @@
-  import { useState, useEffect } from "react";
-  import api from "../../api"
-  import { Cabecalho } from "../../components/Cabecalho";
-  import { GridAdmin } from "../../components/Admin/GridAdmin";
-  import { EditarParametro } from "../../components/Admin/EditarParametro"; // Importando o novo componente
-  import { AdicionarParametro } from "../../components/Admin/AdicionarParametro";
+import { useState, useEffect } from "react";
+import api from "../../api";
+import { Cabecalho } from "../../components/Cabecalho";
+import { GridAdmin } from "../../components/Admin/GridAdmin";
+import { EditarDado } from "../../components/Admin/EditarDado";
+import { AdicionarDado } from "../../components/Admin/AdicionarDado";
 
 
-
-  export function AdminRegistroProducao() {
+  export function AdminPontoControle() {
     const [error, setError] = useState("");
     const [dados, setDados] = useState([]);
     const [dadosLen, setDadosLen] = useState(0);
@@ -17,24 +16,18 @@
     const [editId, setEditId] = useState(null);
     const [tooltipVisible, setTooltipVisible] = useState({ edit: null, delete: null });
     const tabela = "PRODUCAO"
+    const [size] = useState(6)
 
 
 
   useEffect(() => {
-    api.get("/parametro", {
+    api.get("/pontocontrole", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
-      },
-      params: {
-        funcaoEnum: tabela  
-      }
-  })
+      }})
   .then(response => {      
-    const dadosComFuncao = response.data.map(item => ({
-        ...item,
-        funcao: tabela
-      }));
-      setDados(dadosComFuncao);})
+    console.log(response.data)
+      setDados(response.data);})
   .catch(err => {        if (err.response?.status === 401) {
           navigator('/login'); 
         }
@@ -96,12 +89,12 @@
     return (
       <div className="w-full rounded h-full bg-gray-100 p-4 overflow-y-visible">
 
-        <Cabecalho dados={dados} nivel={1} setshowModalAdd={setShowModalAdd} setDados={setDados} tabela={"Produção"}/>
+        <Cabecalho dados={dados} nivel={1} setshowModalAdd={setShowModalAdd} setDados={setDados} tabela={"Ponto de Controle"}/>
 
         {showModalAdd && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-              <AdicionarParametro dados={dados} param={true} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
+              <AdicionarDado dados={dados} param={true} table={"pontocontrole"} closeModal={() => setShowModalAdd(false)} /> {/* Componente JSX dentro do modal */}
             </div>
           </div>
         )}
@@ -109,7 +102,7 @@
         {showModalEdit && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="w-[50rem] h-auto bg-white p-6 rounded-lg shadow-lg">
-              <EditarParametro id={editId} param={true} dados={dados} closeModal={() => setShowModalEdit(false)} />
+              <EditarDado id={editId} param={true} table={"pontocontrole"} dados={dados} closeModal={() => setShowModalEdit(false)} />
             </div>
           </div>
         )}

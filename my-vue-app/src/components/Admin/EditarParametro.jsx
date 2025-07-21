@@ -55,7 +55,8 @@ const handleSubmit = async e => {
     grandezaDesc: valoresEditados.grandeza,
     unidadeDesc:  valoresEditados.unidade, 
     funcao:       valoresEditados.funcao,
-    formulaEnum: valoresEditados.formula
+    formulaEnum: valoresEditados.formula,
+    pontoControle: valoresEditados.pontoControle == "Selecione" ? null : valoresEditados.pontoControle
   };
 
   console.log(body)
@@ -76,7 +77,7 @@ const handleSubmit = async e => {
     if (error.response?.status === 401) navigator("/login");
     console.error("❌ Erro ao inserir registro:", error);
     alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
-  } finally {
+  }finally{
     window.location.reload()
   }
 };
@@ -104,7 +105,7 @@ const handleSubmit = async e => {
           // exclui id e unidade, pois o componente SelectInputUpdate já faz cascata
           if (key === "id" || key === "unidade") return null;
 
-          const isSelect = ["status", "funcao", "grandeza", "formula"].includes(key);
+          const isSelect = ["status", "funcao", "grandeza", "formula", "pontoControle"].includes(key);
 
           return (
             <div key={key} className={key === "descricao" ? "col-span-3 w-[48.3rem]" : undefined}>
@@ -139,7 +140,7 @@ const handleSubmit = async e => {
       <form onSubmit={handleSubmit} className="flex justify-end gap-4 mt-4">
         <button
           type="submit"
-          className="w-[12rem] bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+          className="w-[12rem] bg-blue-500 hover:brightness-90 text-white py-2 px-4 rounded"
         >
           Concluir
         </button>
