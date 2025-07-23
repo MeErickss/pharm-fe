@@ -101,7 +101,7 @@ export function Distribuicao() {
       try {
         await modbusApi.post(
           "/connect",
-          { host: "192.168.1.8", port: 502, slaveId: 1 },
+          { host: "192.168.1.33", port: 502, slaveId: 1 },
           { timeout: 2000 }
         );
       } catch (e) {

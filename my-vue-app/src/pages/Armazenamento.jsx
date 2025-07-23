@@ -3,6 +3,7 @@ import { LogAlarme } from "../components/LogAlarme.jsx";
 import api from "../api.js";
 import { LogArmazenamento } from "../components/LogArmazenamento.jsx";
 import { Distribuicao } from "./images/Distribuicao.jsx";
+import { ModalFormula } from "../components/modalFormula.jsx";
 import { ModalEmergencia } from "../components/ModalEmergencia.jsx";
 import correcoes from "../components/dicionario.js";
 import React from "react";
@@ -187,82 +188,7 @@ export function Armazenamento() {
         </div>
 
 
-        {modalFormula && (<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="w-full max-w-4xl max-h-[90vh] overflow-auto bg-neutral-100 p-6 rounded-2xl shadow-lg relative">
-          <h1><strong>Parametros da Formula param</strong></h1>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="16" onClick={() => setModalFormula(!modalFormula)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 fill-red-500 hover:fill-red-900">
-            <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
-          </svg>
-
-            {/* Conteúdo paginado */}
-            {parametrosFormula.map((row) => (
-              <div
-                key={row.id}
-                className="mb-6 bg-white p-6 rounded-lg shadow flex flex-wrap gap-4"
-              >
-              {Object.entries(row).map(([field, value]) => (
-                  ["valor","descricao","unidade"].includes(field.replace(/([A-Z])/g, " $1")) &&
-                  (<div key={field} className={field.replace(/([A-Z])/g, " $1") == "descricao" ? "flex flex-col w-7/12" : field.replace(/([A-Z])/g, " $1") == "valor" ? "flex flex-col col-span-2 w-2/12" : "flex w-2/12 flex-col"}>
-                    <label className="text-xs font-bold text-black">
-                      <strong>{correcoes[field.replace(/([A-Z])/g, " $1")]}</strong>
-                    </label>
-                    {<input
-                      readOnly
-                      value={
-                        typeof value === "object"
-                          ? value.unidade
-                          : value
-                      }
-                      className="mt-1 bg-gray-50 border text-neutral-500 border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-                    />}
-                  </div>)
-                ))}
-              </div>
-            ))}
-
-            {/* Controles de Paginação */}
-            <div className="flex justify-between items-center mt-4">
-              <button
-                onClick={() =>
-                  fetchParametrosFormula(
-                    // Você pode armazenar a fórmula atual em estado se precisar
-                    formula[0],
-                    Math.max(pageFormula - 1, 0)
-                  )
-                }
-                disabled={pageFormula === 0}
-                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-              >
-                Anterior
-              </button>
-              <span>
-                Página {pageFormula + 1} de {totalPagesFormula}
-              </span>
-              <button
-                onClick={() =>
-                  fetchParametrosFormula(
-                    formula[0],
-                    Math.min(pageFormula + 1, totalPagesFormula - 1)
-                  )
-                }
-                disabled={pageFormula + 1 === totalPagesFormula}
-                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-              >
-                Próxima
-              </button>
-            </div>
-
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={() => {setModalFormula(false);setIniciar(true);setStep(0)}}
-                className="mt-4 bg-green-500 text-white px-6 py-2 rounded hover:brightness-90"
-              >
-                Carregar Receita
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+        {modalFormula && <ModalFormula  parametrosFormula={parametrosFormula} modalFormula={modalFormula} setModalFormula={setModalFormula} fetchParametrosFormula={fetchParametrosFormula} setIniciar={setIniciar} setStep={setStep} pageFormula={pageFormula} totalPagesFormula={totalPagesAlarme} />}
 
 
       {showModalEmergencia && (

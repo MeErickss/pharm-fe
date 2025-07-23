@@ -88,7 +88,7 @@ export function Farmacia() {
             img: selectImage(),
             statusLocal: STATUSES.includes(sl) ? sl : STATUSES[0],
             value: 0,
-            clpAddress: Number(item.enderecoCLP),
+            clpAddress: Number(item.pontoControle.enderecoCLP),
             original: item,
           };
         });
@@ -107,7 +107,7 @@ export function Farmacia() {
   // Connect Modbus on mount
   useEffect(() => {
     modbusApi.post("/connect", {
-      host: "192.168.1.8",
+      host: "192.168.1.33",
       port: 502,
       slaveId: 1
     }).catch(e => {
@@ -120,23 +120,22 @@ export function Farmacia() {
   }, []);
 
   // Polling periódico de status e níveis (leitura em bloco entre min e max clpAddress)
-  useEffect(() => {
+    useEffect(() => {
     if (!elementosData.length) return;
-    const intervalo = setInterval(async () => {
+    async function fetchStatuses() {
       try {
-        // calcular intervalo de leitura baseado nos endereços CLP
-        const addresses = elementosData.map(el => el.original.pontoControle.enderecoCLP-1);
+        const addresses = elementosData.map(el => el.clpAddress - 1);
         const minAddr = Math.min(...addresses);
+        const maxAddr = Math.max(...addresses);
+        const length = maxAddr - minAddr + 1;
 
-        // leitura em bloco
-        const statusRes = await modbusApi.post("/read", {
-          type: "holding",
-          address: 99,
-          length: 100,
-        });
-        const regs = statusRes.data.data;
+        const res = await modbusApi.post(
+          "/read",
+          { type: "holding", address: minAddr, length },
+          { timeout: 5000 }
+        );
+        const regs = res.data.data;
 
-        // níveis continuam fixos em 13 e 14
         const nivelRes = await modbusApi.post("/read", {
           type: "holding",
           address: 114,
@@ -154,14 +153,12 @@ export function Farmacia() {
             return { ...el, statusLocal: newStatus, value: newValue };
           })
         );
-        setError("");
       } catch (e) {
-        console.error("Erro no polling Modbus:", e);
-        setError("Falha na leitura periódica do Modbus");
+        console.error("Erro ao ler status Modbus:", e);
+        setError("Falha ao ler status dos equipamentos");
       }
-    }, 1000);
-
-    return () => clearInterval(intervalo);
+    }
+    fetchStatuses();
   }, [elementosData]);
 
   const handleToggle = async el => {
@@ -172,7 +169,7 @@ export function Farmacia() {
     try {
       await modbusApi.post("/write", {
         type: "holding",
-        address: el.original.pontoControle.enderecoCLP-1,
+        address: el.original.pontoControle.enderecoCLP,
         value: nextIdx
       });
       setError("");
