@@ -1,15 +1,20 @@
 import { useState } from "react";
-
+import { PdfMakerModal } from "./PdfMaker";
+import correcoes from "./dicionario";
 
 export function Cabecalho({ dados, nivel, setshowModalAdd, setDados, tabela }) {
       const [query, setQuery] = useState("")
       const [filter, setFilter] = useState("");
+      const [relatorio, setRelatorio] = useState(false)
+
+console.log(dados)
 
     const handleQuery = (event) => {
         setQuery(event);
       
         const filteredData = dados.filter((item) => {
           const value = item[filter];
+          console.log(value)
             return value.toString().toLowerCase().includes(event.toLowerCase());
         });
       
@@ -36,7 +41,7 @@ export function Cabecalho({ dados, nivel, setshowModalAdd, setDados, tabela }) {
             <input
               type="text"
               value={query}
-              onChange={(e) => filter == "" ?alert("Defina um Filtro"):handleQuery(e.target.value, filter)} // Pegando o valor do input e passando a key
+              onChange={(e) => filter == "" ? alert("Defina um Filtro"):handleQuery(e.target.value, filter)} // Pegando o valor do input e passando a key
               className="p-2 rounded-l-lg outline-none"
               placeholder="Digite o valor"
             />
@@ -44,9 +49,10 @@ export function Cabecalho({ dados, nivel, setshowModalAdd, setDados, tabela }) {
                 <select name="filter" id="filter" value={filter} onChange={handleFilter} className="p-2 mr-1 rounded-r-lg outline-none">
                   <option value="">Selecione um filtro</option>
                   {Object.keys(dados[0]).map((key) => (
-                  <option
+
+                  key != "parametros" && key != "unidades" && <option
                     key={key}
-                    value={key}>{key.toLocaleUpperCase()}
+                    value={key}>{correcoes[key]}
                   </option>
                 ))}
                 </select>
@@ -57,6 +63,13 @@ export function Cabecalho({ dados, nivel, setshowModalAdd, setDados, tabela }) {
               >
                 Limpar Filtro
               </button>
+              <button
+                onClick={() => setRelatorio(!relatorio)}
+                className="bg-indigo-600 hover:brightness-90 text-white mx-4 px-4 py-2 rounded"
+              >
+                Gerar Relatório
+              </button>
+              {relatorio && <PdfMakerModal setShowModalPdf={setRelatorio} dados={dados}/>}
             </div>
         </>
   );

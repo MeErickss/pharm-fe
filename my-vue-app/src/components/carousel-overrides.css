@@ -2,17 +2,9 @@
 .custom-carousel .slick-arrow {
     width: 48px;
     height: 48px;
-    background: rgba(0,0,0,0.1);
+    background: black;
     border-radius: 50%;
     z-index: 2;
-  }
-  
-  /* aumenta o próprio ícone da seta */
-  .custom-carousel .slick-prev:before,
-  .custom-carousel .slick-next:before {
-    font-size: 28px;
-    color: #333;
-    opacity: 1;
   }
   
   /* reposiciona um pouco para dentro */
@@ -22,24 +14,5 @@
   .custom-carousel .slick-next {
     right: 16px;
   }
-  
-  /* aumenta os dots (bolinhas) de paginação */
-  .custom-carousel .custom-dots li button {
-    width: 14px;
-    height: 14px;
-    padding: 0;
-  }
-  
-  .custom-carousel .custom-dots li button:before {
-    font-size: 14px;
-    line-height: 14px;
-    color: #999;
-    opacity: 1;
-  }
-  
-  /* troca a cor do dot ativo */
-  .custom-carousel .custom-dots li.slick-active button:before {
-    color: #1890ff;
-    opacity: 1;
-  }
+
   

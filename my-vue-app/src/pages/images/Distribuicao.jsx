@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../api";           // Backend API para dados não relacionados a Modbus
+import api from "../../api";             // Backend API para dados não relacionados a Modbus
+import React from "react";
 import modbusApi from "../../modbusApi"; // API para Modbus
 import distribuicaoImg from "./Tudo/distribuicao.png";
 import valvula1Img from "./Tudo/valvula1.png";
@@ -39,9 +40,9 @@ const prefixImageMap = {
 };
 
 const tipoImageMap = {
-  VALVULA: valvula1Img,
-  SENSOR:  sensor1Img,
-  BOMBA:   bombaImg,
+  VALVULA:          valvula1Img,
+  SENSOR:           sensor1Img,
+  BOMBA:            bombaImg,
   INDICADOR_VOLUME: barra1Img,
 };
 
@@ -51,21 +52,24 @@ export function Distribuicao() {
   const [error, setError] = useState("");
   const [updatingIds, setUpdatingIds] = useState(new Set());
 
+  // Carrega layout e dados iniciais
   useEffect(() => {
     api.get("/distribuicao", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     })
     .then(({ data }) => {
-      console.log(data)
-      if (!Array.isArray(data)) return setElementosData([]);
-
+      if (!Array.isArray(data)) {
+        setElementosData([]);
+        return;
+      }
       const mapped = data.map(item => {
         let coordsPx = { x: 0, y: 0, w: 0, h: 0 };
         try {
-          const p = JSON.parse(item.posicaoNoLayout || '{}');
-          if (["x","y","w","h"].every(k => typeof p[k] === 'number')) coordsPx = p;
+          const p = JSON.parse(item.posicaoNoLayout || "{}");
+          if (["x","y","w","h"].every(k => typeof p[k] === "number")) {
+            coordsPx = p;
+          }
         } catch {}
-
         const lower = item.nomePadronizado.toLowerCase();
         const selectImage = () => {
           for (const [prefix, img] of Object.entries(prefixImageMap)) {
@@ -73,29 +77,28 @@ export function Distribuicao() {
           }
           return tipoImageMap[item.tipo] ?? null;
         };
-
         return {
-          id: item.id,
-          key: item.nomePadronizado,
-          label: item.nomePadronizado,
+          id:          item.id,
+          key:         item.nomePadronizado,
+          label:       item.nomePadronizado,
+          nome:        item.nome,
           coordsPx,
-          nome: item.nome,
-          img: selectImage(),
+          img:         selectImage(),
           statusLocal: STATUSES[0],
-          original: item,
-          clpAddress: Number(item.pontoControle.enderecoCLP),
+          original:    item,
+          clpAddress:  Number(item.pontoControle.enderecoCLP),
         };
       });
-
       setElementosData(mapped);
     })
     .catch(err => {
-      if (err.response?.status === 401) navigate('/');
+      if (err.response?.status === 401) navigate("/");
       setError("Não foi possível carregar os dados de distribuição");
       setElementosData([]);
     });
   }, [navigate]);
 
+  // Conecta ao Modbus
   useEffect(() => {
     async function connectModbus() {
       try {
@@ -110,9 +113,12 @@ export function Distribuicao() {
       }
     }
     connectModbus();
-    return () => { modbusApi.post("/close").catch(() => {}); };
+    return () => {
+      modbusApi.post("/close").catch(() => {});
+    };
   }, []);
 
+  // Polling periódico de status via Modbus
   useEffect(() => {
     if (!elementosData.length) return;
     async function fetchStatuses() {
@@ -144,12 +150,16 @@ export function Distribuicao() {
     fetchStatuses();
   }, [elementosData]);
 
+  // Alterna status de válvulas via Modbus
   const handleToggle = async (el) => {
     const { id, label, statusLocal } = el;
     const nextIdx = (STATUSES.indexOf(statusLocal) + 1) % STATUSES.length;
     const next = STATUSES[nextIdx];
-    setElementosData(prev => prev.map(e => e.id===id?{...e, statusLocal:next}:e));
+    setElementosData(prev =>
+      prev.map(e => e.id === id ? { ...e, statusLocal: next } : e)
+    );
     setUpdatingIds(prev => new Set(prev).add(id));
+
     try {
       await modbusApi.post(
         "/write",
@@ -159,61 +169,165 @@ export function Distribuicao() {
       setError("");
     } catch {
       setError(`Falha ao atualizar ${label}.`);
-      setElementosData(prev => prev.map(e => e.id===id?{...e, statusLocal}:e));
+      // Reverte ao status anterior
+      setElementosData(prev =>
+        prev.map(e => e.id === id ? { ...e, statusLocal } : e)
+      );
     } finally {
-      setUpdatingIds(prev => { prev.delete(id); return new Set(prev); });
+      setUpdatingIds(prev => {
+        prev.delete(id);
+        return new Set(prev);
+      });
     }
   };
 
   const toPct = (px, total) => `${(px/total)*100}%`;
 
   return (
-    <div className="relative top-20 w-full max-w-xl" style={{ transform:'scale(1.5)', aspectRatio:`${ORIGINAL_WIDTH}/${ORIGINAL_HEIGHT}` }}>
+    <div
+      className="relative top-20 w-full max-w-xl"
+      style={{
+        transform: 'scale(1.4)',
+        aspectRatio: `${ORIGINAL_WIDTH}/${ORIGINAL_HEIGHT}`
+      }}
+    >
       {error && <div className="text-red-600 mb-2">{error}</div>}
+
+      {/* Layout de fundo */}
       <img
         src={distribuicaoImg}
         alt="Diagrama Distribuição"
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain" }}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "contain"
+        }}
       />
+
+      {/* Elementos do diagrama */}
       {elementosData.map(el => {
         const { x, y, w, h } = el.coordsPx;
         if (!el.img || w === 0 || h === 0) return null;
+
+        const left      = toPct(x, ORIGINAL_WIDTH);
+        const top       = toPct(y, ORIGINAL_HEIGHT);
+        const width     = toPct(w, ORIGINAL_WIDTH);
+        const height    = toPct(h, ORIGINAL_HEIGHT);
+        const labelTop  = toPct(y + 30, ORIGINAL_HEIGHT);
         const isUpdating = updatingIds.has(el.id);
-        const labelTop = y + 30;
+        const isButton    = el.original.tipo === "VALVULA" || el.original.tipo === "BOMBA";
+        const nivel = localStorage.getItem('nivel')
+
+        // Label do equipamento
+        const labelEl = (
+          <div
+            key={`${el.id}-label`}
+            aria-hidden
+            className={el.original.nomePadronizado.includes("bomba") ? "mx-24 my-4" : "mx-9"}
+            style={{
+              position: 'absolute',
+              left,
+              top: labelTop,
+              transform: 'translateY(-100%)',
+              padding: '2px 4px',
+              backgroundColor: 'black',
+              color: 'yellow',
+              borderRadius: '4px',
+              fontSize: '1rem',
+              whiteSpace: 'nowrap',
+              pointerEvents: 'none'
+            }}
+          >
+            {el.nome}
+          </div>
+        );
+
+        // Conteúdo: botão se for válvula, imagem se não
+        const content = isButton ? (
+          nivel == "ADMIN" || nivel == "MANUTENCAO" ?
+          <button
+            key={el.id}
+            onClick={() => !isUpdating && handleToggle(el)}
+            aria-label={`${el.label} está ${el.statusLocal}`}
+            disabled={isUpdating}
+            style={{
+              position: 'absolute',
+              left, top,
+              width, height,
+              padding: 0, margin: 0,
+              cursor: isUpdating ? 'wait' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: isUpdating ? 0.6 : 1
+            }}
+          >
+            <img
+              src={el.img}
+              alt={el.label}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                pointerEvents: 'none',
+                filter: filters[el.statusLocal],
+                transition: 'filter 0.3s'
+              }}
+            />
+          </button>
+        :(
+          <div
+            key={el.id}
+            aria-label={`${el.label} está ${el.statusLocal}`}
+            disabled={isUpdating}
+            style={{
+              position: 'absolute',
+              left, top,
+              width, height,
+              padding: 0, margin: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: isUpdating ? 0.6 : 1
+            }}
+          >
+            <img
+              src={el.img}
+              alt={el.label}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                pointerEvents: 'none',
+                filter: filters[el.statusLocal],
+                transition: 'filter 0.3s'
+              }}
+            />
+          </div>
+        )) : (
+          <img
+            key={el.id}
+            src={el.img}
+            alt={el.label}
+            style={{
+              position: 'absolute',
+              left, top,
+              width, height,
+              objectFit: 'contain',
+              filter: filters[el.statusLocal],
+              transition: 'filter 0.3s',
+              pointerEvents: 'none'
+            }}
+          />
+        );
+
         return (
-          <>
-            <div
-              className={el.original.nomePadronizado.includes("bomba") ? "mx-24 my-4":"mx-9"}
-              key={`${el.id}-label`}
-              aria-hidden
-              style={{
-                position: 'absolute', left: toPct(x, ORIGINAL_WIDTH), top: toPct(labelTop, ORIGINAL_HEIGHT),
-                transform: 'translateY(-100%)', padding: '2px 4px', backgroundColor: 'black', color: 'yellow',
-                borderRadius: '4px', fontSize: '1rem', whiteSpace: 'nowrap', pointerEvents: 'none'
-              }}
-            >
-              {el.nome}
-            </div>
-            <button
-              key={el.id}
-              onClick={() => !isUpdating && handleToggle(el)}
-              aria-label={`${el.label} está ${el.statusLocal}`}
-              disabled={isUpdating}
-              style={{
-                position: 'absolute', left: toPct(x, ORIGINAL_WIDTH), top: toPct(y, ORIGINAL_HEIGHT),
-                width: toPct(w, ORIGINAL_WIDTH), height: toPct(h, ORIGINAL_HEIGHT), padding: 0, margin: 0,
-                cursor: isUpdating ? 'wait' : 'pointer', display: 'flex', alignItems: 'center',
-                justifyContent: 'center', opacity: isUpdating ? 0.6 : 1
-              }}
-            >
-              <img
-                src={el.img}
-                alt={el.label}
-                style={{ width:'100%', height:'100%', objectFit:'contain', pointerEvents:'none',
-                  filter: filters[el.statusLocal], transition: 'filter 0.3s' }}
-              />
-            </button>
-          </>
+          <React.Fragment key={el.id}>
+            {labelEl}
+            {content}
+          </React.Fragment>
         );
       })}
     </div>

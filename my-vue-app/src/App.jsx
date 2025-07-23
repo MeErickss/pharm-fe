@@ -20,8 +20,6 @@ import { AdminRegistroUnidade } from "./pages/Admin/AdminRegistroUnidade.jsx";
 import { AdminRegistroUsuarios } from "./pages/Admin/AdminRegistroUsuarios.jsx"
 import { Status } from "./pages/Maintenance/Status.jsx";
 import { ManutencaoFuncao } from "./pages/Maintenance/ManutencaoFuncao.jsx";
-import { Teste } from "./pages/teste.jsx";
-import { LogSistema } from "./pages/Admin/LogSistema.jsx";
 import { AdminPontoControle } from "./pages/Admin/AdminPontoControle.jsx";
 
 export default function App() {
@@ -44,10 +42,8 @@ export default function App() {
           <Route path="admin/unidade" element={<AdminRegistroUnidade/>} />
           <Route path="admin/pontocontrole" element={<AdminPontoControle/>} />
           <Route path="admin/grandezas" element={<AdminRegistroGrandeza/>} />
-          <Route path="admin/logs" element={<LogSistema/>} />
           <Route path="manutencao" element={<ManutencaoFuncao/>} />
           <Route path="maintencestatus" element={<Status/>} />
-          <Route path="admin/teste" element={<Teste/>} />
         </Route>
 
         <Route path="*" element={<Pagina404 />} />

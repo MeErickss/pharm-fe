@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import farmacia from "./images/farmacia.png";
-import filtros from "./images/filtros.png";
-import purifier from "./images/purifier.png";
+import logo from "../pages/images/logo.svg"
+import { LoadingOutlined } from "@ant-design/icons";
 
 export function Home() {
   const [width, setWidth] = useState(window.innerWidth);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     function handleResize() {
@@ -17,13 +17,12 @@ export function Home() {
   return (
     <div className="flex flex-col h-full w-full rounded-lg bg-white font-inter text-gray-800 overflow-y-auto">
 
-      {/* Hero Section */}
       <section
         id="home"
         className="bg-white flex flex-col-reverse lg:flex-row items-center container mx-auto px-6 lg:px-20 py-24 gap-16"
       >
-        <div className="lg:w-1/2 space-y-8 border-b-2 pb-4 border-neutral-300">
-        <h1 className="text-6xl text-indigo-500 font-mono font-bold text-center">Health Safe</h1>
+        <div className="lg:w-1/2 space-y-8 border-b-2 pb-4 border-indigo-300">
+          <img src={logo} width={280} />
           <h1 className="text-4xl lg:text-5xl font-extrabold leading-tight text-gray-900">
             Segurança e Saúde Ocupacional de Forma Simples
           </h1>
@@ -37,14 +36,21 @@ export function Home() {
             Saiba Mais
           </a>
         </div>
-        <div className="lg:w-1/2 rounded-lg">
+        <div className="lg:w-1/2 rounded-lg relative">
           <div className="w-full h-72 lg:h-96 rounded-xl overflow-hidden shadow-xl">
+            {/* Loader Overlay */}
+            {loading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
+                <LoadingOutlined style={{ color: "blue", fontSize: "50px" }} spin />
+              </div>
+            )}
             <iframe
               title="HealthSafe - Vila Mangalot"
               className="w-full h-full"
               src="https://maps.google.com/maps?q=-23.4893194,-46.743483&z=15&output=embed"
               allowFullScreen
               loading="lazy"
+              onLoad={() => setLoading(false)}
             />
           </div>
         </div>

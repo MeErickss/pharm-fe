@@ -28,6 +28,20 @@ const correcoes = {
     "tipoUso":"Tipo de Uso",
     "pontoControle":"Ponto Controle",
     "clpTipo":"CLP Tipo",
+    "DESCRICAO":"Descrição",
+    "DATAHORA":"Data Hora",
+    "STATUS":"Status",
+    "USER":"Usuário",
+    "ID":"Id",
+    "PARAMETRO":"Parâmetro",
+    "PARAMETROANTERIOR":"Parâmetro Anterior",
+    "abreviacao":"Abreviação",
+    "tamanho":"Tamanho",
+    "offset":"Offset",
+    "nivel":"Nível",
+    "login":"Login",
+    "unidades":"Unidades",
+    "parametros":"Parâmetros",
 }
 
 export default correcoes;

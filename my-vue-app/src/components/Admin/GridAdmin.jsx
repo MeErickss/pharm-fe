@@ -1,5 +1,4 @@
 import { Tooltip } from "antd";
-import React from "react";
 import correcoes from "../dicionario"
 
 export function GridAdmin({
@@ -66,7 +65,7 @@ export function GridAdmin({
           }}
         >
           {Object.values(row).map((value, idx) => (
-            <div key={idx} className={value in style ? style[value] : value == null ? "bg-red-500 text-white font-bold text-center rounded-lg px-2 w-10/12" : "px-2 w-full"}>
+            <div key={idx} className={value in style ? style[value] : value == null ? "bg-red-500 text-white font-bold text-center rounded-lg px-2 w-10/12" : "w-full"}>
               {value ?? <strong>INDEFINIDO</strong>}
             </div>
           ))}

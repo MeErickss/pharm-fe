@@ -10,6 +10,12 @@
     "preview": "vite preview",
     "start:server": "node src/server.js"
   },
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "jsx": "react-jsx"
+  },
   "dependencies": {
     "@andsfonseca/palavras-pt-br": "^1.0.8",
     "@ant-design/icons": "^5.6.1",
@@ -26,7 +32,9 @@
     "dictionary-pt": "^4.0.0",
     "express": "^4.21.2",
     "font-awesome": "^4.7.0",
+    "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.3",
+    "jspdf": "^3.0.1",
     "modbus-serial": "^8.0.21-no-serial-port",
     "multer": "^2.0.1",
     "mysql": "^2.18.1",
@@ -39,6 +47,7 @@
     "react-icons": "^5.4.0",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.1.3",
+    "remark-breaks": "^4.0.0",
     "remove-accents": "^0.5.0"
   },
   "devDependencies": {

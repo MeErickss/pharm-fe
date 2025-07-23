@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import React from "react";
 import api from "../../api";
 import farmaciaImg from "./Tudo/farmacia.png";
 import valvula1Img from "./Tudo/valvula1.png";
@@ -9,7 +10,7 @@ import sensor2Img from "./Tudo/sensor2.png";
 import bombaImg from "./Tudo/bomba.png";
 import barra1Img from "./Tudo/barra1.png";
 import barra2Img from "./Tudo/barra2.png";
-import barra3Img from "./Tudo/barra3.png"
+import barra3Img from "./Tudo/barra3.png";
 import modbusApi from "../../modbusApi";
 
 const ORIGINAL_WIDTH = 591;
@@ -29,22 +30,21 @@ const filters = {
   estragado:  "grayscale(1) brightness(0.2)",
 };
 
-
 const prefixImageMap = {
-  "valvula1": valvula1Img,
-  "valvula2": valvula2Img,
-  "sensor1":  sensor1Img,
-  "sensor2":  sensor2Img,
-  "bomba":    bombaImg,
-  "nivel_ta": barra1Img,
-  "nivel_tm": barra2Img,
-  "pressao_ba": barra3Img,
+  "valvula1":  valvula1Img,
+  "valvula2":  valvula2Img,
+  "sensor1":   sensor1Img,
+  "sensor2":   sensor2Img,
+  "bomba":     bombaImg,
+  "nivel_ta":  barra1Img,
+  "nivel_tm":  barra2Img,
+  "pressao_ba":barra3Img,
 };
 
 const tipoImageMap = {
-  VALVULA: valvula1Img,
-  SENSOR:  sensor1Img,
-  BOMBA:   bombaImg,
+  VALVULA:          valvula1Img,
+  SENSOR:           sensor1Img,
+  BOMBA:            bombaImg,
   INDICADOR_VOLUME: barra1Img,
 };
 
@@ -61,35 +61,36 @@ export function Farmacia() {
     })
     .then(response => {
       const data = response.data;
-      console.log(data)
       if (Array.isArray(data)) {
         const mapped = data.map(item => {
           const key = item.nomePadronizado;
           let coordsPx = { x: 0, y: 0, w: 0, h: 0 };
           try {
-            const p = JSON.parse(item.posicaoNoLayout || '{}');
+            const p = JSON.parse(item.posicaoNoLayout || "{}");
             if (["x","y","w","h"].every(k => typeof p[k] === 'number')) {
               coordsPx = { x: p.x, y: p.y, w: p.w, h: p.h };
             }
           } catch {}
           const selectImage = () => {
             const lower = key.toLowerCase();
-            for (const [prefix,img] of Object.entries(prefixImageMap)) {
+            for (const [prefix, img] of Object.entries(prefixImageMap)) {
               if (lower.startsWith(prefix.toLowerCase())) return img;
             }
-            return item.tipo && tipoImageMap[item.tipo] ? tipoImageMap[item.tipo] : null;
+            return item.tipo && tipoImageMap[item.tipo]
+              ? tipoImageMap[item.tipo]
+              : null;
           };
-          const sl = (item.status||"").toLowerCase();
+          const sl = (item.status || "").toLowerCase();
           return {
-            id: item.id,
-            label: key,
-            nome: item.nome,
+            id:           item.id,
+            label:        key,
+            nome:         item.nome,
             coordsPx,
-            img: selectImage(),
-            statusLocal: STATUSES.includes(sl) ? sl : STATUSES[0],
-            value: 0,
-            clpAddress: Number(item.pontoControle.enderecoCLP),
-            original: item,
+            img:          selectImage(),
+            statusLocal:  STATUSES.includes(sl) ? sl : STATUSES[0],
+            value:        0,
+            clpAddress:   Number(item.pontoControle.enderecoCLP),
+            original:     item,
           };
         });
         setElementosData(mapped);
@@ -119,8 +120,8 @@ export function Farmacia() {
     };
   }, []);
 
-  // Polling periódico de status e níveis (leitura em bloco entre min e max clpAddress)
-    useEffect(() => {
+  // Polling periódico de status e níveis
+  useEffect(() => {
     if (!elementosData.length) return;
     async function fetchStatuses() {
       try {
@@ -161,11 +162,15 @@ export function Farmacia() {
     fetchStatuses();
   }, [elementosData]);
 
+  // Toggle status only for válvulas
   const handleToggle = async el => {
     const nextIdx = (STATUSES.indexOf(el.statusLocal) + 1) % STATUSES.length;
     const next = STATUSES[nextIdx];
-    setElementosData(prev => prev.map(e => e.id === el.id ? { ...e, statusLocal: next } : e));
+    setElementosData(prev => prev.map(e =>
+      e.id === el.id ? { ...e, statusLocal: next } : e
+    ));
     setUpdatingIds(prev => new Set(prev).add(el.id));
+
     try {
       await modbusApi.post("/write", {
         type: "holding",
@@ -175,52 +180,186 @@ export function Farmacia() {
       setError("");
     } catch {
       setError(`Falha ao atualizar ${el.label}.`);
-      setElementosData(prev => prev.map(e => e.id === el.id ? { ...e, statusLocal: el.statusLocal } : e));
+      // reverte
+      setElementosData(prev => prev.map(e =>
+        e.id === el.id ? { ...e, statusLocal: el.statusLocal } : e
+      ));
     } finally {
       setUpdatingIds(prev => { prev.delete(el.id); return new Set(prev); });
     }
   };
 
   const toPct = (px, total) => `${(px / total) * 100}%`;
+  const nivel = localStorage.getItem('nivel')
+  console.log
 
   return (
-    <div className="relative top-20 w-full max-w-xl" style={{ transform: 'scale(1.6)', aspectRatio: `${ORIGINAL_WIDTH}/${ORIGINAL_HEIGHT}` }}>
+    <div
+      className="relative top-20 w-full max-w-xl"
+      style={{
+        transform: 'scale(1.5)',
+        aspectRatio: `${ORIGINAL_WIDTH}/${ORIGINAL_HEIGHT}`
+      }}
+    >
       {error && <div className="text-red-600 mb-2">{error}</div>}
-      <img src={farmaciaImg} alt="Diagrama Farmácia" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+      <img
+        src={farmaciaImg}
+        alt="Diagrama Farmácia"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover'
+        }}
+      />
 
       {elementosData.map(el => {
         const { x, y, w, h, value } = el.coordsPx;
         if (!el.img || w === 0 || h === 0) return null;
-        const isUpdating = updatingIds.has(el.id);
-        const labelTop = y + 32;
 
+        const left     = toPct(x, ORIGINAL_WIDTH);
+        const top      = toPct(y, ORIGINAL_HEIGHT);
+        const width    = toPct(w, ORIGINAL_WIDTH);
+        const height   = toPct(h, ORIGINAL_HEIGHT);
+        const labelTop = toPct(y + 32, ORIGINAL_HEIGHT);
+        const isUpdating = updatingIds.has(el.id);
+
+        // indicadores de nível
         if (['nivel_ta', 'nivel_tm'].includes(el.label.toLowerCase())) {
           return (
-            <div key={el.label} className="flex flex-col items-center" style={{
-              position: 'absolute', left: toPct(x, ORIGINAL_WIDTH), top: toPct(y, ORIGINAL_HEIGHT), width: toPct(w, ORIGINAL_WIDTH), height: toPct(h, ORIGINAL_HEIGHT)
-            }}>
+            <div
+              key={el.label}
+              className="flex flex-col items-center"
+              style={{
+                position: 'absolute',
+                left, top, width, height
+              }}
+            >
               <div className="relative bg-gray-200 rounded-sm w-8 h-full">
-                <div className="absolute bottom-0 bg-blue-400 rounded-t-sm" style={{ width: '100%', height: `${el.value}%` }} />
-                <div className="absolute" style={{ bottom: `calc(${el.value}% - 0.5rem)`, left: '50%', transform: 'translateX(-50%)' }}>
+                <div
+                  className="absolute bottom-0 bg-blue-400 rounded-t-sm"
+                  style={{ width: '100%', height: `${value}%` }}
+                />
+                <div
+                  className="absolute"
+                  style={{
+                    bottom: `calc(${value}% - 0.5rem)`,
+                    left: '50%',
+                    transform: 'translateX(-50%)'
+                  }}
+                >
                   <div className="w-8 h-2 bg-gray-400 rounded-sm" />
                 </div>
               </div>
-              <span className="absolute mt-1 text-sm font-medium text-gray-700">{el.value}L</span>
+              <span className="absolute mt-1 text-sm font-medium text-gray-700">
+                {value}L
+              </span>
             </div>
           );
         }
 
+        // somente válvula recebe <button>, demais apenas <img>
+        const isButton = el.original.tipo === "VALVULA" || el.original.tipo === "BOMBA";
+
         return (
-          <>
-            <div key={`${el.id}-label`} className={el.original.nomePadronizado.includes('bomba') ? 'mx-24 my-4' : 'mx-9'} aria-hidden style={{
-              position: 'absolute', left: toPct(x, ORIGINAL_WIDTH), top: toPct(labelTop, ORIGINAL_HEIGHT), transform: 'translateY(-100%)', padding: '2px 4px', color: 'yellow', backgroundColor: 'black', borderRadius: '4px', fontSize: '1rem', whiteSpace: 'nowrap', pointerEvents: 'none'
-            }}> {el.nome} </div>
-            <button key={el.id} onClick={() => !isUpdating && handleToggle(el)} aria-label={`${el.nome} está ${el.statusLocal}`} disabled={isUpdating} style={{
-              position: 'absolute', left: toPct(x, ORIGINAL_WIDTH), top: toPct(y, ORIGINAL_HEIGHT), width: toPct(w, ORIGINAL_WIDTH), height: toPct(h, ORIGINAL_HEIGHT), padding: 0, margin: 0, cursor: isUpdating ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: isUpdating ? 0.6 : 1
-            }}>
-              <img src={el.img} alt={el.nome} style={{ width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none', filter: filters[el.statusLocal], transition: 'filter 0.3s' }} />
-            </button>
-          </>
+          <React.Fragment key={el.id}>
+            {/* label mantida exatamente como antes */}
+            <div
+              key={`${el.id}-label`}
+              className={el.original.nomePadronizado.includes('bomba') ? 'mx-24 my-4' : 'mx-9'}
+              aria-hidden
+              style={{
+                position: 'absolute',
+                left,
+                top: labelTop,
+                transform: 'translateY(-100%)',
+                padding: '2px 4px',
+                color: 'yellow',
+                backgroundColor: 'black',
+                borderRadius: '4px',
+                fontSize: '1rem',
+                whiteSpace: 'nowrap',
+                pointerEvents: 'none'
+              }}
+            >
+              {el.nome}
+            </div>
+
+            {isButton ? (
+              nivel == "ADMIN" || nivel == "MANUTENCAO" ?
+              <button
+                onClick={() => !isUpdating && handleToggle(el)}
+                aria-label={`${el.nome} está ${el.statusLocal}`}
+                disabled={isUpdating}
+                style={{
+                  position: 'absolute',
+                  left, top, width, height,
+                  padding: 0,
+                  margin: 0,
+                  cursor: isUpdating ? 'wait' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: isUpdating ? 0.6 : 1
+                }}
+              >
+                <img
+                  src={el.img}
+                  alt={el.nome}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    filter: filters[el.statusLocal],
+                    transition: 'filter 0.3s',
+                    pointerEvents: 'none'
+                  }}
+                />
+              </button>
+          : (
+              <div
+                aria-label={`${el.nome} está ${el.statusLocal}`}
+                disabled={isUpdating}
+                style={{
+                  position: 'absolute',
+                  left, top, width, height,
+                  padding: 0,
+                  margin: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: isUpdating ? 0.6 : 1
+                }}
+              >
+                <img
+                  src={el.img}
+                  alt={el.nome}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    filter: filters[el.statusLocal],
+                    transition: 'filter 0.3s',
+                    pointerEvents: 'none'
+                  }}
+                />
+              </div>
+          )) : (
+              <img
+                src={el.img}
+                alt={el.nome}
+                style={{
+                  position: 'absolute',
+                  left, top, width, height,
+                  objectFit: 'contain',
+                  filter: filters[el.statusLocal],
+                  transition: 'filter 0.3s',
+                  pointerEvents: 'none'
+                }}
+              />
+            )}
+          </React.Fragment>
         );
       })}
     </div>

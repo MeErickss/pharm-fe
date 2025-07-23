@@ -3,16 +3,13 @@ import { LogAlarme } from "../components/LogAlarme.jsx";
 import api from "../api.js";
 import { LogArmazenamento } from "../components/LogArmazenamento.jsx";
 import { Distribuicao } from "./images/Distribuicao.jsx";
-import { ModalFormula } from "../components/modalFormula.jsx";
+import { ModalFormula } from "../components/ModalFormula.jsx";
+import { GridFormula } from "../components/GridFormula.jsx";
 import { ModalEmergencia } from "../components/ModalEmergencia.jsx";
-import correcoes from "../components/dicionario.js";
-import React from "react";
-import { Steps } from "antd"
 import { PdfMakerModal } from "../components/PdfMaker.jsx";
 
 export function Armazenamento() {
 
-  const { Step } = Steps
   const [error, setError] = useState("");
 
   const [dadosArmazenamento, setDadosArmazenamento] = useState([]);
@@ -149,43 +146,8 @@ export function Armazenamento() {
         totalPagesAlarme={totalPagesAlarme}
       />
 
-        <div className="grid items-center grid-cols-4 grid-rows-2 col-span-2 bg-neutral-400 w-full h-[15.7rem] text-white p-4 rounded-2xl gap-4">
-          <div className="grid grid-cols-4 grid-rows-2 w-full h-full col-span-4 bg-neutral-200 text-black rounded">
-            <span>Alarme</span>
-            <span>Descricao</span>
-            <span>Ação</span>
-            <span>Fechado Valuvla 2</span>
-            <div className="col-span-4 -mt-[1.5rem]" style={{ padding: 24 }}>
-              <Steps current={step}>
-                <Step title="Inicio"/>
-                <Step title="Processo"/>
-                <Step title="Concluído"/>
-              </Steps>
-            </div>
-          </div>
-          {!iniciar && formula.map((f) => (
-            <button
-              key={f}
-              onClick={() => fetchParametrosFormula(f)}
-              className="bg-blue-500 hover:brightness-90 text-white mx-6 h-8 px-3 py-1 rounded-lg"
-            >
-              Fórmula {correcoes[f]}
-            </button>
-          ))}
-
-          <button
-            className="bg-blue-500 hover:brightness-90 text-white mx-6 h-8 px-3 py-1 rounded-lg"
-            onClick={() => setShowModalEmergencia((p) => !p)}
-          >
-            EMERGÊNCIA
-          </button>
-
-          {localStorage.getItem('nivel') === "MANUTENCAO" && <button
-            className="bg-blue-500 hover:brightness-90 text-white mx-6 h-8 px-3 py-1 rounded-lg"
-          >
-            Modo Manutenção
-          </button>}
-        </div>
+      <GridFormula setShowModalEmergencia={setShowModalEmergencia} formula={formula} iniciar={iniciar} step={step} fetchParametrosFormula={fetchParametrosFormula}/>
+        
 
 
         {modalFormula && <ModalFormula  parametrosFormula={parametrosFormula} modalFormula={modalFormula} setModalFormula={setModalFormula} fetchParametrosFormula={fetchParametrosFormula} setIniciar={setIniciar} setStep={setStep} pageFormula={pageFormula} totalPagesFormula={totalPagesAlarme} />}

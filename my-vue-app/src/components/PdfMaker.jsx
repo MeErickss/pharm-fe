@@ -1,5 +1,6 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkBreaks from "remark-breaks";
 import html2pdf from "html2pdf.js";
 import * as pdfjsLib from "pdfjs-dist/build/pdf";
 
@@ -7,17 +8,28 @@ import * as pdfjsLib from "pdfjs-dist/build/pdf";
 pdfjsLib.GlobalWorkerOptions.workerSrc = "/libs/pdfjs/pdf.worker.js";
 
 export function PdfMakerModal({ setShowModalPdf, setStep, dados }) {
-  const textoGerado = dados
-    .map(item => 
-  `
-  Data: ${new Date()}
-  Descrição: ${item.descricao}
-  Valor atual: ${item.valor}
-  Min: ${item.vlMin} | Max: ${item.vlMax}
-  Unidade: ${item.unidade.unidade}
-  Clp: ${item.pontoControle == null ? "—" : `Clp: ${item.pontoControle.pontoControle}`}
-  `)
-  .join("\n\n");
+  const modelo = (valores) => {
+    const unidade = typeof valores.unidade === 'object' ? valores.unidade?.unidade : valores.unidade;
+    const clp = valores.pontoControle?.pontoControle;
+
+    const campos = [
+      ['Data', new Date().toLocaleString()],
+      ['Descrição', valores.descricao],
+      ['Valor atual', valores.valor],
+      ['Min/Max', valores.vlMin != null && valores.vlMax != null ? `Min: ${valores.vlMin} | Max: ${valores.vlMax}` : null],
+      ['Unidade', unidade], 
+      ['Clp', clp],
+    ];
+
+    return campos
+      .filter(([_, valor]) => valor !== null && valor !== undefined && valor !== '')
+      .map(([label, valor]) => `${label}: ${valor}`)
+      .join('\n');
+  };
+
+  
+  const textoGerado = dados.map(item => modelo(item)).join("\n");
+
 
   const [texto, setTexto] = useState(textoGerado || "");
   const [error, setError] = useState(null);
@@ -36,10 +48,10 @@ export function PdfMakerModal({ setShowModalPdf, setStep, dados }) {
   };
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-[50rem] max-h-[90vh] overflow-y-auto bg-white p-6 rounded-lg shadow-lg">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Editor Markdown ↔ PDF</h2>
+          <h2 className="text-xl font-semibold">Gerar Relatório</h2>
           <svg xmlns="http://www.w3.org/2000/svg" onClick={()=>{setShowModalPdf(false);setStep(1)}} viewBox="0 0 384 512" width="16" className="cursor-pointer text-gray-500 hover:text-gray-800 fill-red-500 hover:fill-red-900">
             <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
           </svg>
@@ -69,9 +81,11 @@ export function PdfMakerModal({ setShowModalPdf, setStep, dados }) {
           ref={previewRef}
           className="prose max-w-none p-4 border rounded bg-gray-50"
         >
-          <ReactMarkdown>{texto}</ReactMarkdown>
-        </div>
+        <ReactMarkdown remarkPlugins={[remarkBreaks]}>
+          {texto}
+        </ReactMarkdown>
       </div>
+      </div>  
     </div>
   );
 }

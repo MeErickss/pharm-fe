@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import correcoes from "./dicionario";
 
 export function LogAlarme({
   fetchLogAlarme,
@@ -59,7 +60,7 @@ export function LogAlarme({
         const dadosLen = fields.length;
         return (
           <div className="fixed inset-0 z-50 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-lg shadow w-[30rem] overflow-hidden">
               {/* Botão de fechar no topo-direito */}
               <button
                 onClick={() => setModalParametro({ bool: false, item: "" })}
@@ -72,7 +73,7 @@ export function LogAlarme({
 
               <div>
 
-                <div className="flex flex-col justify-center items-center p-4 text-center gap-2">
+                <div className="flex flex-col justify-center items-center text-center gap-2">
                 <h1 className= {itemWrapper.descricao == "Ignorado" ? "flex flex-col border-b-2 border-red-500 ml-2 justify-center items-center text-black font-bold text-center" : itemWrapper.descricao == "Reconhecido" ? "flex flex-col border-b-2 w-1/2 border-green-400 ml-2 justify-center items-center text-black font-bold text-center" : "flex flex-col border-b-2 w-1/2 border-blue-400 ml-2 justify-center items-center text-black font-bold text-center"}>
                   Alarme {itemWrapper.descricao}
                 </h1>
@@ -89,7 +90,7 @@ export function LogAlarme({
                   )}
                 </div>
               </div>
-                  <div className="flex justify-center items-center">Acontecimento: </div>
+                  <div className="flex justify-center items-center pb-8">Acontecimento: </div>
             </div>
           </div>
         );
@@ -142,7 +143,7 @@ export function LogAlarme({
               {dadosAlarme.length > 0 &&
                 Object.keys(dadosAlarme[0]).map((key) => (
                   <option key={key} value={key}>
-                    {key.toLocaleUpperCase()}
+                    {correcoes[key.toLocaleUpperCase()]}
                   </option>
                 ))}
             </select>

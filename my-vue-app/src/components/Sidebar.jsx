@@ -1,5 +1,5 @@
 // src/Sidebar.jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../pages/images/logo.svg"
 import {
@@ -8,10 +8,8 @@ import {
   DesktopOutlined,
   ContainerOutlined,
   SettingOutlined,
-  HistoryOutlined,
   BarsOutlined,
   FormOutlined,
-  CodeOutlined,
   LogoutOutlined
 
 } from "@ant-design/icons";
@@ -85,14 +83,12 @@ export function Sidebar() {
       key: "admin",
       icon: <SettingOutlined />,
       children: [
-        { label: "Parâmetros Produção", key: "admin:producao", icon: <FormOutlined /> },
-        { label: "Parâmetros Armazém",   key: "admin:armazem",  icon: <FormOutlined /> },
+        { label: "Produção", key: "admin:producao", icon: <FormOutlined /> },
+        { label: "Armazém",   key: "admin:armazem",  icon: <FormOutlined /> },
         { label: "Unidades",    key: "admin:unidade",  icon: <FormOutlined /> },
         { label: "Grandezas",   key: "admin:grandezas", icon: <FormOutlined /> },
         { label: "Pontos Controle",   key: "admin:pontocontrole", icon: <FormOutlined /> },
         { label: "Usuários",    key: "admin:usuarios",  icon: <FormOutlined /> },
-        { label: "Logs Sistema",         key: "admin:logs",      icon: <HistoryOutlined /> },
-        { label: "Teste",         key: "admin:teste",      icon: <CodeOutlined /> },
       ],
     },
     nivel === "manutencao" && {
