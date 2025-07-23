@@ -132,7 +132,7 @@ export function Farmacia() {
         const res = await modbusApi.post(
           "/read",
           { type: "holding", address: minAddr, length },
-          { timeout: 5000 }
+          { timeout: 2000 }
         );
         const regs = res.data.data;
 
