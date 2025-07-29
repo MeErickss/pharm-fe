@@ -59,13 +59,23 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
         ));
 
       case "pontoControle":
-        return options.map(o => (
-          o.status == "DESLIGADO" && (
-          <option key={o.id} value={o.pontoControle}>
-            {o.pontoControle}
-          </option>
-          )
-        ));
+        console.log(options);
+        return (
+          <>
+            {options
+              .filter(o => o.status === "DESALOCADO")
+              .map(o => (
+                <option key={o.id} value={o.pontoControle}>
+                  {o.pontoControle}
+                </option>
+              ))
+            }
+            <option value={null}>
+              DESVINCULAR
+            </option>
+          </>
+        );
+
 
       default:
         return options.map(o => (

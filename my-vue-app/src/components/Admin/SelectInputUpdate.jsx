@@ -53,7 +53,6 @@ export function SelectInputUpdate({ table, onChange, value, param }) {
       mainValue = typeof value === 'object' ? (value.formula ?? "") : (value ?? "");
       break;
     case "pontoControle":
-      // Fix: use value.pontoControle instead of formula
       mainValue = typeof value === 'object' ? (value.pontoControle ?? "") : (value ?? "");
       break;
     default:
@@ -65,13 +64,21 @@ export function SelectInputUpdate({ table, onChange, value, param }) {
       return options.map((opt, i) => <option key={i} value={opt}>{opt}</option>);
     }
     if (table === "pontoControle") {
-      return options.map(o => (
-        o.status == "DESLIGADO" &&
-        <option key={o.id} value={o.pontoControle}>
-          {o.pontoControle}
-        </option>
-      ));
-    }
+        return (
+          <>
+            {options
+              .filter(o => o.status === "DESALOCADO")
+              .map(o => (
+                <option key={o.id} value={o.pontoControle}>
+                  {o.pontoControle}
+                </option>
+              ))
+            }
+            <option value={null}>
+              DESVINCULAR
+            </option>
+          </>
+        )}
     if (table === "grandeza") {
       return options.map(o => (
         <option key={o.id} value={o.descricao}>

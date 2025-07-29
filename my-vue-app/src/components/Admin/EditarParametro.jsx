@@ -41,7 +41,6 @@ export function EditarParametro({ id, dados, closeModal, param }) {
     });
   };
 
-  // envia PUT para editar o parâmetro
 const handleSubmit = async e => {
   e.preventDefault();
 
@@ -56,7 +55,7 @@ const handleSubmit = async e => {
     unidadeDesc:  valoresEditados.unidade, 
     funcao:       valoresEditados.funcao,
     formulaEnum: valoresEditados.formula,
-    pontoControle: valoresEditados.pontoControle == "Selecione" ? null : valoresEditados.pontoControle
+    pontoControle: valoresEditados.pontoControle == "DESVINCULAR" || valoresEditados.pontoControle == "Selecione" ? null : valoresEditados.pontoControle
   };
 
   console.log(body)

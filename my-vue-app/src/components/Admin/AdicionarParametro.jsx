@@ -51,7 +51,7 @@ export function AdicionarParametro({ dados, closeModal, param }) {
       grandezaDesc: valores.grandeza,
       funcao:       valores.funcao,
       formulaEnum: valores.formula,
-      pontoControle: valores.pontoControle == "Selecione" ? null : valores.pontoControle 
+      pontoControle: valoresEditados.pontoControle == "DESVINCULAR" || valoresEditados.pontoControle == "Selecione" ? null : valoresEditados.pontoControle
     };
 
     console.log(body)

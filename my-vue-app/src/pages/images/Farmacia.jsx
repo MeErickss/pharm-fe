@@ -191,7 +191,6 @@ export function Farmacia() {
 
   const toPct = (px, total) => `${(px / total) * 100}%`;
   const nivel = localStorage.getItem('nivel')
-  console.log
 
   return (
     <div
@@ -215,6 +214,7 @@ export function Farmacia() {
       />
 
       {elementosData.map(el => {
+        console.log(elementosData)
         const { x, y, w, h, value } = el.coordsPx;
         if (!el.img || w === 0 || h === 0) return null;
 
@@ -254,6 +254,23 @@ export function Farmacia() {
               </div>
               <span className="absolute mt-1 text-sm font-medium text-gray-700">
                 {value}L
+              </span>
+            </div>
+          );
+        } else if(el.label.toLowerCase() == 'pressao_ba'){
+                    return (
+            <div
+              key={el.label}
+              className="flex flex-col items-center mx-1 scale-75"
+              style={{
+                position: 'absolute',
+                left, top, width, height
+              }}
+            >
+              <div className="relative bg-neutral-300 rounded-sm w-8 h-full rotate-90">
+              </div>
+              <span className="absolute mt-7 text-sm font-medium text-black">
+                {value}Psi
               </span>
             </div>
           );
@@ -314,6 +331,7 @@ export function Farmacia() {
                     filter: filters[el.statusLocal],
                     transition: 'filter 0.3s',
                     pointerEvents: 'none'
+                    
                   }}
                 />
               </button>
