@@ -79,7 +79,7 @@ export function Grid({
     <div className="w-full border border-gray-300 rounded-lg bg-white shadow">
       {dados.length > 0 && (
         <div
-          className="grid bg-gray-200 text-base font-semibold text-gray-700 p-3 border-b"
+          className="grid bg-gray-200 text-sm font-semibold text-gray-700 p-3 border-b"
           style={{
             gridTemplateColumns: `
               minmax(3rem, auto)
@@ -100,7 +100,7 @@ export function Grid({
       {dados.map((row) => (
         <div
           key={row.id}
-          className="grid text-sm p-3 px-2 border-b"
+          className="grid text-xs p-3 px-2 border-b"
           style={{
             gridTemplateColumns: `
               minmax(3rem, auto)

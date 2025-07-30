@@ -10,11 +10,6 @@ export function GridAdmin({
   onDelete,
 }) {
 
-  console.log("dados")
-  console.log(dados)
-  console.log("dados")
-
-
   const style = {
     "UM":"w-10/12 text-white text-center font-bold rounded-lg bg-cyan-300 px-2",
     "DOIS":"w-10/12 text-white text-center font-bold rounded-lg bg-teal-600 px-2",
@@ -37,7 +32,7 @@ export function GridAdmin({
   };
 
   return (
-    <div className="w-full border border--300 rounded-lg bg-white shadow">
+    <div className="w-full border rounded-lg bg-white shadow">
       {dados.length > 0 && (
         <div
           className="grid bg-gray-200 text-base font-semibold text-gray-700 p-3 border-b"
@@ -48,18 +43,18 @@ export function GridAdmin({
           }}
         >
           {Object.keys(dados[0]).map((key) => (
-            <div key={key} className="px-2">
+            <div key={key} className="px-2 md:text-xs lg:text-sm">
               {correcoes[key[0].toUpperCase() + key.substring(1)] || key[0].toUpperCase() + key.substring(1)}
             </div>
           ))}
-          <div className="px-2">Ações</div>
+          <div className="px-2 lg:text-sm">Ações</div>
         </div>
       )}
 
       {dados.map((row) => (
         <div
           key={row.id}
-          className="grid text-sm p-3 px-2 border-b"
+          className="grid text-xs p-3 px-2 border-b"
           style={{
             gridTemplateColumns: `minmax(4rem, auto) minmax(28rem, 1fr) ${Array.from({ length: dadosLen - 1 })
               .map(() => 'minmax(4rem, 1fr)')

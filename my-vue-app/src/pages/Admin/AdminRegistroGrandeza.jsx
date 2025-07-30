@@ -276,7 +276,7 @@ export function AdminRegistroGrandeza() {
       )}
 
       <div className="w-full border border-gray-300 rounded-lg bg-white shadow">
-        <div className="grid bg-gray-200 text-base font-semibold text-gray-700 p-3 border-b grid-cols-5">
+        <div className="grid bg-gray-200 text-sm font-semibold text-gray-700 p-3 border-b grid-cols-5">
           <div>Id</div>
           <div>Descrição</div>
           <div>Status</div>

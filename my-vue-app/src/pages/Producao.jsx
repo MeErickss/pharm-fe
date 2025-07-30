@@ -127,7 +127,6 @@ export function Producao() {
     <main className="grid rounded-xl grid-cols-4 grid-rows-4 gap-4 w-full h-full bg-gray-100">
       {/* Farmácia */}
       <div className="flex flex-col justify-start items-center col-span-2 row-span-3 p-4 bg-white shadow-md rounded-2xl">
-        <h1 className="font-bold text-5xl">Farmácia</h1>
         <Farmacia />
         {iniciar && (
           <div className="grid justify-center items-center relative top-[10rem] text-white w-full grid-cols-4">

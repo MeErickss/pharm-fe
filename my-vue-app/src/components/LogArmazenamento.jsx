@@ -60,7 +60,7 @@ export function LogArmazenamento({
         />
       )}
 
-      <div className="w-full flex flex-col items-center pt-2">
+      <div className="w-full flex flex-col items-center scale-95">
         {(filteredDados || []).map((item, index) => (
           <div
             key={index}
