@@ -89,6 +89,7 @@ export function Sidebar() {
         { label: "Grandezas",   key: "admin:grandezas", icon: <FormOutlined /> },
         { label: "Pontos Controle",   key: "admin:pontocontrole", icon: <FormOutlined /> },
         { label: "Usuários",    key: "admin:usuarios",  icon: <FormOutlined /> },
+        { label: "Teste",    key: "admin:teste",  icon: <FormOutlined /> },
       ],
     },
     nivel === "manutencao" && {

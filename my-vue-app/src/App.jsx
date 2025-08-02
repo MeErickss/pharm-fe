@@ -19,6 +19,7 @@ import { AdminRegistroArmazenamento } from "./pages/Admin/AdminRegistroArmazenam
 import { AdminRegistroUnidade } from "./pages/Admin/AdminRegistroUnidade.jsx";
 import { AdminRegistroUsuarios } from "./pages/Admin/AdminRegistroUsuarios.jsx"
 import { Status } from "./pages/Maintenance/Status.jsx";
+import { Teste } from "./pages/Admin/Teste.jsx"
 import { ManutencaoFuncao } from "./pages/Maintenance/ManutencaoFuncao.jsx";
 import { AdminPontoControle } from "./pages/Admin/AdminPontoControle.jsx";
 
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="admin/pontocontrole" element={<AdminPontoControle/>} />
           <Route path="admin/grandezas" element={<AdminRegistroGrandeza/>} />
           <Route path="manutencao" element={<ManutencaoFuncao/>} />
+          <Route path="admin/teste" element={<Teste/>} />
           <Route path="maintencestatus" element={<Status/>} />
         </Route>
 

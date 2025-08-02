@@ -95,7 +95,7 @@ export function AdminRegistroUsuarios() {
   return (
     <div className="w-full rounded h-full bg-gray-100 p-4 overflow-y-visible">
 
-      <Cabecalho dados={usuarios} nivel={1} setshowModalAdd={setShowModalAdd} tabela={"Usuários"}/>
+      <Cabecalho dados={usuarios} setDados={setDados} nivel={1} setshowModalAdd={setShowModalAdd} tabela={"Usuários"}/>
 
       {showModalAdd && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

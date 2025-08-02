@@ -52,7 +52,7 @@ export function Distribuicao() {
   const [error, setError] = useState("");
   const [updatingIds, setUpdatingIds] = useState(new Set());
 
-  // Carrega layout e dados iniciais
+    // Carrega layout e dados iniciais
   useEffect(() => {
     api.get("/distribuicao", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
@@ -66,9 +66,7 @@ export function Distribuicao() {
         let coordsPx = { x: 0, y: 0, w: 0, h: 0 };
         try {
           const p = JSON.parse(item.posicaoNoLayout || "{}");
-          if (["x","y","w","h"].every(k => typeof p[k] === "number")) {
-            coordsPx = p;
-          }
+          if (["x","y","w","h"].every(k => typeof p[k] === "number")) coordsPx = p;
         } catch {}
         const lower = item.nomePadronizado.toLowerCase();
         const selectImage = () => {
@@ -79,7 +77,6 @@ export function Distribuicao() {
         };
         return {
           id:          item.id,
-          key:         item.nomePadronizado,
           label:       item.nomePadronizado,
           nome:        item.nome,
           coordsPx,
@@ -98,21 +95,17 @@ export function Distribuicao() {
     });
   }, [navigate]);
 
-  // Conecta ao Modbus
+  // Conecta ao Modbus ao montar
   useEffect(() => {
-    async function connectModbus() {
+    async function connect() {
       try {
-        await modbusApi.post(
-          "/connect",
-          { host: "192.168.1.33", port: 502, slaveId: 1 },
-          { timeout: 2000 }
-        );
+        await modbusApi.post("/connect", { host: "192.168.1.33", port: 502, slaveId: 1 });
       } catch (e) {
         console.error("Erro conexão Modbus:", e);
         setError("Não foi possível conectar ao Modbus");
       }
     }
-    connectModbus();
+    connect();
     return () => {
       modbusApi.post("/close").catch(() => {});
     };
@@ -128,11 +121,7 @@ export function Distribuicao() {
         const maxAddr = Math.max(...addresses);
         const length = maxAddr - minAddr + 1;
 
-        const res = await modbusApi.post(
-          "/read",
-          { type: "holding", address: minAddr, length },
-          { timeout: 1500 }
-        );
+        const res = await modbusApi.post("/read", { type: "holding", slaveId: 1, address: minAddr, length });
         const regs = res.data.data;
 
         setElementosData(prev =>
@@ -151,33 +140,21 @@ export function Distribuicao() {
   }, [elementosData]);
 
   // Alterna status de válvulas via Modbus
-  const handleToggle = async (el) => {
-    const { id, label, statusLocal } = el;
-    const nextIdx = (STATUSES.indexOf(statusLocal) + 1) % STATUSES.length;
+  const handleToggle = async el => {
+    const nextIdx = (STATUSES.indexOf(el.statusLocal) + 1) % STATUSES.length;
     const next = STATUSES[nextIdx];
-    setElementosData(prev =>
-      prev.map(e => e.id === id ? { ...e, statusLocal: next } : e)
-    );
-    setUpdatingIds(prev => new Set(prev).add(id));
+    const old = el.statusLocal;
+    setElementosData(prev => prev.map(e => e.id === el.id ? { ...e, statusLocal: next } : e));
+    setUpdatingIds(prev => new Set(prev).add(el.id));
 
     try {
-      await modbusApi.post(
-        "/write",
-        { type: "holding", address: el.clpAddress - 1, value: nextIdx },
-        { timeout: 1000 }
-      );
+      await modbusApi.post("/write", { type: "holding", slaveId: 1, address: el.clpAddress - 1, value: nextIdx });
       setError("");
     } catch {
-      setError(`Falha ao atualizar ${label}.`);
-      // Reverte ao status anterior
-      setElementosData(prev =>
-        prev.map(e => e.id === id ? { ...e, statusLocal } : e)
-      );
+      setError(`Falha ao atualizar ${el.nome}.`);
+      setElementosData(prev => prev.map(e => e.id === el.id ? { ...e, statusLocal: old } : e));
     } finally {
-      setUpdatingIds(prev => {
-        prev.delete(id);
-        return new Set(prev);
-      });
+      setUpdatingIds(prev => { prev.delete(el.id); return new Set(prev); });
     }
   };
 

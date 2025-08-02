@@ -11,7 +11,6 @@ import bombaImg from "./Tudo/bomba.png";
 import barra1Img from "./Tudo/barra1.png";
 import barra2Img from "./Tudo/barra2.png";
 import barra3Img from "./Tudo/barra3.png";
-import modbusApi from "../../modbusApi";
 
 const ORIGINAL_WIDTH = 591;
 const ORIGINAL_HEIGHT = 435;
@@ -54,7 +53,6 @@ export function Farmacia() {
   const [error, setError] = useState("");
   const [updatingIds, setUpdatingIds] = useState(new Set());
 
-  // Fetch layout and status initial
   useEffect(() => {
     api.get("/farmacia", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
@@ -105,9 +103,9 @@ export function Farmacia() {
     });
   }, [navigate]);
 
-  // Connect Modbus on mount
+  // Conecta ao Modbus ao montar
   useEffect(() => {
-    modbusApi.post("/connect", {
+    api.post("/modbus/connect", {
       host: "192.168.1.33",
       port: 502,
       slaveId: 1
@@ -116,7 +114,7 @@ export function Farmacia() {
       setError("Não foi possível conectar ao Modbus");
     });
     return () => {
-      modbusApi.post("/close").catch(err => console.warn("Erro ao fechar Modbus:", err));
+      api.post("/modbus/close").catch(err => console.warn("Erro ao fechar Modbus:", err));
     };
   }, []);
 
@@ -130,15 +128,15 @@ export function Farmacia() {
         const maxAddr = Math.max(...addresses);
         const length = maxAddr - minAddr + 1;
 
-        const res = await modbusApi.post(
-          "/read",
-          { type: "holding", address: minAddr, length },
-          { timeout: 2000 }
+        const res = await api.post(
+          "/modbus/read",
+          { type: "holding", slaveId: 1, address: minAddr, length },
         );
         const regs = res.data.data;
 
-        const nivelRes = await modbusApi.post("/read", {
+        const nivelRes = await api.post("/modbus/read", {
           type: "holding",
+          slaveId: 1,
           address: 114,
           length: 2
         });
@@ -166,23 +164,24 @@ export function Farmacia() {
   const handleToggle = async el => {
     const nextIdx = (STATUSES.indexOf(el.statusLocal) + 1) % STATUSES.length;
     const next = STATUSES[nextIdx];
+    const old = el.statusLocal;
     setElementosData(prev => prev.map(e =>
       e.id === el.id ? { ...e, statusLocal: next } : e
     ));
     setUpdatingIds(prev => new Set(prev).add(el.id));
 
     try {
-      await modbusApi.post("/write", {
+      await api.post("/modbus/write", {
         type: "holding",
+        slaveId: 1,
         address: el.original.pontoControle.enderecoCLP,
         value: nextIdx
       });
       setError("");
     } catch {
       setError(`Falha ao atualizar ${el.label}.`);
-      // reverte
       setElementosData(prev => prev.map(e =>
-        e.id === el.id ? { ...e, statusLocal: el.statusLocal } : e
+        e.id === el.id ? { ...e, statusLocal: old } : e
       ));
     } finally {
       setUpdatingIds(prev => { prev.delete(el.id); return new Set(prev); });
@@ -190,7 +189,7 @@ export function Farmacia() {
   };
 
   const toPct = (px, total) => `${(px / total) * 100}%`;
-  const nivel = localStorage.getItem('nivel')
+  const nivel = localStorage.getItem('nivel');
 
   return (
     <div
@@ -214,7 +213,6 @@ export function Farmacia() {
       />
 
       {elementosData.map(el => {
-        console.log(elementosData)
         const { x, y, w, h, value } = el.coordsPx;
         if (!el.img || w === 0 || h === 0) return null;
 
