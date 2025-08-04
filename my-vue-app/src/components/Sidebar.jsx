@@ -4,12 +4,10 @@ import { useNavigate } from "react-router-dom";
 import logo from "../pages/images/logo.svg"
 import {
   SafetyOutlined,
-  PieChartOutlined,
   DesktopOutlined,
-  ContainerOutlined,
   SettingOutlined,
   MenuOutlined,
-  FormOutlined,
+  HomeOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
@@ -23,6 +21,7 @@ import users from "./Icons/Users.svg"
 import clp from "./Icons/Clp.svg"
 import teste from "./Icons/Teste.svg"
 import manutencao from "./Icons/Manutencao.svg"
+import parametros from "./Icons/Parametros.svg"
 
 
 export function Sidebar() {
@@ -61,14 +60,14 @@ export function Sidebar() {
   }, []);
 
   const items = [
-    { label: "Página Inicial", key: "home", icon: <PieChartOutlined style={{ fontSize: 20}}/> },
+    { label: "Página Inicial", key: "home", icon: <HomeOutlined style={{ fontSize: 20}}/> },
     {
       label: "Produção",
       key: "producao",
       icon: <img src={farmacia} alt="Produção" style={{ width:20 }}/>,
       children: [
         { label: "Monitoramento", key: "producao:monitoramento", icon: <DesktopOutlined style={{ fontSize: 20}} /> },
-        { label: "Parâmetros",           key: "producao:parametros",      icon: <FormOutlined style={{ fontSize: 20}} /> },
+        { label: "Parâmetros",           key: "producao:parametros",      icon: <img src={parametros} alt="Parâmetros" style={{ width:30, marginLeft:-5 }}/> },
       ],
     },
     {
@@ -81,12 +80,12 @@ export function Sidebar() {
           icon: <MenuOutlined style={{ fontSize: 15}} />,
           children: [
             { label: `Armazem ${correcoes[value]}`, key: `armazenagem:monitoramento:${correcoes[value]}`, icon:<DesktopOutlined style={{ fontSize: 20}} /> },
-            { label: "Parâmetros", key: `armazenagem:parametros:${correcoes[value]}`, icon: <FormOutlined style={{ fontSize: 20}} />},
+            { label: "Parâmetros", key: `armazenagem:parametros:${correcoes[value]}`, icon: <img src={parametros} alt="Parâmetros" style={{ width:30, marginLeft:-5 }}/>},
           ],
       }))
     },
     nivel === "admin" && {
-      label: "Cadastros Admin",
+      label: "Admin",
       key: "admin",
       icon: <SettingOutlined style={{ fontSize: 20}}/>,
       children: [
