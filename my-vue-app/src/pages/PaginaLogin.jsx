@@ -38,7 +38,7 @@ export function PaginaLogin() {
   return (
     <div className="flex flex-col gap-10 justify-center items-center w-screen h-screen bg-slate-500">
       <img width={200} src={logo} alt="logo" />
-      <div className="flex w-1/4 h-10/12 p-8 bg-slate-700 rounded-lg shadow-2xl">
+      <div className="flex w-full lg:w-1/4 h-10/12 p-8 bg-slate-700 rounded-lg shadow-2xl">
         <form onSubmit={handleLogin} className="w-full">
           <h2 className="text-center text-indigo-600 font-bold mb-6">LOGIN</h2>
 

@@ -7,12 +7,17 @@ import correcoes from "../dicionario";
 
 export function AdicionarParametro({ dados, closeModal, param }) {
   const navigator = useNavigate();
+  dados[0].pontoControle = null;
+
 
   // Inicializa valores com dados do primeiro elemento ou string vazia
   const inicial = Object.fromEntries(
     Object.keys(dados[0]).map(key => [key, dados[0][key] || ""])
   );
+  
+
   const [valores, setValores] = useState(inicial);
+
 
   // Campos que usam SelectInputInsert
   const selectFields = ["status", "funcao", "grandeza", "formula","pontoControle"];
@@ -33,16 +38,19 @@ export function AdicionarParametro({ dados, closeModal, param }) {
       if (key === "vlMax" && parseFloat(updated.vlMax) < parseFloat(updated.vlMin)) {
         updated.vlMin = updated.vlMax;
       }
-      console.log(updated)
       return updated;
     });
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
+
+    if(valores.pontoControle == "Selecione"){
+      valores.pontoControle = null
+    }
   
     const body = {
-      descricao:   valores.descricao,
+      descricao:   valores.descricao != inicial.descricao ? valores.descricao: null,
       vlmin:       Number(valores.vlMin),
       vlmax:       Number(valores.vlMax),
       valor:       Number(valores.valor),
@@ -51,7 +59,7 @@ export function AdicionarParametro({ dados, closeModal, param }) {
       grandezaDesc: valores.grandeza,
       funcao:       valores.funcao,
       formulaEnum: valores.formula,
-      pontoControle: valoresEditados.pontoControle == "DESVINCULAR" || valoresEditados.pontoControle == "Selecione" ? null : valoresEditados.pontoControle
+      pontoControle: valores.pontoControle == "DESVINCULAR" || valores.pontoControle == "" ? null : valores.pontoControle
     };
 
     console.log(body)
@@ -74,8 +82,6 @@ export function AdicionarParametro({ dados, closeModal, param }) {
     console.error("❌ Erro ao inserir registro:", error.response?.data || error);
     alert("Erro ao inserir registro. Verifique os dados e tente novamente!");
     if (error.response?.status === 401) navigator("/login");
-  }finally{
-    window.location.reload()
   }
   };
   

@@ -4,7 +4,6 @@ import { LogProducao } from "../components/LogProducao.jsx";
 import { Farmacia } from "./images/Farmacia.jsx";
 import api from "../api.js";
 import { ModalEmergencia } from "../components/ModalEmergencia.jsx";
-import { PdfMakerModal } from "../components/PdfMaker.jsx";
 import { ModalFormula } from "../components/ModalFormula.jsx";
 import { GridFormula } from "../components/GridFormula.jsx";
 import "antd/dist/reset.css";
@@ -31,7 +30,6 @@ export function Producao() {
   const [modalFormula, setModalFormula] = useState(false);
   const [showModalEmergencia, setShowModalEmergencia] = useState(false);
 
-  const [showModalPdf, setShowModalPdf] = useState(false);
 
 
   const [iniciar, setIniciar] = useState(false)
@@ -42,6 +40,9 @@ export function Producao() {
   // Tamanho da página
   const [size] = useState(6);
 
+  const [baixando, setBaixando] = useState(false);
+
+
   // ----- Fetch para Log de Produção -----
   const fetchLogProducao = (pageToLoad = 0) => {
     api
@@ -51,7 +52,6 @@ export function Producao() {
       })
       .then(({ data }) => {
         setDadosProd(data.content);
-        console.log(data.content)
         setTotalPagesProd(data.page.totalPages);
         setPageProd(data.page.number);
       })
@@ -123,6 +123,31 @@ export function Producao() {
     fetchLogAlarme(0);
   }, []);
 
+    const handleDownload = async () => {
+    setBaixando(true);
+    try {
+
+      const response = await api.post(`/pdf/dto?tabela=${tabela}`, parametrosFormula, {responseType: "blob"}, {params: tabela});
+
+
+      // cria o blob e dispara o download
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "dto.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Erro ao baixar PDF:", err);
+      alert("Falha ao gerar o PDF.");
+    } finally {
+      setBaixando(false);
+    }
+  };
+
   return (
     <main className="grid rounded-xl grid-cols-4 grid-rows-4 gap-4 w-full h-full bg-gray-100">
       {/* Farmácia */}
@@ -132,7 +157,7 @@ export function Producao() {
           <div className="grid justify-center items-center relative top-[10rem] text-white w-full grid-cols-4">
             <button className="relative bg-green-500 hover:brightness-90 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={() => {setProcesso(true);setStep(1)}}>Iniciar</button>
             {processo && (<><button className="relative bg-red-500 hover:brightness-90 text-white w-7/12 mx-16 h-8 px-3 py-1 rounded-lg" onClick={() => {setProcesso(false);setIniciar(false);setStep(-1)}}>Parar</button>
-            <button className="relative bg-indigo-600 hover:brightness-90 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={()=> {setShowModalPdf(true);setStep(2)}}>Gerar PDF</button>
+            <button className="relative bg-indigo-600 hover:brightness-90 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" disabled={baixando} onClick={()=> {handleDownload();setStep(2)}}>Gerar PDF</button>
             <button className="relative bg-orange-500 hover:brightness-90 text-white mx-16 h-8 px-3 w-7/12 py-1 rounded-lg" onClick={() => {setProcesso(false);setStep(0)}}>Reiniciar</button></>)}
           </div>
         )}
@@ -166,13 +191,6 @@ export function Producao() {
         />
       )}
 
-      {showModalPdf && (
-        <PdfMakerModal
-          setShowModalPdf={setShowModalPdf}
-          setStep={setStep}
-          dados={parametrosFormula}
-        />
-      )}
     </main>
   );
 }

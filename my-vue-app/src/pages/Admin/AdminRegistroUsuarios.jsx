@@ -93,7 +93,7 @@ export function AdminRegistroUsuarios() {
   };
   
   return (
-    <div className="w-full rounded h-full bg-gray-100 p-4 overflow-y-visible">
+    <div className="w-full rounded h-full bg-gray-100 p-4 overflow-y-visible overflow-x-hidden scrollbar-thin scrollbar-track-transparent scrollbar-thumb-indigo-500 hover:scrollbar-thumb-indigo-700">
 
       <Cabecalho dados={usuarios} setDados={setDados} nivel={1} setshowModalAdd={setShowModalAdd} tabela={"Usuários"}/>
 

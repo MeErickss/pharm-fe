@@ -58,7 +58,7 @@ export function Home() {
 
       {/* Services Section */}
       <section className="bg-white rounded-b-lg">
-        <div className="container mx-auto h-full w-full p-6 lg:px-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="container mx-auto h-full w-full lg:px-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
           {[
             {
               title: 'Gestão de Documentos',

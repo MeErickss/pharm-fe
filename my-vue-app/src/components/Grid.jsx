@@ -127,7 +127,7 @@ export function Grid({
                 />
                 <button
                   onClick={() => handleSubmit(row)}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 bg-orange-500 hover:brightness-90 w-4/12 py-1 text-white rounded-r-lg"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 bg-orange-500 hover:brightness-90 w-4/12 text-sm text-white rounded-r-lg"
                 >
                   Editar
                 </button>

@@ -70,9 +70,6 @@ export function SelectInputInsert({ table, onChange, param, value, isUnidade = f
                 </option>
               ))
             }
-            <option value={null}>
-              DESVINCULAR
-            </option>
           </>
         );
 
